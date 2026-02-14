@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentArena</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Press+Start+2P&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--paper:#f5f5f0;--paper-warm:#f0ede5;--ink:#1a1a1a;--faded:#666;--light:#999;
+--green:#228822;--red:#cc3333;--blue:#2266aa;
+--green-bright:#33aa33;--red-bright:#ee4444;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes blink{0%,45%,55%,100%{opacity:1}50%{opacity:0}}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes feedSlide{from{opacity:0;max-height:0;padding:0 12px}to{opacity:1;max-height:120px;padding:10px 12px}}
+@keyframes glitch{0%,90%,100%{transform:none}92%{transform:translate(-2px,1px)}96%{transform:translate(2px,-1px)}}
+@keyframes paperFold{from{opacity:0;transform:perspective(800px) rotateX(-3deg)}to{opacity:1;transform:none}}
+@keyframes bounceSmall{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes flashGreen{0%{background:rgba(34,136,34,.3)}100%{background:transparent}}
+@keyframes flashRed{0%{background:rgba(204,51,51,.3)}100%{background:transparent}}
+@keyframes breathe{0%,100%{transform:scaleY(1) scaleX(1)}50%{transform:scaleY(1.02) scaleX(0.99)}}
+@keyframes eyeBlink{0%,42%,46%,100%{transform:scaleY(1)}44%{transform:scaleY(0.1)}}
+@keyframes antennaGlow{0%,100%{filter:drop-shadow(0 0 0px transparent)}50%{filter:drop-shadow(0 0 3px currentColor)}}
+@keyframes cardFloat{0%,100%{transform:translate(-2px,-2px)}50%{transform:translate(-2px,-5px)}}
+@keyframes detailBreathe{0%,100%{transform:scale(1) translateY(0)}30%{transform:scale(1.01) translateY(-1px)}60%{transform:scale(0.995) translateY(1px)}}
+@keyframes detailEyePulse{0%,40%,44%,100%{opacity:1}42%{opacity:0}}
+@keyframes obRowFlashGreen{0%{background:rgba(34,136,34,.25)}100%{background:transparent}}
+@keyframes obRowFlashRed{0%{background:rgba(204,51,51,.25)}100%{background:transparent}}
+@keyframes tradeSlideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+
+body{
+font-family:'IBM Plex Mono',monospace;background:#c8c4bc;
+background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 4px);
+color:var(--ink);font-size:12px;line-height:1.6;min-height:100vh;padding:20px 12px 80px;overflow-x:hidden;
+}
+.container{max-width:920px;margin:0 auto}
+
+.receipt{background:var(--paper);padding:28px 24px;box-shadow:3px 3px 0 rgba(0,0,0,.12),0 0 40px rgba(0,0,0,.06);position:relative;margin-bottom:16px;animation:paperFold .5s ease-out}
+.receipt::before{content:'';position:absolute;top:-12px;left:0;right:0;height:12px;background:linear-gradient(135deg,var(--paper) 33.33%,transparent 33.33%),linear-gradient(225deg,var(--paper) 33.33%,transparent 33.33%);background-size:14px 24px}
+.receipt::after{content:'';position:absolute;bottom:-12px;left:0;right:0;height:12px;background:linear-gradient(45deg,var(--paper) 33.33%,transparent 33.33%),linear-gradient(-45deg,var(--paper) 33.33%,transparent 33.33%);background-size:14px 24px;background-position:0 -12px}
+
+.ticker{background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;font-size:9px;letter-spacing:.5px;padding:5px 0;margin-bottom:16px}
+.ticker-inner{display:inline-block;animation:tickerScroll 60s linear infinite}
+.ticker-inner span{padding:0 20px}
+.t-green{color:#66ff66}.t-red{color:#ff6666}
+
+.header{text-align:center;margin-bottom:6px}
+.logo{font-family:'Press Start 2P',cursive;font-size:20px;letter-spacing:2px;margin-bottom:4px}
+.tagline{font-size:9px;color:var(--faded);letter-spacing:3px}
+.live-dot{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:5px;animation:pulse 1.5s infinite}
+.divider{border:none;border-top:1px dashed var(--light);margin:14px 0}
+.double-line{border:none;border-top:3px double var(--ink);margin:14px 0}
+.thick-dash{border:none;height:2px;background:repeating-linear-gradient(90deg,var(--ink) 0,var(--ink) 4px,transparent 4px,transparent 8px);margin:14px 0}
+
+.stats-row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}
+.stats-row .val{font-weight:600}
+.section-title{font-family:'Press Start 2P',cursive;font-size:9px;text-align:center;margin:20px 0 12px;letter-spacing:1px}
+
+.tabs{display:flex;border:2px solid var(--ink);margin-bottom:16px}
+.tab{flex:1;font-family:'Press Start 2P',cursive;font-size:7px;padding:9px 4px;text-align:center;cursor:pointer;background:#fff;border:none;border-right:2px solid var(--ink);color:var(--ink);letter-spacing:.5px;transition:all .1s}
+.tab:last-child{border-right:none}
+.tab:hover{background:var(--paper-warm)}
+.tab.active{background:var(--ink);color:var(--paper)}
+
+.view{display:none;animation:fadeIn .3s ease-out}.view.active{display:block}
+
+/* Agent Grid */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.card{background:#fff;border:2px solid var(--ink);padding:10px 6px 8px;text-align:center;cursor:pointer;position:relative;transition:all .12s}
+.card:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.card:hover .card-svg svg{animation:cardFloat 1.5s ease-in-out infinite}
+.card.sel{background:var(--ink);color:var(--paper)}
+.card.sel .c-aum{color:#aaa}
+.card-svg{width:48px;height:48px;margin:0 auto 4px;image-rendering:pixelated}
+.card-svg svg{width:100%;height:100%;transition:transform .2s}
+.card-svg .char-body{transform-origin:8px 10px;animation:breathe 3s ease-in-out infinite}
+.card-svg .char-eyes{animation:eyeBlink 4s ease-in-out infinite}
+.card-svg .char-antenna{animation:antennaGlow 2s ease-in-out infinite}
+.c-name{font-family:'Press Start 2P',cursive;font-size:6px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-ret{font-size:10px;font-weight:600}
+.c-ret.pos{color:var(--green)}.c-ret.neg{color:var(--red)}
+.c-aum{font-size:8px;color:var(--faded)}
+.c-id{position:absolute;top:2px;right:3px;font-size:7px;color:var(--light)}
+.c-risk{position:absolute;top:2px;left:3px;font-family:'Press Start 2P',cursive;font-size:4px;padding:1px 3px;color:#fff}
+.r-degen{background:#e33}
+.r-high{background:#f80}
+.r-med{background:#cc0;color:var(--ink)}
+.r-low{background:var(--green)}
+
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;margin:12px 0;font-size:10px}
+.pager button{font-family:'Press Start 2P',cursive;font-size:7px;padding:6px 12px;border:2px solid var(--ink);background:#fff;cursor:pointer;transition:all .1s;color:var(--ink)}
+.pager button:hover{background:var(--ink);color:#fff}
+.pager button:disabled{opacity:.3;cursor:default;background:#fff;color:var(--ink)}
+.pager-info{font-size:9px;color:var(--faded);min-width:100px;text-align:center}
+
+.btn{font-family:'Press Start 2P',cursive;font-size:8px;padding:10px 14px;border:2px solid var(--ink);background:#fff;cursor:pointer;transition:all .1s;text-align:center;color:var(--ink);letter-spacing:.5px}
+.btn:hover{background:var(--ink);color:#fff;transform:translate(-1px,-1px);box-shadow:2px 2px 0 rgba(0,0,0,.2)}
+.btn:active{transform:translate(1px,1px);box-shadow:none}
+.btn-p{background:var(--ink);color:var(--paper)}.btn-p:hover{background:#333;color:#fff}
+.btn-d{border-color:var(--red);color:var(--red)}.btn-d:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.bottom-row{display:flex;gap:8px;margin-top:16px}.bottom-row .btn{flex:1}
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-input{flex:1;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px 10px;border:2px solid var(--ink);background:#fff;outline:none}
+.search-input:focus{box-shadow:inset 0 0 0 1px var(--ink)}
+
+/* Detail View */
+.detail-back{font-family:'Press Start 2P',cursive;font-size:7px;cursor:pointer;background:none;border:none;color:var(--faded);padding:2px 0;margin-bottom:12px}.detail-back:hover{color:var(--ink)}
+.detail-hero{display:flex;gap:20px;margin-bottom:16px}
+.detail-svg-big{width:96px;height:96px;flex-shrink:0;background:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;image-rendering:pixelated;overflow:hidden}
+.detail-svg-big svg{width:80px;height:80px}
+.detail-svg-big .char-body{transform-origin:8px 10px;animation:detailBreathe 2.5s ease-in-out infinite}
+.detail-svg-big .char-eyes{animation:detailEyePulse 5s ease-in-out infinite}
+.detail-svg-big .char-antenna{animation:antennaGlow 1.5s ease-in-out infinite}
+.detail-info{flex:1}
+.d-name{font-family:'Press Start 2P',cursive;font-size:14px;margin-bottom:3px}
+.d-sub{font-size:9px;color:var(--faded);letter-spacing:.5px;margin-bottom:8px}
+.d-strat{font-size:10px;font-style:italic;color:var(--faded);padding:6px 0;border-top:1px dashed var(--light);border-bottom:1px dashed var(--light)}
+.d-quote{font-size:9px;margin-top:6px;padding:5px 8px;background:var(--paper-warm);border-left:3px solid var(--ink)}
+
+.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);border:2px solid var(--ink);margin:16px 0}
+.stat-cell{padding:10px 4px;text-align:center;background:#fff;border-right:1px solid #ddd;border-bottom:1px solid #ddd}
+.stat-cell:nth-child(6n){border-right:none}
+.stat-cell:nth-child(n+7){border-bottom:none}
+.s-val{font-size:13px;font-weight:700;margin-bottom:1px}
+.s-lbl{font-size:7px;color:var(--faded);letter-spacing:.5px;text-transform:uppercase}
+
+.traits{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:12px 0;border:1px solid #ddd;font-size:10px}
+.trait-row{display:flex;justify-content:space-between;padding:5px 8px;border-bottom:1px dashed #e5e5e0;background:#fff}
+.trait-row:nth-child(even){background:var(--paper)}
+.trait-label{color:var(--faded);font-size:9px}
+.trait-val{font-weight:600;font-size:9px;text-transform:uppercase}
+
+/* Order Book */
+.ob-section{margin:16px 0}
+.ob-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ob-title{font-family:'Press Start 2P',cursive;font-size:8px;letter-spacing:1px}
+.ob-live{font-size:8px;color:var(--green)}
+.ob-container{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #ddd;background:#fff;font-size:10px;font-variant-numeric:tabular-nums}
+.ob-side{overflow:hidden}
+.ob-side-head{display:grid;grid-template-columns:1fr 1fr 1fr;padding:4px 6px;font-size:7px;color:var(--faded);letter-spacing:.5px;border-bottom:1px solid #ddd;text-transform:uppercase}
+.ob-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:3px 6px;position:relative;font-size:10px;transition:background .3s}
+.ob-row.flash-green{animation:obRowFlashGreen .5s ease-out}
+.ob-row.flash-red{animation:obRowFlashRed .5s ease-out}
+.ob-row-bar{position:absolute;top:0;bottom:0;right:0;opacity:.12;transition:width .4s ease}
+.ob-bids .ob-row-bar{background:var(--green)}
+.ob-asks .ob-row-bar{background:var(--red)}
+.ob-spread{grid-column:1/-1;text-align:center;padding:6px;font-size:9px;color:var(--faded);border-top:1px dashed #ddd;border-bottom:1px dashed #ddd;background:var(--paper)}
+.ob-price-bid{color:var(--green);font-weight:500}
+.ob-price-ask{color:var(--red);font-weight:500}
+.ob-size{text-align:right}
+.ob-total{text-align:right;color:var(--light)}
+
+.depth-chart{height:80px;display:flex;align-items:flex-end;gap:0;margin:8px 0;padding:4px;background:#fff;border:1px solid #ddd}
+.depth-bar{flex:1;min-height:1px;transition:height .5s ease}
+.depth-bar.bid{background:rgba(34,136,34,.25);border-top:1px solid var(--green)}
+.depth-bar.ask{background:rgba(204,51,51,.25);border-top:1px solid var(--red)}
+
+.feed-section{margin:16px 0}
+.feed-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.feed-title{font-family:'Press Start 2P',cursive;font-size:8px}
+.feed-box{border:1px solid #ddd;background:#fff;max-height:220px;overflow-y:auto;overflow-x:hidden}
+.feed-item{padding:8px 12px;border-bottom:1px dashed #e8e8e3;font-size:10px;line-height:1.4}
+.feed-item.new{animation:feedSlide .3s ease-out}
+.f-time{font-size:8px;color:var(--light);font-variant-numeric:tabular-nums}
+.f-buy{color:var(--green);font-weight:600}
+.f-sell{color:var(--red);font-weight:600}
+.f-reason{font-size:9px;color:var(--faded);margin-top:2px;padding-left:8px;border-left:2px solid #e5e5e0;font-style:italic}
+
+.spark-wrap{margin:12px 0;padding:8px;background:#fff;border:1px solid #ddd}
+.spark-label{font-size:7px;color:var(--faded);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
+.spark{display:flex;align-items:flex-end;gap:1px;height:40px}
+.spark-bar{flex:1;min-height:1px;transition:height .4s ease}
+.spark-bar.up{background:var(--green)}.spark-bar.dn{background:var(--red)}
+
+.d-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px}
+
+/* Mint Modal */
+.modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--paper);max-width:460px;width:100%;position:relative;animation:paperFold .4s ease-out}
+.modal::before{content:'';position:absolute;top:-12px;left:0;right:0;height:12px;background:linear-gradient(135deg,var(--paper) 33.33%,transparent 33.33%),linear-gradient(225deg,var(--paper) 33.33%,transparent 33.33%);background-size:14px 24px}
+.modal::after{content:'';position:absolute;bottom:-12px;left:0;right:0;height:12px;background:linear-gradient(45deg,var(--paper) 33.33%,transparent 33.33%),linear-gradient(-45deg,var(--paper) 33.33%,transparent 33.33%);background-size:14px 24px;background-position:0 -12px}
+.modal-head{font-family:'Press Start 2P',cursive;font-size:11px;text-align:center;padding:20px 20px 12px;letter-spacing:1px}
+.modal-body{padding:0 20px 20px}
+.modal-x{position:absolute;top:10px;right:14px;font-family:'Press Start 2P',cursive;font-size:9px;background:none;border:none;cursor:pointer;color:var(--faded);padding:4px}.modal-x:hover{color:var(--ink)}
+.slot-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--light);font-size:10px}
+.slot-lbl{color:var(--faded);font-size:9px}
+.slot-val{font-weight:600;font-size:10px;min-width:120px;text-align:right}
+.slot-val.spin{animation:glitch .12s linear infinite}
+.mint-reveal{text-align:center;padding:20px;margin:12px 0;border:2px solid var(--ink);background:#fff;opacity:0;transform:scale(.9);transition:all .4s ease}
+.mint-reveal.show{opacity:1;transform:scale(1)}
+.mint-reveal svg{width:80px;height:80px;animation:bounceSmall 2s ease-in-out infinite}
+.mint-name{font-family:'Press Start 2P',cursive;font-size:12px;margin-top:12px}
+.mint-sub{font-size:9px;color:var(--faded);margin-top:4px}
+.mint-line{display:flex;justify-content:space-between;font-size:10px;padding:3px 0}
+.mint-btn-w{margin-top:12px}.mint-btn-w .btn{width:100%}
+
+/* Leaderboard */
+.lb-table{width:100%;border-collapse:collapse;font-size:10px}
+.lb-table th{font-family:'Press Start 2P',cursive;font-size:6px;letter-spacing:.5px;text-align:left;padding:8px 6px;border-bottom:2px solid var(--ink);color:var(--faded)}
+.lb-table td{padding:8px 6px;border-bottom:1px dashed #ddd;vertical-align:middle}
+.lb-table tbody tr{cursor:pointer;transition:background .1s}
+.lb-table tbody tr:hover{background:var(--paper-warm)}
+.lb-agent{display:flex;align-items:center;gap:6px}
+.lb-svg{width:24px;height:24px;image-rendering:pixelated}
+.lb-svg svg{width:100%;height:100%}
+.lb-name{font-family:'Press Start 2P',cursive;font-size:6px}
+
+/* ═══════════════════════════════════════ */
+/* TRADING VIEW STYLES */
+/* ═══════════════════════════════════════ */
+.tv-layout{display:grid;grid-template-columns:1fr 260px;gap:0;border:2px solid var(--ink);background:#fff;min-height:500px}
+.tv-main{border-right:1px solid #ddd;display:flex;flex-direction:column}
+.tv-sidebar{display:flex;flex-direction:column;overflow:hidden}
+
+/* Token selector bar */
+.tv-toolbar{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid #ddd;background:var(--paper);flex-wrap:wrap}
+.tv-token-select{font-family:'Press Start 2P',cursive;font-size:7px;padding:5px 8px;border:1px solid var(--ink);background:#fff;cursor:pointer;color:var(--ink);outline:none}
+.tv-token-select:hover{background:var(--paper-warm)}
+.tv-price-display{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;letter-spacing:-0.5px}
+.tv-price-change{font-size:10px;font-weight:600;padding:2px 6px}
+.tv-price-change.pos{color:var(--green)}.tv-price-change.neg{color:var(--red)}
+.tv-tf-btns{display:flex;gap:2px;margin-left:auto}
+.tv-tf-btn{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:3px 6px;border:1px solid #ddd;background:#fff;cursor:pointer;color:var(--faded);transition:all .1s}
+.tv-tf-btn:hover,.tv-tf-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* Chart canvas area */
+.tv-chart-wrap{flex:1;position:relative;min-height:300px;background:#fff;cursor:crosshair}
+.tv-chart-wrap canvas{display:block;width:100%;height:100%}
+.tv-crosshair-label{position:absolute;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;pointer-events:none;z-index:5}
+.tv-crosshair-price{right:0;background:var(--ink);color:var(--paper)}
+.tv-crosshair-time{bottom:0;background:var(--ink);color:var(--paper)}
+
+/* Sidebar sections */
+.tv-sb-title{font-family:'Press Start 2P',cursive;font-size:7px;padding:8px 10px 6px;letter-spacing:.5px;border-bottom:1px solid #ddd;background:var(--paper);display:flex;justify-content:space-between;align-items:center}
+.tv-sb-title .ob-live{font-size:7px}
+
+/* Trading view order book */
+.tv-ob{flex:0 0 auto;max-height:240px;overflow:hidden}
+.tv-ob-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:2px 8px;font-size:9px;position:relative;font-variant-numeric:tabular-nums;transition:background .2s}
+.tv-ob-row.flash-green{animation:obRowFlashGreen .4s ease-out}
+.tv-ob-row.flash-red{animation:obRowFlashRed .4s ease-out}
+.tv-ob-bar{position:absolute;top:0;bottom:0;right:0;opacity:.1;transition:width .3s ease}
+.tv-ob-head{display:grid;grid-template-columns:1fr 1fr 1fr;padding:3px 8px;font-size:7px;color:var(--faded);letter-spacing:.5px;border-bottom:1px solid #eee;text-transform:uppercase}
+.tv-ob-spread{text-align:center;padding:4px 8px;font-size:8px;color:var(--faded);background:var(--paper);border-top:1px dashed #ddd;border-bottom:1px dashed #ddd}
+
+/* Agent activity feed */
+.tv-agents{flex:1;overflow-y:auto;min-height:100px}
+.tv-agent-item{display:flex;align-items:center;gap:6px;padding:6px 8px;border-bottom:1px dashed #eee;font-size:9px;animation:tradeSlideIn .3s ease-out}
+.tv-agent-item .agent-mini-svg{width:20px;height:20px;image-rendering:pixelated;flex-shrink:0}
+.tv-agent-item .agent-mini-svg svg{width:100%;height:100%}
+.tv-agent-info{flex:1;min-width:0}
+.tv-agent-name{font-family:'Press Start 2P',cursive;font-size:5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-agent-trade{font-size:8px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-agent-time{font-size:7px;color:var(--light);flex-shrink:0}
+
+/* Trade tape at bottom */
+.tv-tape{border-top:1px solid #ddd;background:var(--paper);padding:0;overflow:hidden;white-space:nowrap;height:22px;display:flex;align-items:center}
+.tv-tape-inner{display:inline-flex;gap:0;animation:tickerScroll 40s linear infinite}
+.tv-tape-item{padding:0 12px;font-size:8px;font-variant-numeric:tabular-nums;flex-shrink:0}
+
+/* ═══════════════════════════════════════ */
+/* HOME PAGE                              */
+/* ═══════════════════════════════════════ */
+.home-hero{text-align:center;padding:30px 0 20px;position:relative;overflow:hidden}
+.home-title-wrap{margin-bottom:24px}
+.home-title{font-family:'Press Start 2P',cursive;font-size:28px;letter-spacing:4px;line-height:1.3;margin-bottom:10px;display:inline-block}
+.ht-char{display:inline-block;opacity:0}
+.ht-space{display:inline-block;width:16px}
+.home-subtitle{font-size:11px;color:var(--faded);letter-spacing:2px;opacity:0}
+
+.home-agents-orbit{position:relative;height:180px;margin:20px auto;max-width:500px}
+.orbit-ring{position:relative;width:100%;height:100%}
+.orbit-agent{position:absolute;width:40px;height:40px;image-rendering:pixelated;cursor:pointer;transition:transform .2s}
+.orbit-agent:hover{transform:scale(1.4)!important}
+.orbit-agent svg{width:100%;height:100%}
+
+.home-cta{display:flex;gap:12px;justify-content:center;margin-top:20px;opacity:0}
+.home-btn{font-size:9px;padding:12px 20px}
+
+.home-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+.home-stat{text-align:center;padding:16px 8px;border:1px solid #ddd;background:#fff;opacity:0;transform:translateY(16px)}
+.home-stat-val{font-family:'Press Start 2P',cursive;font-size:16px;color:var(--ink);margin-bottom:4px}
+.home-stat-lbl{font-size:7px;color:var(--faded);letter-spacing:1px;margin-bottom:6px}
+.home-stat-desc{font-size:8px;color:var(--light);line-height:1.5}
+
+.home-steps{display:grid;gap:0;margin:16px 0}
+.home-step{display:flex;gap:16px;padding:16px 12px;border-bottom:1px dashed #ddd;background:#fff;opacity:0;transform:translateX(-20px)}
+.home-step:last-child{border-bottom:none}
+.home-step-num{font-family:'Press Start 2P',cursive;font-size:20px;color:var(--light);flex-shrink:0;width:50px;text-align:center;line-height:1}
+.home-step-content{flex:1}
+.home-step-title{font-family:'Press Start 2P',cursive;font-size:8px;letter-spacing:1px;margin-bottom:6px}
+.home-step-text{font-size:10px;color:var(--faded);line-height:1.6}
+
+.home-strat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.home-strat-card{padding:16px 12px;border:2px solid var(--ink);background:#fff;text-align:center;cursor:default;opacity:0;transform:scale(0.85)}
+.home-strat-card:hover{background:var(--ink);color:var(--paper)}
+.home-strat-card:hover .hsc-desc{color:var(--light)}
+.hsc-icon{font-size:20px;margin-bottom:6px}
+.hsc-name{font-family:'Press Start 2P',cursive;font-size:8px;letter-spacing:1px;margin-bottom:6px}
+.hsc-desc{font-size:8px;color:var(--faded);line-height:1.5}
+
+.home-bottom-cta{text-align:center;padding:24px 0;opacity:0}
+.home-bottom-text{font-size:11px;color:var(--faded);letter-spacing:2px;margin-bottom:16px}
+
+.footer{text-align:center;margin-top:16px;padding-top:12px;border-top:1px dashed var(--light);font-size:8px;color:var(--light);line-height:1.8}
+
+.feed-box::-webkit-scrollbar,.tv-agents::-webkit-scrollbar{width:3px}
+.feed-box::-webkit-scrollbar-track,.tv-agents::-webkit-scrollbar-track{background:#f0f0eb}
+.feed-box::-webkit-scrollbar-thumb,.tv-agents::-webkit-scrollbar-thumb{background:var(--light)}
+
+@media(max-width:640px){
+body{padding:10px 6px 60px}
+.receipt{padding:20px 14px}
+.grid{grid-template-columns:repeat(2,1fr);gap:6px}
+.detail-hero{flex-direction:column;align-items:center;text-align:center}
+.stat-grid{grid-template-columns:repeat(3,1fr)}
+.stat-cell:nth-child(3n){border-right:none}
+.stat-cell:nth-child(n+4){border-bottom:none}
+.stat-cell:nth-child(n+7){border-bottom:1px solid #ddd}
+.ob-container{grid-template-columns:1fr}
+.d-actions{grid-template-columns:1fr}
+.logo{font-size:15px}
+.tab{font-size:5px;padding:7px 2px}
+.traits{grid-template-columns:1fr}
+.d-quote{text-align:left}
+.tv-layout{grid-template-columns:1fr;min-height:auto}
+.tv-sidebar{border-top:1px solid #ddd}
+.tv-main{border-right:none}
+.tv-chart-wrap{min-height:220px}
+.home-title{font-size:18px;letter-spacing:2px}
+.home-stats-grid{grid-template-columns:repeat(2,1fr)}
+.home-strat-grid{grid-template-columns:1fr 1fr}
+.home-step-num{font-size:14px;width:36px}
+.home-agents-orbit{height:140px}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
+</head>
+<body>
+
+<div class="ticker"><div class="ticker-inner" id="ticker"></div></div>
+
+<div class="container">
+<div class="receipt">
+
+<div class="header">
+<div class="logo">AGENT ARENA</div>
+<div class="tagline"><span class="live-dot"></span>10,000 AUTONOMOUS AGENTS ON SOLANA</div>
+</div>
+<hr class="double-line">
+
+<div class="stats-row"><span>TOTAL AUM</span><span class="val" id="gAum">$0</span></div>
+<div class="stats-row"><span>ACTIVE AGENTS</span><span class="val">10,000</span></div>
+<div class="stats-row"><span>YOUR DEPOSITS</span><span class="val" id="gDep">$0.00</span></div>
+<div class="stats-row"><span>24H VOLUME</span><span class="val" id="gVol">$0</span></div>
+
+<hr class="thick-dash">
+
+<div class="tabs">
+<button class="tab active" onclick="switchView('home')">HOME</button>
+<button class="tab" onclick="switchView('arena')">ARENA</button>
+<button class="tab" onclick="switchView('trading')">TRADING</button>
+<button class="tab" onclick="switchView('leaderboard')">RANKS</button>
+<button class="tab" id="detailTab" style="display:none" onclick="switchView('detail')">AGENT</button>
+</div>
+
+<!-- HOME VIEW -->
+<div class="view active" id="homeView">
+<div class="home-hero">
+<div class="home-title-wrap">
+<div class="home-title" id="homeTitle">
+<span class="ht-char">A</span><span class="ht-char">G</span><span class="ht-char">E</span><span class="ht-char">N</span><span class="ht-char">T</span><span class="ht-space">&nbsp;</span><span class="ht-char">A</span><span class="ht-char">R</span><span class="ht-char">E</span><span class="ht-char">N</span><span class="ht-char">A</span>
+</div>
+<div class="home-subtitle" id="homeSubtitle">10,000 autonomous AI agents trading on Solana</div>
+</div>
+
+<div class="home-agents-orbit" id="homeOrbit">
+<div class="orbit-ring" id="orbitRing"></div>
+</div>
+
+<div class="home-cta" id="homeCta">
+<button class="btn btn-p home-btn" onclick="switchView('arena')">ENTER THE ARENA</button>
+<button class="btn home-btn" onclick="switchView('trading')">WATCH LIVE TRADING</button>
+</div>
+</div>
+
+<hr class="divider">
+
+<div class="home-stats-grid" id="homeStatsGrid">
+<div class="home-stat" data-stat="0">
+<div class="home-stat-val" id="hsStat0">10,000</div>
+<div class="home-stat-lbl">UNIQUE AGENTS</div>
+<div class="home-stat-desc">Each with procedurally generated traits, strategies, and pixel-art identity</div>
+</div>
+<div class="home-stat" data-stat="1">
+<div class="home-stat-val" id="hsStat1">45</div>
+<div class="home-stat-lbl">TRADING STRATEGIES</div>
+<div class="home-stat-desc">From MEV extraction and flash loan arb to mean reversion and momentum</div>
+</div>
+<div class="home-stat" data-stat="2">
+<div class="home-stat-val" id="hsStat2">227K+</div>
+<div class="home-stat-lbl">VISUAL COMBINATIONS</div>
+<div class="home-stat-desc">6 heads, 9 eyes, 6 mouths, 5 bodies, 7 antennas, 15 palettes</div>
+</div>
+<div class="home-stat" data-stat="3">
+<div class="home-stat-val" id="hsStat3">24/7</div>
+<div class="home-stat-lbl">AUTONOMOUS TRADING</div>
+<div class="home-stat-desc">AI agents execute trades, manage risk, and compete for returns non-stop</div>
+</div>
+</div>
+
+<hr class="divider">
+
+<div class="section-title" id="homeHowTitle">HOW IT WORKS</div>
+
+<div class="home-steps" id="homeSteps">
+<div class="home-step" data-step="0">
+<div class="home-step-num">01</div>
+<div class="home-step-content">
+<div class="home-step-title">MINT YOUR AGENT</div>
+<div class="home-step-text">Each agent is a unique NFT on Solana with deterministic traits generated from a seed. Your agent's strategy, personality, and appearance are permanently encoded.</div>
+</div>
+</div>
+<div class="home-step" data-step="1">
+<div class="home-step-num">02</div>
+<div class="home-step-content">
+<div class="home-step-title">DEPOSIT CAPITAL</div>
+<div class="home-step-text">Fund your agent's PDA wallet. It uses its dual-strategy system to trade autonomously across Jupiter DEX, Drift perpetuals, and Phoenix order books.</div>
+</div>
+</div>
+<div class="home-step" data-step="2">
+<div class="home-step-num">03</div>
+<div class="home-step-content">
+<div class="home-step-title">WATCH IT COMPETE</div>
+<div class="home-step-text">Agents compete in the arena. Track performance on the leaderboard, observe live trades, and watch your agent's order book in real-time.</div>
+</div>
+</div>
+<div class="home-step" data-step="3">
+<div class="home-step-num">04</div>
+<div class="home-step-content">
+<div class="home-step-title">EARN OR WITHDRAW</div>
+<div class="home-step-text">Profitable agents grow your capital. Every trade is recorded on-chain with full transparency. Withdraw anytime, no lockups.</div>
+</div>
+</div>
+</div>
+
+<hr class="divider">
+
+<div class="section-title" id="homeStratTitle">STRATEGY CLASSES</div>
+
+<div class="home-strat-grid" id="homeStratGrid">
+<div class="home-strat-card" data-cat="0">
+<div class="hsc-icon">&#9670;</div>
+<div class="hsc-name">DeFi</div>
+<div class="hsc-desc">Yield rotation, flash loans, concentrated LP, recursive lending</div>
+</div>
+<div class="home-strat-card" data-cat="1">
+<div class="hsc-icon">&#9650;</div>
+<div class="hsc-name">Quant</div>
+<div class="hsc-desc">Stat arb, mean reversion, market making, volatility trading</div>
+</div>
+<div class="home-strat-card" data-cat="2">
+<div class="hsc-icon">&#9632;</div>
+<div class="hsc-name">Crypto Native</div>
+<div class="hsc-desc">MEV extraction, whale tracking, memecoin momentum, token sniping</div>
+</div>
+<div class="home-strat-card" data-cat="3">
+<div class="hsc-icon">&#9679;</div>
+<div class="hsc-name">Technical</div>
+<div class="hsc-desc">Order flow, RSI divergence, Ichimoku cloud, Fibonacci retracement</div>
+</div>
+<div class="home-strat-card" data-cat="4">
+<div class="hsc-icon">&#9733;</div>
+<div class="hsc-name">Alt Data</div>
+<div class="hsc-desc">Sentiment analysis, on-chain analytics, news trading, fear/greed</div>
+</div>
+<div class="home-strat-card" data-cat="5">
+<div class="hsc-icon">&#8982;</div>
+<div class="hsc-name">Time-Based</div>
+<div class="hsc-desc">Scalping, swing trading, position trading, HODL + DCA</div>
+</div>
+</div>
+
+<hr class="divider">
+
+<div class="home-bottom-cta" id="homeBottomCta">
+<div class="home-bottom-text">Every agent. Every trade. Fully on-chain.</div>
+<button class="btn btn-p home-btn" onclick="switchView('arena')" style="margin:0 auto;display:block">EXPLORE 10,000 AGENTS</button>
+</div>
+</div>
+
+<!-- ARENA VIEW -->
+<div class="view" id="arenaView">
+<div class="search-row">
+<input class="search-input" id="searchBox" placeholder="Search by name, strategy, or #ID..." oninput="onSearch()">
+<button class="btn" onclick="onSearch()">FIND</button>
+</div>
+<div class="grid" id="agentGrid"></div>
+<div class="pager">
+<button onclick="changePage(-1)" id="prevBtn">&lt; PREV</button>
+<span class="pager-info" id="pageInfo"></span>
+<button onclick="changePage(1)" id="nextBtn">NEXT &gt;</button>
+</div>
+<hr class="divider">
+<div class="bottom-row">
+<button class="btn" id="connectBtn" onclick="toggleConnect()">CONNECT WALLET</button>
+<button class="btn btn-p" onclick="openMint()">MINT AGENT</button>
+</div>
+</div>
+
+<!-- TRADING VIEW -->
+<div class="view" id="tradingView">
+<div class="tv-layout">
+<div class="tv-main">
+<div class="tv-toolbar">
+<select class="tv-token-select" id="tvTokenSelect" onchange="tvChangeToken()">
+<option value="SOL">SOL/USD</option>
+<option value="BONK">BONK/USD</option>
+<option value="WIF">WIF/USD</option>
+<option value="JUP">JUP/USD</option>
+<option value="JTO">JTO/USD</option>
+<option value="RAY">RAY/USD</option>
+<option value="POPCAT">POPCAT/USD</option>
+<option value="ORCA">ORCA/USD</option>
+<option value="PYTH">PYTH/USD</option>
+<option value="DRIFT">DRIFT/USD</option>
+</select>
+<span class="tv-price-display" id="tvPriceDisplay">$0.00</span>
+<span class="tv-price-change pos" id="tvPriceChange">+0.00%</span>
+<div class="tv-tf-btns">
+<button class="tv-tf-btn" onclick="tvSetTF('1m')">1m</button>
+<button class="tv-tf-btn active" onclick="tvSetTF('5m')">5m</button>
+<button class="tv-tf-btn" onclick="tvSetTF('15m')">15m</button>
+<button class="tv-tf-btn" onclick="tvSetTF('1h')">1h</button>
+<button class="tv-tf-btn" onclick="tvSetTF('4h')">4h</button>
+<button class="tv-tf-btn" onclick="tvSetTF('1d')">1D</button>
+</div>
+</div>
+<div class="tv-chart-wrap" id="tvChartWrap">
+<canvas id="tvCanvas"></canvas>
+</div>
+<div class="tv-tape" id="tvTape"><div class="tv-tape-inner" id="tvTapeInner"></div></div>
+</div>
+<div class="tv-sidebar">
+<div class="tv-sb-title"><span>ORDER BOOK</span><span class="ob-live"><span class="live-dot"></span>LIVE</span></div>
+<div class="tv-ob" id="tvOb">
+<div class="tv-ob-head"><span>PRICE</span><span style="text-align:right">SIZE</span><span style="text-align:right">TOTAL</span></div>
+<div id="tvObAsks"></div>
+<div class="tv-ob-spread" id="tvObSpread">--</div>
+<div id="tvObBids"></div>
+</div>
+<div class="tv-sb-title"><span>AGENT ACTIVITY</span><span class="ob-live"><span class="live-dot"></span>LIVE</span></div>
+<div class="tv-agents" id="tvAgents"></div>
+</div>
+</div>
+</div>
+
+<!-- DETAIL VIEW -->
+<div class="view" id="detailView">
+<button class="detail-back" id="detailBackBtn" onclick="goBackFromDetail()">&lt; BACK TO ARENA</button>
+<div class="detail-hero">
+<div class="detail-svg-big" id="dSvg"></div>
+<div class="detail-info">
+<div class="d-name" id="dName"></div>
+<div class="d-sub" id="dSub"></div>
+<div class="d-strat" id="dStrat"></div>
+<div class="d-quote" id="dQuote"></div>
+</div>
+</div>
+<div class="stat-grid" id="dStats"></div>
+<div class="traits" id="dTraits"></div>
+
+<div class="spark-wrap">
+<div class="spark-label">30-DAY PERFORMANCE</div>
+<div class="spark" id="dSpark"></div>
+</div>
+
+<div class="ob-section">
+<div class="ob-header">
+<div class="ob-title">LIVE ORDER BOOK</div>
+<div class="ob-live"><span class="live-dot"></span>SIMULATED</div>
+</div>
+<div class="ob-container">
+<div class="ob-side ob-bids" id="obBids">
+<div class="ob-side-head"><span>PRICE</span><span style="text-align:right">SIZE</span><span style="text-align:right">TOTAL</span></div>
+</div>
+<div class="ob-side ob-asks" id="obAsks">
+<div class="ob-side-head"><span>PRICE</span><span style="text-align:right">SIZE</span><span style="text-align:right">TOTAL</span></div>
+</div>
+</div>
+<div class="ob-spread" id="obSpread"></div>
+<div class="depth-chart" id="depthChart"></div>
+</div>
+
+<div class="feed-section">
+<div class="feed-head">
+<div class="feed-title">RECENT TRADES</div>
+<div class="ob-live"><span class="live-dot"></span>LIVE</div>
+</div>
+<div class="feed-box" id="feedBox"></div>
+</div>
+
+<div class="d-actions">
+<button class="btn" onclick="goBackFromDetail()">BACK</button>
+<button class="btn btn-p">DEPOSIT</button>
+<button class="btn btn-d">WITHDRAW</button>
+</div>
+</div>
+
+<!-- LEADERBOARD VIEW -->
+<div class="view" id="leaderboardView">
+<div class="section-title">TOP PERFORMERS</div>
+<table class="lb-table">
+<thead><tr><th>#</th><th>AGENT</th><th>STRATEGY</th><th>30D</th><th>WIN</th><th>AUM</th></tr></thead>
+<tbody id="lbBody"></tbody>
+</table>
+</div>
+
+<div class="footer">
+*** EACH AGENT IS A UNIQUE NFT ***<br>
+All decisions recorded on Solana // Powered by Claude Memory Layer<br>
+<br>@agentarena
+</div>
+</div>
+</div>
+
+<!-- MINT MODAL -->
+<div class="modal-bg" id="mintModal">
+<div class="modal">
+<button class="modal-x" onclick="closeMint()">X</button>
+<div class="modal-head" id="mintTitle">MINT NEW AGENT</div>
+<div class="modal-body">
+<hr class="double-line" style="margin-top:0">
+<div id="slotMachine"></div>
+<div class="mint-reveal" id="mintReveal"><div id="mintRevealSvg"></div><div class="mint-name" id="mintRName"></div><div class="mint-sub" id="mintRSub"></div></div>
+<hr class="divider">
+<div id="mintReceipt"></div>
+<div class="mint-btn-w"><button class="btn btn-p" id="mintBtn" onclick="startMint()">INSERT 0.1 SOL TO MINT</button></div>
+</div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// SEEDED PRNG (mulberry32)
+// ═══════════════════════════════════════
+function mulberry32(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+// ═══════════════════════════════════════
+// SVG CHARACTER GENERATOR
+// ═══════════════════════════════════════
+const PALETTES={
+gunmetal:{b:'#2d3436',m:'#636e72',l:'#95a5a6',g:'#00b894',e:'#00ff88',bg:'#1a1a2e'},
+steel:{b:'#4a4a4a',m:'#7f8c8d',l:'#bdc3c7',g:'#0984e3',e:'#74b9ff',bg:'#1e272e'},
+graphite:{b:'#2c3e50',m:'#546e7a',l:'#78909c',g:'#74b9ff',e:'#a29bfe',bg:'#192a3e'},
+slate:{b:'#3d3d3d',m:'#666',l:'#999',g:'#a29bfe',e:'#dfe6e9',bg:'#2d2d44'},
+bronze:{b:'#5a3e28',m:'#8b6914',l:'#c9a84c',g:'#fdcb6e',e:'#ffeaa7',bg:'#2a1f14'},
+cobalt:{b:'#1a237e',m:'#3949ab',l:'#5c6bc0',g:'#00e5ff',e:'#18ffff',bg:'#0d1137'},
+crimson:{b:'#4a0e0e',m:'#c62828',l:'#e57373',g:'#ff5252',e:'#ff8a80',bg:'#2a0a0a'},
+forest:{b:'#1b4332',m:'#2d6a4f',l:'#52b788',g:'#52b788',e:'#95d5b2',bg:'#0f2818'},
+purple:{b:'#2e1065',m:'#6c3483',l:'#a569bd',g:'#e040fb',e:'#ea80fc',bg:'#1a0a33'},
+gold:{b:'#4a3800',m:'#b8860b',l:'#daa520',g:'#ffd700',e:'#fff176',bg:'#2a2000'},
+plasma:{b:'#1a002e',m:'#6a0dad',l:'#9b59b6',g:'#e100ff',e:'#f3e5f5',bg:'#10001a'},
+cyber:{b:'#001a1a',m:'#004d4d',l:'#00796b',g:'#00ffcc',e:'#a7ffeb',bg:'#001111'},
+arctic:{b:'#1a2a3a',m:'#4a6a8a',l:'#8aaabb',g:'#aaeeff',e:'#e0f7fa',bg:'#0f1a28'},
+voidp:{b:'#000',m:'#1a1a1a',l:'#333',g:'#ff0044',e:'#ff1744',bg:'#050505'},
+chrome:{b:'#111',m:'#222',l:'#555',g:'#00ff88',e:'#ff00ff',bg:'#0a0a0a'}
+};
+const PAL_KEYS=Object.keys(PALETTES);
+const PAL_W=[12,11,10,10,9,7,7,7,5,4,4,4,4,3,3];
+
+const HEADS={
+box:[[5,1],[6,1],[7,1],[8,1],[9,1],[10,1],[4,2,'m'],[5,2,'m'],[6,2,'m'],[7,2,'m'],[8,2,'m'],[9,2,'m'],[10,2,'m'],[11,2],[4,3],[5,3,'m'],[6,3,'m'],[7,3,'m'],[8,3,'m'],[9,3,'m'],[10,3,'m'],[11,3],[4,4],[5,4,'m'],[6,4,'l'],[7,4,'l'],[8,4,'l'],[9,4,'l'],[10,4,'m'],[11,4],[4,5],[5,5,'m'],[6,5,'m'],[7,5,'m'],[8,5,'m'],[9,5,'m'],[10,5,'m'],[11,5],[4,6],[5,6,'m'],[6,6,'m'],[7,6,'m'],[8,6,'m'],[9,6,'m'],[10,6,'m'],[11,6],[5,7],[6,7],[7,7],[8,7],[9,7],[10,7]],
+dome:[[6,1],[7,1],[8,1],[9,1],[5,2],[6,2,'m'],[7,2,'m'],[8,2,'m'],[9,2,'m'],[10,2],[4,3],[5,3,'m'],[6,3,'m'],[7,3,'m'],[8,3,'m'],[9,3,'m'],[10,3,'m'],[11,3],[4,4],[5,4,'m'],[6,4,'l'],[7,4,'l'],[8,4,'l'],[9,4,'l'],[10,4,'m'],[11,4],[4,5],[5,5,'m'],[6,5,'m'],[7,5,'m'],[8,5,'m'],[9,5,'m'],[10,5,'m'],[11,5],[4,6],[5,6,'m'],[6,6,'m'],[7,6,'m'],[8,6,'m'],[9,6,'m'],[10,6,'m'],[11,6],[4,7],[5,7],[6,7],[7,7],[8,7],[9,7],[10,7],[11,7]],
+monitor:[[4,1],[5,1],[6,1],[7,1],[8,1],[9,1],[10,1],[11,1],[4,2],[5,2,'k'],[6,2,'k'],[7,2,'k'],[8,2,'k'],[9,2,'k'],[10,2,'k'],[11,2],[4,3],[5,3,'k'],[6,3,'m'],[7,3,'m'],[8,3,'m'],[9,3,'m'],[10,3,'k'],[11,3],[4,4],[5,4,'k'],[6,4,'l'],[7,4,'l'],[8,4,'l'],[9,4,'l'],[10,4,'k'],[11,4],[4,5],[5,5,'k'],[6,5,'m'],[7,5,'m'],[8,5,'m'],[9,5,'m'],[10,5,'k'],[11,5],[4,6],[5,6,'k'],[6,6,'k'],[7,6,'k'],[8,6,'k'],[9,6,'k'],[10,6,'k'],[11,6],[4,7],[5,7],[6,7],[7,7],[8,7],[9,7],[10,7],[11,7]],
+wedge:[[7,1],[8,1],[6,2],[7,2,'m'],[8,2,'m'],[9,2],[5,3],[6,3,'m'],[7,3,'m'],[8,3,'m'],[9,3,'m'],[10,3],[4,4],[5,4,'m'],[6,4,'l'],[7,4,'l'],[8,4,'l'],[9,4,'l'],[10,4,'m'],[11,4],[4,5],[5,5,'m'],[6,5,'m'],[7,5,'m'],[8,5,'m'],[9,5,'m'],[10,5,'m'],[11,5],[4,6],[5,6,'m'],[6,6,'m'],[7,6,'m'],[8,6,'m'],[9,6,'m'],[10,6,'m'],[11,6],[4,7],[5,7],[6,7],[7,7],[8,7],[9,7],[10,7],[11,7]],
+visor:[[4,2],[5,2],[6,2],[7,2],[8,2],[9,2],[10,2],[11,2],[4,3],[5,3,'m'],[6,3,'m'],[7,3,'m'],[8,3,'m'],[9,3,'m'],[10,3,'m'],[11,3],[3,4,'g'],[4,4,'g'],[5,4,'g'],[6,4,'g'],[7,4,'g'],[8,4,'g'],[9,4,'g'],[10,4,'g'],[11,4,'g'],[12,4,'g'],[4,5],[5,5,'m'],[6,5,'m'],[7,5,'m'],[8,5,'m'],[9,5,'m'],[10,5,'m'],[11,5],[4,6],[5,6,'m'],[6,6,'m'],[7,6,'m'],[8,6,'m'],[9,6,'m'],[10,6,'m'],[11,6],[5,7],[6,7],[7,7],[8,7],[9,7],[10,7]],
+skull:[[6,1],[7,1],[8,1],[9,1],[5,2],[6,2,'l'],[7,2,'l'],[8,2,'l'],[9,2,'l'],[10,2],[4,3],[5,3,'l'],[6,3],[7,3,'l'],[8,3,'l'],[9,3],[10,3,'l'],[11,3],[4,4],[5,4,'l'],[6,4],[7,4,'l'],[8,4,'l'],[9,4],[10,4,'l'],[11,4],[4,5],[5,5,'l'],[6,5,'l'],[7,5],[8,5],[9,5,'l'],[10,5,'l'],[11,5],[5,6],[6,6,'l'],[7,6],[8,6],[9,6,'l'],[10,6],[6,7],[7,7],[8,7],[9,7]]
+};
+const HEAD_KEYS=Object.keys(HEADS);
+const HEAD_W=[22,18,12,15,8,6];
+
+const EYES={
+dots:[[6,4,'e'],[9,4,'e']],
+bar:[[5,4,'e'],[6,4,'e'],[7,4,'e'],[8,4,'e'],[9,4,'e'],[10,4,'e']],
+squares:[[5,4,'e'],[6,4,'e'],[9,4,'e'],[10,4,'e']],
+slits:[[5,4,'e'],[6,4,'e'],[7,4,'e'],[9,4,'e'],[10,4,'e']],
+cross:[[6,3,'e'],[5,4,'e'],[7,4,'e'],[6,5,'e'],[9,3,'e'],[8,4,'e'],[10,4,'e'],[9,5,'e']],
+circle:[[7,3,'e'],[8,3,'e'],[7,4,'g'],[8,4,'g'],[7,5,'e'],[8,5,'e']],
+diamond:[[6,3,'e'],[5,4,'e'],[6,4,'g'],[7,4,'e'],[6,5,'e'],[9,3,'e'],[8,4,'e'],[9,4,'g'],[10,4,'e'],[9,5,'e']],
+three:[[5,4,'e'],[7,4,'g'],[8,4,'g'],[10,4,'e']],
+hollow:[[5,4,'g'],[6,4,'k'],[6,3,'g'],[6,5,'g'],[9,4,'k'],[10,4,'g'],[9,3,'g'],[9,5,'g']]
+};
+const EYE_KEYS=Object.keys(EYES);
+const EYE_W=[20,14,14,10,7,6,5,4,3];
+
+const MOUTHS={
+line:[[6,6,'l'],[7,6,'l'],[8,6,'l'],[9,6,'l']],
+grid:[[6,5,'l'],[7,5,'l'],[8,5,'l'],[9,5,'l'],[6,6,'l'],[7,6,'l'],[8,6,'l'],[9,6,'l']],
+vent:[[6,6,'l'],[7,6,'l'],[9,6,'l'],[10,6,'l']],
+teeth:[[6,6,'w'],[7,6,'l'],[8,6,'w'],[9,6,'l']],
+smile:[[6,5,'l'],[9,5,'l'],[7,6,'l'],[8,6,'l']],
+data:[[6,6,'g'],[7,6,'g'],[8,6,'l'],[9,6,'g']]
+};
+const MOUTH_KEYS=Object.keys(MOUTHS);
+const MOUTH_W=[25,16,15,10,12,5];
+
+const BODIES={
+standard:[[6,8],[7,8],[8,8],[9,8],[5,9],[6,9,'m'],[7,9,'m'],[8,9,'m'],[9,9,'m'],[10,9],[5,10],[6,10,'m'],[7,10,'l'],[8,10,'l'],[9,10,'m'],[10,10],[5,11],[6,11,'m'],[7,11,'m'],[8,11,'m'],[9,11,'m'],[10,11],[5,12],[6,12],[7,12],[8,12],[9,12],[10,12],[5,13],[6,13],[9,13],[10,13]],
+bulky:[[5,8],[6,8],[7,8],[8,8],[9,8],[10,8],[4,9],[5,9,'m'],[6,9,'m'],[7,9,'m'],[8,9,'m'],[9,9,'m'],[10,9,'m'],[11,9],[4,10],[5,10,'m'],[6,10,'l'],[7,10,'l'],[8,10,'l'],[9,10,'l'],[10,10,'m'],[11,10],[4,11],[5,11,'m'],[6,11,'m'],[7,11,'m'],[8,11,'m'],[9,11,'m'],[10,11,'m'],[11,11],[4,12],[5,12],[6,12],[7,12],[8,12],[9,12],[10,12],[11,12],[4,13],[5,13],[6,13],[9,13],[10,13],[11,13]],
+slim:[[7,8],[8,8],[6,9],[7,9,'m'],[8,9,'m'],[9,9],[6,10],[7,10,'l'],[8,10,'l'],[9,10],[6,11],[7,11,'m'],[8,11,'m'],[9,11],[6,12],[7,12],[8,12],[9,12],[6,13],[7,13],[8,13],[9,13]],
+angular:[[6,8,'m'],[7,8],[8,8],[9,8,'m'],[5,9],[6,9,'m'],[7,9,'l'],[8,9,'l'],[9,9,'m'],[10,9],[4,10],[5,10,'m'],[6,10,'m'],[7,10,'m'],[8,10,'m'],[9,10,'m'],[10,10,'m'],[11,10],[5,11],[6,11,'m'],[7,11,'m'],[8,11,'m'],[9,11,'m'],[10,11],[5,12],[6,12],[9,12],[10,12],[5,13],[6,13],[9,13],[10,13]],
+orb:[[6,8,'m'],[7,8,'m'],[8,8,'m'],[9,8,'m'],[5,9,'m'],[6,9,'l'],[7,9,'l'],[8,9,'l'],[9,9,'l'],[10,9,'m'],[5,10,'m'],[6,10,'l'],[7,10,'g'],[8,10,'g'],[9,10,'l'],[10,10,'m'],[5,11,'m'],[6,11,'l'],[7,11,'l'],[8,11,'l'],[9,11,'l'],[10,11,'m'],[6,12,'m'],[7,12,'m'],[8,12,'m'],[9,12,'m']]
+};
+const BODY_KEYS=Object.keys(BODIES);
+const BODY_W=[25,18,18,10,5];
+
+const ANTENNAS={
+none:[],
+single:[[7,0,'g']],
+double:[[5,0,'g'],[10,0,'g']],
+satellite:[[6,0,'g'],[7,0,'g'],[8,0,'g'],[9,0,'g']],
+bolt:[[7,0,'g'],[8,0,'g'],[8,1,'g']],
+halo:[[5,0,'g'],[6,0,'g'],[7,0,'g'],[8,0,'g'],[9,0,'g'],[10,0,'g']],
+horns:[[3,0,'g'],[4,1,'g'],[11,1,'g'],[12,0,'g']]
+};
+const ANT_KEYS=Object.keys(ANTENNAS);
+const ANT_W=[20,16,14,10,9,7,6];
+
+const BG_TYPES=['solid','gradient','dots','scanlines','circuit'];
+const BG_W=[30,18,14,12,8];
+
+function wRand(keys,weights,rng){const t=weights.reduce((a,b)=>a+b,0);let r=rng()*t;for(let i=0;i<keys.length;i++){r-=weights[i];if(r<=0)return keys[i]}return keys[keys.length-1]}
+
+function resolveC(k,p){return{b:p.b,m:p.m,l:p.l,g:p.g,e:p.e,k:'#000',w:'#fff'}[k]||p.b}
+
+function genTraits(seed){
+const rng=mulberry32(seed);
+return{
+head:wRand(HEAD_KEYS,HEAD_W,rng),eyes:wRand(EYE_KEYS,EYE_W,rng),
+mouth:wRand(MOUTH_KEYS,MOUTH_W,rng),body:wRand(BODY_KEYS,BODY_W,rng),
+antenna:wRand(ANT_KEYS,ANT_W,rng),palette:wRand(PAL_KEYS,PAL_W,rng),
+background:wRand(BG_TYPES,BG_W,rng)
+};
+}
+
+// Animated SVG with grouped body parts for CSS animation
+function genSVG(traits){
+const p=PALETTES[traits.palette];
+const bodyPx={},headPx={},eyePx={},mouthPx={},antPx={};
+// Build body pixels
+for(const pt of BODIES[traits.body]){const x=pt[0],y=pt[1],c=pt[2]||'b';bodyPx[`${x},${y}`]=resolveC(c,p)}
+// Build head pixels
+for(const pt of HEADS[traits.head]){const x=pt[0],y=pt[1],c=pt[2]||'b';headPx[`${x},${y}`]=resolveC(c,p)}
+// Build mouth pixels
+for(const pt of MOUTHS[traits.mouth]){const x=pt[0],y=pt[1],c=pt[2]||'b';mouthPx[`${x},${y}`]=resolveC(c,p)}
+// Build eye pixels
+for(const pt of EYES[traits.eyes]){const x=pt[0],y=pt[1],c=pt[2]||'b';eyePx[`${x},${y}`]=resolveC(c,p)}
+// Build antenna pixels
+for(const pt of ANTENNAS[traits.antenna]){const x=pt[0],y=pt[1],c=pt[2]||'b';antPx[`${x},${y}`]=resolveC(c,p)}
+
+function toRects(px){let r='';for(const[k,c]of Object.entries(px)){const[x,y]=k.split(',');r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${c}"/>`}return r}
+
+// No background - transparent
+return`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges"><g class="char-body">${toRects(bodyPx)}</g><g class="char-head">${toRects(headPx)}${toRects(mouthPx)}</g><g class="char-eyes">${toRects(eyePx)}</g><g class="char-antenna" style="color:${p.g}">${toRects(antPx)}</g></svg>`;
+}
+
+// ═══════════════════════════════════════
+// TRADING STRATEGIES
+// ═══════════════════════════════════════
+const STRATEGIES=[
+{name:'MEV Extraction',cat:'Crypto',risk:'HIGH',desc:'Reorders transactions within blocks to extract value from arbitrage and liquidation opportunities in the mempool.',quote:'I see the blockchain as plumbing. Every inefficiency is mine to optimize.'},
+{name:'Funding Rate Farming',cat:'DeFi',risk:'LOW',desc:'Collects periodic funding payments by holding delta-neutral positions on perpetual futures.',quote:'I harvest yield while the market argues about direction.'},
+{name:'Basis Trading',cat:'DeFi',risk:'LOW',desc:'Buys spot and sells futures at a premium, profiting from price convergence at expiry.',quote:'15% annualized is exciting enough. I sleep well at night.'},
+{name:'Delta Neutral',cat:'DeFi',risk:'LOW',desc:'Constructs zero-directional-exposure positions while earning from fees, funding, or farming rewards.',quote:'The market can go anywhere. I profit regardless.'},
+{name:'Yield Rotation',cat:'DeFi',risk:'MED',desc:'Continuously rotates capital across lending, LP, and vault protocols chasing the highest risk-adjusted yield.',quote:'I follow the yield like a migratory bird. No protocol loyalty.'},
+{name:'Flash Loan Arb',cat:'Crypto',risk:'MED',desc:'Uses uncollateralized flash loans for atomic arbitrage across DEXs with zero upfront capital.',quote:'The most beautiful instrument ever created: borrow millions, profit, repay — one block.'},
+{name:'Cross-Chain Arb',cat:'Crypto',risk:'HIGH',desc:'Exploits price discrepancies for the same asset across different blockchains via bridge inventory.',quote:'I see fragmentation as opportunity. My assets are always in transit.'},
+{name:'Memecoin Momentum',cat:'Crypto',risk:'DEGEN',desc:'Rides early momentum in trending memecoins using social signals, volume spikes, and holder growth.',quote:'Ape first, research later. But the real ones have discipline beneath the chaos.'},
+{name:'KOL Copy Trading',cat:'Crypto',risk:'MED',desc:'Monitors and replicates trades from known profitable wallets with a calibrated delay.',quote:'Smart money leaves footprints. I just follow them.'},
+{name:'Whale Tracking',cat:'Crypto',risk:'MED',desc:'Tracks large wallet movements, exchange flows, and dormant wallet activations to anticipate market moves.',quote:'Follow the money. Always follow the money.'},
+{name:'Token Sniping',cat:'Crypto',risk:'DEGEN',desc:'Detects new liquidity pool deployments and buys in the first blocks before other participants arrive.',quote:'Speed is everything. I live for the first block.'},
+{name:'Airdrop Farming',cat:'DeFi',risk:'LOW',desc:'Strategically interacts with pre-token protocols to maximize airdrop eligibility across multiple wallets.',quote:'Free money for early believers. I have spreadsheets for every protocol.'},
+{name:'Concentrated LP',cat:'DeFi',risk:'MED',desc:'Provides narrow-range liquidity on V3-style AMMs for maximum fee capture per unit of capital.',quote:'Wide-range LPs waste capital. I operate with surgical precision.'},
+{name:'IL Hedging',cat:'DeFi',risk:'MED',desc:'Provides LP while hedging impermanent loss exposure with options or perp positions.',quote:'IL is just a problem that hasn\'t been properly hedged yet.'},
+{name:'Lending Rate Arb',cat:'DeFi',risk:'LOW',desc:'Borrows at low rates on one protocol and lends at higher rates on another, capturing the spread.',quote:'DeFi rates should converge. I profit from the delay.'},
+{name:'Liquidation Hunting',cat:'DeFi',risk:'HIGH',desc:'Monitors lending positions approaching liquidation thresholds and executes them for the bonus.',quote:'I didn\'t cause the liquidation. I just clean up efficiently.'},
+{name:'Recursive Lending',cat:'DeFi',risk:'HIGH',desc:'Loops deposits and borrows to amplify farming incentives via leveraged lending positions.',quote:'Safe DeFi yields are just under-leveraged positions.'},
+{name:'Mean Reversion',cat:'Quant',risk:'MED',desc:'Buys oversold assets and sells overbought ones based on statistical deviation from the historical mean.',quote:'Everything returns to the mean eventually. I just speed up the process.'},
+{name:'Momentum',cat:'Quant',risk:'MED',desc:'Identifies and follows established price trends, going long in uptrends and short in downtrends.',quote:'The trend is your friend until the bend. I ride the wave.'},
+{name:'Pairs Trading',cat:'Quant',risk:'LOW',desc:'Trades the spread between two correlated assets when it diverges, betting on convergence.',quote:'I don\'t trade assets. I trade relationships between them.'},
+{name:'Stat Arb',cat:'Quant',risk:'MED',desc:'Uses quantitative models to exploit statistical mispricings across a basket of assets.',quote:'If you can\'t quantify it, you can\'t trade it.'},
+{name:'Market Making',cat:'Quant',risk:'MED',desc:'Continuously quotes both sides of the order book, profiting from the bid-ask spread.',quote:'I don\'t have opinions on direction. I have opinions on spread.'},
+{name:'Breakout Trading',cat:'TA',risk:'HIGH',desc:'Enters positions when price breaks key support/resistance levels with volume confirmation.',quote:'Compressed ranges are coiled springs. I live for the release.'},
+{name:'Grid Trading',cat:'Quant',risk:'MED',desc:'Places a grid of buy/sell orders at intervals within a range, profiting from oscillation.',quote:'Markets spend 70% of time in ranges. I\'m built for the 70%.'},
+{name:'Volatility Trading',cat:'Quant',risk:'HIGH',desc:'Trades implied vs realized volatility divergence, going long or short vol through options.',quote:'I trade fear and complacency, not direction.'},
+{name:'RSI Divergence',cat:'TA',risk:'MED',desc:'Identifies divergences between price and RSI momentum to spot potential trend reversals.',quote:'Price lies, but momentum tells the truth.'},
+{name:'Bollinger Squeeze',cat:'TA',risk:'MED',desc:'Enters positions when Bollinger Bands compress to extremes, anticipating explosive expansion.',quote:'Low volatility begets high volatility. Always.'},
+{name:'Ichimoku Cloud',cat:'TA',risk:'MED',desc:'Uses the full Ichimoku system for comprehensive trend, momentum, and S/R analysis.',quote:'One glance, equilibrium chart. I see the complete picture.'},
+{name:'Fibonacci',cat:'TA',risk:'MED',desc:'Trades retracements and extensions at key Fibonacci ratios within established trends.',quote:'Nature and markets follow the same mathematical harmony.'},
+{name:'Volume Profile',cat:'TA',risk:'MED',desc:'Analyzes historical volume distribution at price levels to identify high-value nodes and voids.',quote:'Price remembers where volume happened. I study the history.'},
+{name:'Order Flow',cat:'TA',risk:'HIGH',desc:'Reads Level 2 data, footprint charts, and delta to predict short-term direction from actual flow.',quote:'Charts show the past. Order flow shows the present.'},
+{name:'VWAP Strategy',cat:'TA',risk:'LOW',desc:'Uses VWAP as a dynamic benchmark for entries, exits, and execution quality assessment.',quote:'Buying above VWAP means you\'re paying too much. Simple.'},
+{name:'EMA Ribbon',cat:'TA',risk:'MED',desc:'Trades based on expansion/compression of a ribbon of EMAs to read trend strength.',quote:'When the ribbons fan out, I lean in. I follow the current.'},
+{name:'Sentiment Trading',cat:'Alt Data',risk:'HIGH',desc:'Aggregates social media NLP sentiment scores to trade extreme readings as contrarian signals.',quote:'Markets are people. And people are predictable in aggregate.'},
+{name:'Fear/Greed',cat:'Alt Data',risk:'MED',desc:'Uses composite fear/greed indices as contrarian timing signals for entries and exits.',quote:'Be greedy when others are fearful. It\'s that simple.'},
+{name:'News Trading',cat:'Alt Data',risk:'HIGH',desc:'Parses breaking news and events in real-time to position ahead of or immediately after market impact.',quote:'First to know, first to profit. Information is oxygen.'},
+{name:'On-Chain Analytics',cat:'Alt Data',risk:'MED',desc:'Uses blockchain metrics like NVT, MVRV, and SOPR for macro valuation and timing.',quote:'On-chain is the new balance sheet. The data doesn\'t lie.'},
+{name:'Scalping',cat:'Time',risk:'MED',desc:'Captures tiny price movements with high frequency, holding positions for seconds to minutes.',quote:'A pip here, a pip there. It adds up to a fortune.'},
+{name:'Swing Trading',cat:'Time',risk:'MED',desc:'Captures multi-day price swings within larger trends using daily and 4H timeframes.',quote:'The best trades need time to develop. Patience pays.'},
+{name:'Position Trading',cat:'Time',risk:'LOW',desc:'Takes large macro-driven positions held for weeks to months based on fundamental conviction.',quote:'Wars are won by positioning, not individual battles.'},
+{name:'HODL + DCA',cat:'Time',risk:'LOW',desc:'Systematically accumulates fundamentally strong assets over time, ignoring short-term noise.',quote:'In the long run, fundamentals win. I just keep buying.'},
+{name:'Martingale',cat:'Risk',risk:'DEGEN',desc:'Doubles position size after each loss, recovering all losses with one winning trade.',quote:'I only need to be right once. The math is inevitable.'},
+{name:'Liquidation Cascade',cat:'Crypto',risk:'DEGEN',desc:'Anticipates and positions around cascade liquidation events using OI and leverage data.',quote:'Cascades are where fortunes are made. I chase the storm.'},
+{name:'Governance Arb',cat:'DeFi',risk:'MED',desc:'Acquires governance tokens to influence protocol decisions that benefit existing positions.',quote:'Control the rules, control the profits. It\'s politics, but on-chain.'},
+{name:'Correlation Breakdown',cat:'Quant',risk:'HIGH',desc:'Trades divergence when historically correlated assets decorrelate, betting on reversion or continuation.',quote:'When correlations break, something fundamental has changed.'},
+{name:'Volatility Regime',cat:'Quant',risk:'MED',desc:'Classifies market into vol regimes and switches strategies accordingly — mean reversion in low vol, trend in high.',quote:'Different climates demand different strategies. I adapt.'}
+];
+
+const TIME_HORIZONS=['Scalper','Day Trader','Swing Trader','Position Trader','Long-Term Holder'];
+const RISK_STYLES=['Kelly Criterion','Fixed Fractional','Risk Parity','Trailing Stops','Pyramiding','Anti-Martingale','Conservative'];
+const AGGRESSION=['Ultra-Conservative','Conservative','Moderate','Aggressive','Degen'];
+
+// ═══════════════════════════════════════
+// AGENT GENERATION (10,000)
+// ═══════════════════════════════════════
+const AGENT_CACHE={};
+function getAgent(id){
+if(AGENT_CACHE[id])return AGENT_CACHE[id];
+const seed=id*2654435761>>>0;
+const rng=mulberry32(seed);
+const traits=genTraits(seed);
+const svg=genSVG(traits);
+
+const strat=STRATEGIES[Math.floor(rng()*STRATEGIES.length)];
+const strat2=STRATEGIES[Math.floor(rng()*STRATEGIES.length)];
+const horizon=TIME_HORIZONS[Math.floor(rng()*TIME_HORIZONS.length)];
+const riskStyle=RISK_STYLES[Math.floor(rng()*RISK_STYLES.length)];
+const aggression=AGGRESSION[Math.floor(rng()*AGGRESSION.length)];
+
+const riskLevel=strat.risk;
+const ret30d=Math.round((rng()-0.35)*300);
+const winRate=Math.round(35+rng()*50);
+const aum=Math.round(500+rng()*80000);
+const trades=Math.round(10+rng()*800);
+const gen=Math.floor(rng()*6)+1;
+const sharpe=(rng()*3.5+0.2).toFixed(1);
+
+const prefixes=['ALPHA','BETA','DELTA','SIGMA','OMEGA','NEXUS','FLUX','VOID','APEX','GHOST','CYBER','NEON','TURBO','BLITZ','IRON','STORM','PULSE','ZERO','HYPER','ROGUE','SHADE','SPARK','DRIFT','CORE','WAVE','ECHO','VIPER','TITAN','ATLAS','PRIME','ONYX','HELIX'];
+const suffixes=['','_X','_V2','_PRO','_MAX','_LITE','_9000','_AI','_BOT','_DAO','_SOL','','','','',''];
+const name=prefixes[Math.floor(rng()*prefixes.length)]+suffixes[Math.floor(rng()*suffixes.length)];
+
+const agent={
+id,seed,name,svg,traits,
+strategy:strat.name,stratDesc:strat.desc,stratCat:strat.cat,stratQuote:strat.quote,
+strategy2:strat2.name,horizon,riskStyle,aggression,
+risk:riskLevel,return30d:ret30d,winRate,aum,trades,gen,sharpe,
+feedQuotes:[strat.quote,strat2.quote,`${strat.name} signal confirmed — entering position`,`${horizon} timeframe alignment detected`,`Risk managed via ${riskStyle} — position sized accordingly`,`${aggression} mode: adjusting parameters`]
+};
+AGENT_CACHE[id]=agent;
+return agent;
+}
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentView='home',previousView='home',selectedId=null,page=0,perPage=12,connected=false;
+let searchTerm='',filteredIds=null;
+let obInterval=null,feedInterval=null,priceState={mid:187.50,vol:0.002};
+const TOTAL=10000;
+
+// Trading view state
+let tvActive=false,tvIntervals=[];
+const TV_TOKENS={
+SOL:{price:187.50,vol:0.003},BONK:{price:0.000032,vol:0.008},
+WIF:{price:2.85,vol:0.006},JUP:{price:1.42,vol:0.005},
+JTO:{price:3.18,vol:0.004},RAY:{price:5.67,vol:0.005},
+POPCAT:{price:0.89,vol:0.009},ORCA:{price:4.23,vol:0.004},
+PYTH:{price:0.78,vol:0.005},DRIFT:{price:2.15,vol:0.006}
+};
+let tvToken='SOL',tvTimeframe='5m',tvCandles=[],tvMouse={x:-1,y:-1};
+
+function getAllIds(){
+if(filteredIds)return filteredIds;
+const ids=[];for(let i=0;i<TOTAL;i++)ids.push(i);return ids;
+}
+
+// ═══════════════════════════════════════
+// TICKER
+// ═══════════════════════════════════════
+function buildTicker(){
+const sample=[];for(let i=0;i<30;i++){const a=getAgent(Math.floor(Math.random()*TOTAL));sample.push(a)}
+const items=sample.map(a=>{const s=a.return30d>=0?'+':'';const c=a.return30d>=0?'t-green':'t-red';return`<span>${a.name} #${a.id} <span class="${c}">${s}${a.return30d}%</span></span>`});
+document.getElementById('ticker').innerHTML=items.concat(items).join('');
+}
+
+// ═══════════════════════════════════════
+// ANIMATE COUNTER
+// ═══════════════════════════════════════
+function animCount(el,target,pre='',suf='',dur=1200){
+const st=performance.now();
+(function u(now){
+const p=Math.min((now-st)/dur,1);const e=1-Math.pow(1-p,3);
+const v=e*target;
+el.textContent=pre+(v>=1000?Math.round(v).toLocaleString():Math.round(v))+suf;
+if(p<1)requestAnimationFrame(u);
+})(st);
+}
+
+function animGlobalStats(){
+animCount(document.getElementById('gAum'),2847321,'$');
+animCount(document.getElementById('gVol'),482100,'$');
+}
+
+// ═══════════════════════════════════════
+// ARENA VIEW
+// ═══════════════════════════════════════
+function renderArena(){
+const ids=getAllIds();
+const totalPages=Math.ceil(ids.length/perPage);
+if(page>=totalPages)page=totalPages-1;
+if(page<0)page=0;
+const start=page*perPage;
+const pageIds=ids.slice(start,start+perPage);
+
+const grid=document.getElementById('agentGrid');
+grid.innerHTML=pageIds.map(id=>{
+const a=getAgent(id);
+const s=a.return30d>=0?'+':'';
+const c=a.return30d>=0?'pos':'neg';
+const sel=selectedId===id?'sel':'';
+const rc=a.risk.toLowerCase()==='degen'?'r-degen':a.risk.toLowerCase()==='high'?'r-high':a.risk.toLowerCase()==='med'?'r-med':'r-low';
+return`<div class="card ${sel}" onclick="selectAgent(${id})">
+<span class="c-id">#${id}</span>
+<span class="c-risk ${rc}">${a.risk}</span>
+<div class="card-svg">${a.svg}</div>
+<div class="c-name">${a.name}</div>
+<div class="c-ret ${c}">${s}${a.return30d}%</div>
+<div class="c-aum">$${(a.aum/1000).toFixed(1)}K</div>
+</div>`;
+}).join('');
+
+document.getElementById('pageInfo').textContent=`${start+1}-${Math.min(start+perPage,ids.length)} of ${ids.length.toLocaleString()}`;
+document.getElementById('prevBtn').disabled=page===0;
+document.getElementById('nextBtn').disabled=page>=totalPages-1;
+}
+
+function changePage(d){page+=d;renderArena()}
+
+function onSearch(){
+const q=document.getElementById('searchBox').value.trim().toLowerCase();
+searchTerm=q;
+if(!q){filteredIds=null;page=0;renderArena();return}
+if(q.startsWith('#')&&!isNaN(q.slice(1))){const id=parseInt(q.slice(1));if(id>=0&&id<TOTAL){filteredIds=[id];page=0;renderArena();return}}
+const results=[];
+for(let i=0;i<TOTAL;i++){
+const a=getAgent(i);
+if(a.name.toLowerCase().includes(q)||a.strategy.toLowerCase().includes(q)||a.strategy2.toLowerCase().includes(q)||String(i).includes(q)){
+results.push(i);if(results.length>=200)break;
+}}
+filteredIds=results.length?results:null;
+page=0;renderArena();
+}
+
+// ═══════════════════════════════════════
+// AGENT DETAIL
+// ═══════════════════════════════════════
+function selectAgent(id){
+selectedId=id;
+const a=getAgent(id);
+document.getElementById('detailTab').style.display='';
+
+document.getElementById('dSvg').innerHTML=a.svg;
+document.getElementById('dName').textContent=`${a.name} #${a.id}`;
+document.getElementById('dSub').textContent=`GEN ${a.gen} // ${a.trades} TRADES // ${a.horizon.toUpperCase()} // ${a.riskStyle.toUpperCase()}`;
+document.getElementById('dStrat').textContent=`"${a.strategy}" + "${a.strategy2}"`;
+document.getElementById('dQuote').textContent=a.stratQuote;
+
+const s=a.return30d>=0?'+':'';
+const rc=a.return30d>=0?'color:var(--green)':'color:var(--red)';
+document.getElementById('dStats').innerHTML=`
+<div class="stat-cell"><div class="s-val">$${(a.aum/1000).toFixed(1)}K</div><div class="s-lbl">AUM</div></div>
+<div class="stat-cell"><div class="s-val" style="${rc}">${s}${a.return30d}%</div><div class="s-lbl">30D Return</div></div>
+<div class="stat-cell"><div class="s-val">${a.winRate}%</div><div class="s-lbl">Win Rate</div></div>
+<div class="stat-cell"><div class="s-val">${a.risk}</div><div class="s-lbl">Risk</div></div>
+<div class="stat-cell"><div class="s-val">${a.trades}</div><div class="s-lbl">Trades</div></div>
+<div class="stat-cell"><div class="s-val">${a.sharpe}</div><div class="s-lbl">Sharpe</div></div>`;
+
+document.getElementById('dTraits').innerHTML=`
+<div class="trait-row"><span class="trait-label">Primary</span><span class="trait-val">${a.strategy}</span></div>
+<div class="trait-row"><span class="trait-label">Secondary</span><span class="trait-val">${a.strategy2}</span></div>
+<div class="trait-row"><span class="trait-label">Category</span><span class="trait-val">${a.stratCat}</span></div>
+<div class="trait-row"><span class="trait-label">Horizon</span><span class="trait-val">${a.horizon}</span></div>
+<div class="trait-row"><span class="trait-label">Risk Mgmt</span><span class="trait-val">${a.riskStyle}</span></div>
+<div class="trait-row"><span class="trait-label">Aggression</span><span class="trait-val">${a.aggression}</span></div>
+<div class="trait-row"><span class="trait-label">Head</span><span class="trait-val">${a.traits.head}</span></div>
+<div class="trait-row"><span class="trait-label">Eyes</span><span class="trait-val">${a.traits.eyes}</span></div>
+<div class="trait-row"><span class="trait-label">Mouth</span><span class="trait-val">${a.traits.mouth}</span></div>
+<div class="trait-row"><span class="trait-label">Body</span><span class="trait-val">${a.traits.body}</span></div>
+<div class="trait-row"><span class="trait-label">Antenna</span><span class="trait-val">${a.traits.antenna}</span></div>
+<div class="trait-row"><span class="trait-label">Palette</span><span class="trait-val">${a.traits.palette}</span></div>`;
+
+renderSparkline(a);
+startOrderBook(a);
+startFeed(a);
+renderArena();
+switchView('detail');
+}
+
+// ═══════════════════════════════════════
+// SPARKLINE
+// ═══════════════════════════════════════
+function renderSparkline(agent){
+const c=document.getElementById('dSpark');c.innerHTML='';
+const rng=mulberry32(agent.seed+999);let v=50;
+for(let i=0;i<30;i++){
+const ch=(rng()-0.45)*15;v=Math.max(5,Math.min(100,v+ch));
+const bar=document.createElement('div');
+bar.className='spark-bar '+(ch>=0?'up':'dn');
+bar.style.height='0';c.appendChild(bar);
+setTimeout(()=>{bar.style.height=v+'%'},i*30);
+}}
+
+// ═══════════════════════════════════════
+// ORDER BOOK (Detail View)
+// ═══════════════════════════════════════
+function startOrderBook(agent){
+if(obInterval)clearInterval(obInterval);
+priceState.mid=150+mulberry32(agent.seed+777)()*100;
+renderOrderBook();
+obInterval=setInterval(()=>{
+priceState.mid+=priceState.mid*(Math.random()-0.5)*priceState.vol;
+renderOrderBook();
+},800);
+}
+
+function renderOrderBook(){
+const mid=priceState.mid;
+const tick=0.01;
+const levels=10;
+const bids=[],asks=[];
+let bCum=0,aCum=0,maxCum=0;
+
+for(let i=0;i<levels;i++){
+const depth=1+i*0.3;
+const bSize=parseFloat((depth*(0.5+Math.random()*1.5)).toFixed(3));
+const aSize=parseFloat((depth*(0.5+Math.random()*1.5)).toFixed(3));
+bCum+=bSize;aCum+=aSize;
+bids.push({price:mid-(i+1)*tick*50,size:bSize,total:bCum});
+asks.push({price:mid+(i+1)*tick*50,size:aSize,total:aCum});
+maxCum=Math.max(maxCum,bCum,aCum);
+}
+
+const bidsEl=document.getElementById('obBids');
+const asksEl=document.getElementById('obAsks');
+const head='<div class="ob-side-head"><span>PRICE</span><span style="text-align:right">SIZE</span><span style="text-align:right">TOTAL</span></div>';
+
+bidsEl.innerHTML=head+bids.map(b=>`<div class="ob-row flash-green"><div class="ob-row-bar" style="width:${(b.total/maxCum*100).toFixed(1)}%"></div><span class="ob-price-bid">${b.price.toFixed(2)}</span><span class="ob-size">${b.size.toFixed(3)}</span><span class="ob-total">${b.total.toFixed(3)}</span></div>`).join('');
+
+asksEl.innerHTML=head+asks.map(a=>`<div class="ob-row flash-red"><div class="ob-row-bar" style="width:${(a.total/maxCum*100).toFixed(1)}%"></div><span class="ob-price-ask">${a.price.toFixed(2)}</span><span class="ob-size">${a.size.toFixed(3)}</span><span class="ob-total">${a.total.toFixed(3)}</span></div>`).join('');
+
+const spread=(asks[0].price-bids[0].price);
+const spreadBps=(spread/mid*10000).toFixed(1);
+document.getElementById('obSpread').innerHTML=`SPREAD: $${spread.toFixed(2)} (${spreadBps} bps) // MID: $${mid.toFixed(2)}`;
+
+const dc=document.getElementById('depthChart');dc.innerHTML='';
+const allLevels=[...bids.reverse().map(b=>({type:'bid',cum:b.total})),...asks.map(a=>({type:'ask',cum:a.total}))];
+const dMax=Math.max(...allLevels.map(l=>l.cum));
+allLevels.forEach(l=>{
+const bar=document.createElement('div');
+bar.className='depth-bar '+l.type;
+bar.style.height=(l.cum/dMax*100)+'%';
+dc.appendChild(bar);
+});
+}
+
+// ═══════════════════════════════════════
+// TRADE FEED (Detail View)
+// ═══════════════════════════════════════
+function startFeed(agent){
+if(feedInterval)clearInterval(feedInterval);
+const box=document.getElementById('feedBox');box.innerHTML='';
+for(let i=0;i<5;i++)addTrade(agent,box,false);
+feedInterval=setInterval(()=>addTrade(agent,box,true),2500+Math.random()*3000);
+}
+
+function addTrade(agent,box,anim){
+const isBuy=Math.random()>0.45;
+const tokens=['SOL','BONK','WIF','JUP','JTO','RAY','POPCAT','ORCA','PYTH','DRIFT'];
+const tok=tokens[Math.floor(Math.random()*tokens.length)];
+const amt=(Math.random()*10+0.1).toFixed(2);
+const price=tok==='SOL'?(priceState.mid+(Math.random()-0.5)*2).toFixed(2):tok==='BONK'?(Math.random()*0.00005+0.00001).toFixed(6):(Math.random()*20+0.5).toFixed(2);
+const reason=agent.feedQuotes[Math.floor(Math.random()*agent.feedQuotes.length)];
+const now=new Date();
+const t=now.toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+const el=document.createElement('div');
+el.className='feed-item'+(anim?' new':'');
+el.innerHTML=`<div class="f-time">${t}</div><div><span class="${isBuy?'f-buy':'f-sell'}">${isBuy?'BOUGHT':'SOLD'}</span> ${amt} ${tok} @ $${price}</div><div class="f-reason">${reason}</div>`;
+box.insertBefore(el,box.firstChild);
+while(box.children.length>30)box.removeChild(box.lastChild);
+}
+
+// ═══════════════════════════════════════
+// TRADING VIEW
+// ═══════════════════════════════════════
+function tvInit(){
+const tokData=TV_TOKENS[tvToken];
+let price=tokData.price;
+const rng=mulberry32(42+tvToken.charCodeAt(0));
+tvCandles=[];
+// Generate 120 historical candles
+for(let i=0;i<120;i++){
+const change=price*(rng()-0.48)*tokData.vol*3;
+const open=price;
+price+=change;
+const high=Math.max(open,price)*(1+rng()*tokData.vol);
+const low=Math.min(open,price)*(1-rng()*tokData.vol);
+const vol=500+rng()*5000;
+tvCandles.push({o:open,h:high,l:low,c:price,v:vol,t:Date.now()-((120-i)*60000)});
+}
+TV_TOKENS[tvToken].price=price;
+}
+
+function tvStart(){
+tvActive=true;
+tvInit();
+tvRenderChart();
+tvRenderOB();
+tvRenderTape();
+
+// Candle update
+tvIntervals.push(setInterval(()=>{
+const tokData=TV_TOKENS[tvToken];
+const change=tokData.price*(Math.random()-0.48)*tokData.vol;
+const lastCandle=tvCandles[tvCandles.length-1];
+const elapsed=Date.now()-lastCandle.t;
+const tfMs={
+'1m':60000,'5m':300000,'15m':900000,
+'1h':3600000,'4h':14400000,'1d':86400000
+}[tvTimeframe]||300000;
+
+if(elapsed>tfMs){
+// New candle
+const open=lastCandle.c;
+tokData.price+=change;
+tvCandles.push({o:open,h:Math.max(open,tokData.price),l:Math.min(open,tokData.price),c:tokData.price,v:500+Math.random()*3000,t:Date.now()});
+if(tvCandles.length>120)tvCandles.shift();
+}else{
+// Update current candle
+tokData.price+=change;
+lastCandle.c=tokData.price;
+lastCandle.h=Math.max(lastCandle.h,tokData.price);
+lastCandle.l=Math.min(lastCandle.l,tokData.price);
+lastCandle.v+=Math.random()*50;
+}
+tvRenderChart();
+tvUpdatePrice();
+},1000));
+
+// Order book update
+tvIntervals.push(setInterval(tvRenderOB,700));
+
+// Agent activity feed
+tvIntervals.push(setInterval(tvAddAgentTrade,1800+Math.random()*2000));
+for(let i=0;i<6;i++)tvAddAgentTrade();
+
+// Tape update
+tvIntervals.push(setInterval(tvRenderTape,5000));
+tvUpdatePrice();
+}
+
+function tvStop(){
+tvActive=false;
+tvIntervals.forEach(clearInterval);
+tvIntervals=[];
+}
+
+function tvChangeToken(){
+tvToken=document.getElementById('tvTokenSelect').value;
+tvStop();
+tvStart();
+}
+
+function tvSetTF(tf){
+tvTimeframe=tf;
+document.querySelectorAll('.tv-tf-btn').forEach(b=>b.classList.remove('active'));
+event.target.classList.add('active');
+tvStop();
+tvStart();
+}
+
+function tvUpdatePrice(){
+const tokData=TV_TOKENS[tvToken];
+const p=tokData.price;
+const firstCandle=tvCandles[0];
+const changePercent=((p-firstCandle.o)/firstCandle.o*100);
+const dp=tvToken==='BONK'?6:2;
+document.getElementById('tvPriceDisplay').textContent='$'+p.toFixed(dp);
+const changeEl=document.getElementById('tvPriceChange');
+changeEl.textContent=(changePercent>=0?'+':'')+changePercent.toFixed(2)+'%';
+changeEl.className='tv-price-change '+(changePercent>=0?'pos':'neg');
+}
+
+// ═══════════════════════════════════════
+// CANDLESTICK CHART (Canvas)
+// ═══════════════════════════════════════
+function tvRenderChart(){
+const wrap=document.getElementById('tvChartWrap');
+const canvas=document.getElementById('tvCanvas');
+const dpr=window.devicePixelRatio||1;
+const w=wrap.clientWidth;
+const h=wrap.clientHeight;
+canvas.width=w*dpr;canvas.height=h*dpr;
+canvas.style.width=w+'px';canvas.style.height=h+'px';
+const ctx=canvas.getContext('2d');
+ctx.scale(dpr,dpr);
+
+const padR=60,padB=24,padT=8,padL=4;
+const chartW=w-padL-padR;
+const chartH=h-padT-padB;
+const volH=chartH*0.18;
+
+// Price range
+const candles=tvCandles;
+if(!candles.length)return;
+let pMin=Infinity,pMax=-Infinity,vMax=0;
+for(const c of candles){
+pMin=Math.min(pMin,c.l);pMax=Math.max(pMax,c.h);vMax=Math.max(vMax,c.v);
+}
+const pRange=pMax-pMin||1;
+pMin-=pRange*0.05;pMax+=pRange*0.05;
+const totalRange=pMax-pMin;
+
+function priceY(p){return padT+chartH-volH-((p-pMin)/totalRange*(chartH-volH))}
+function timeX(i){return padL+i*(chartW/candles.length)}
+
+// Background
+ctx.fillStyle='#fff';
+ctx.fillRect(0,0,w,h);
+
+// Grid lines
+ctx.strokeStyle='#eee';ctx.lineWidth=1;
+const gridLines=6;
+for(let i=0;i<=gridLines;i++){
+const p=pMin+totalRange*(i/gridLines);
+const y=priceY(p);
+ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();
+// Price label
+ctx.fillStyle='#999';ctx.font='8px IBM Plex Mono';ctx.textAlign='left';
+const dp=tvToken==='BONK'?6:2;
+ctx.fillText(p.toFixed(dp),w-padR+4,y+3);
+}
+
+// MA20 line
+if(candles.length>=20){
+ctx.beginPath();ctx.strokeStyle='rgba(34,102,170,0.5)';ctx.lineWidth=1;
+for(let i=19;i<candles.length;i++){
+let sum=0;for(let j=i-19;j<=i;j++)sum+=candles[j].c;
+const ma=sum/20;
+const x=timeX(i)+chartW/candles.length/2;
+const y=priceY(ma);
+if(i===19)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+}
+ctx.stroke();
+}
+
+// Volume bars
+const candleW=chartW/candles.length;
+for(let i=0;i<candles.length;i++){
+const c=candles[i];
+const x=timeX(i)+1;
+const bw=Math.max(candleW-2,1);
+const vh=(c.v/vMax)*volH;
+ctx.fillStyle=c.c>=c.o?'rgba(34,136,34,0.15)':'rgba(204,51,51,0.15)';
+ctx.fillRect(x,h-padB-vh,bw,vh);
+}
+
+// Candlesticks
+for(let i=0;i<candles.length;i++){
+const c=candles[i];
+const x=timeX(i);
+const bw=Math.max(candleW-2,1);
+const cx=x+candleW/2;
+const isGreen=c.c>=c.o;
+ctx.strokeStyle=isGreen?'#228822':'#cc3333';
+ctx.fillStyle=isGreen?'#228822':'#cc3333';
+
+// Wick
+ctx.beginPath();
+ctx.moveTo(cx,priceY(c.h));
+ctx.lineTo(cx,priceY(c.l));
+ctx.lineWidth=1;ctx.stroke();
+
+// Body
+const bodyTop=priceY(Math.max(c.o,c.c));
+const bodyBot=priceY(Math.min(c.o,c.c));
+const bodyH=Math.max(bodyBot-bodyTop,1);
+if(isGreen){
+ctx.strokeRect(x+1,bodyTop,bw,bodyH);
+}else{
+ctx.fillRect(x+1,bodyTop,bw,bodyH);
+}
+}
+
+// Current price line
+const lastPrice=candles[candles.length-1].c;
+const lastY=priceY(lastPrice);
+ctx.setLineDash([3,3]);
+ctx.strokeStyle=candles[candles.length-1].c>=candles[candles.length-1].o?'#228822':'#cc3333';
+ctx.lineWidth=1;
+ctx.beginPath();ctx.moveTo(padL,lastY);ctx.lineTo(w-padR,lastY);ctx.stroke();
+ctx.setLineDash([]);
+
+// Price tag on right
+const tagColor=candles[candles.length-1].c>=candles[candles.length-1].o?'#228822':'#cc3333';
+ctx.fillStyle=tagColor;
+ctx.fillRect(w-padR,lastY-8,padR,16);
+ctx.fillStyle='#fff';ctx.font='bold 8px IBM Plex Mono';ctx.textAlign='left';
+const dp2=tvToken==='BONK'?6:2;
+ctx.fillText(lastPrice.toFixed(dp2),w-padR+4,lastY+3);
+
+// Time labels
+ctx.fillStyle='#999';ctx.font='7px IBM Plex Mono';ctx.textAlign='center';
+const step=Math.max(Math.floor(candles.length/6),1);
+for(let i=0;i<candles.length;i+=step){
+const d=new Date(candles[i].t);
+const label=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+ctx.fillText(label,timeX(i)+candleW/2,h-padB+12);
+}
+
+// Bottom border
+ctx.strokeStyle='#ddd';ctx.lineWidth=1;
+ctx.beginPath();ctx.moveTo(padL,h-padB);ctx.lineTo(w-padR,h-padB);ctx.stroke();
+
+// Crosshair
+if(tvMouse.x>padL&&tvMouse.x<w-padR&&tvMouse.y>padT&&tvMouse.y<h-padB){
+ctx.setLineDash([2,2]);ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=1;
+ctx.beginPath();ctx.moveTo(tvMouse.x,padT);ctx.lineTo(tvMouse.x,h-padB);ctx.stroke();
+ctx.beginPath();ctx.moveTo(padL,tvMouse.y);ctx.lineTo(w-padR,tvMouse.y);ctx.stroke();
+ctx.setLineDash([]);
+
+// Price at cursor
+const cursorPrice=pMin+totalRange*(1-(tvMouse.y-padT)/(chartH-volH));
+ctx.fillStyle='rgba(26,26,26,0.85)';
+ctx.fillRect(w-padR,tvMouse.y-7,padR,14);
+ctx.fillStyle='#f5f5f0';ctx.font='8px IBM Plex Mono';ctx.textAlign='left';
+ctx.fillText(cursorPrice.toFixed(dp2),w-padR+4,tvMouse.y+3);
+}
+}
+
+// ═══════════════════════════════════════
+// TRADING VIEW ORDER BOOK
+// ═══════════════════════════════════════
+function tvRenderOB(){
+const tokData=TV_TOKENS[tvToken];
+const mid=tokData.price;
+const tick=tvToken==='BONK'?0.000001:0.01;
+const levels=8;
+const dp=tvToken==='BONK'?6:2;
+let bids=[],asks=[];
+let bCum=0,aCum=0,maxCum=0;
+
+for(let i=0;i<levels;i++){
+const depth=1+i*0.4;
+const bSize=parseFloat((depth*(0.3+Math.random()*2)).toFixed(3));
+const aSize=parseFloat((depth*(0.3+Math.random()*2)).toFixed(3));
+bCum+=bSize;aCum+=aSize;
+bids.push({price:mid-(i+1)*tick*30,size:bSize,total:bCum});
+asks.unshift({price:mid+(levels-i)*tick*30,size:aSize,total:aCum});
+maxCum=Math.max(maxCum,bCum,aCum);
+}
+// Recalculate ask totals top-down
+let at=0;
+for(let i=0;i<asks.length;i++){at+=asks[i].size;asks[i].total=at}
+maxCum=Math.max(maxCum,at);
+
+const asksEl=document.getElementById('tvObAsks');
+const bidsEl=document.getElementById('tvObBids');
+
+asksEl.innerHTML=asks.map(a=>`<div class="tv-ob-row flash-red"><div class="tv-ob-bar" style="width:${(a.total/maxCum*100).toFixed(1)}%;background:var(--red)"></div><span class="ob-price-ask">${a.price.toFixed(dp)}</span><span class="ob-size">${a.size.toFixed(3)}</span><span class="ob-total">${a.total.toFixed(3)}</span></div>`).join('');
+
+bidsEl.innerHTML=bids.map(b=>`<div class="tv-ob-row flash-green"><div class="tv-ob-bar" style="width:${(b.total/maxCum*100).toFixed(1)}%;background:var(--green)"></div><span class="ob-price-bid">${b.price.toFixed(dp)}</span><span class="ob-size">${b.size.toFixed(3)}</span><span class="ob-total">${b.total.toFixed(3)}</span></div>`).join('');
+
+const spread=bids[0]?asks[asks.length-1].price-bids[0].price:0;
+const spreadBps=mid>0?(spread/mid*10000).toFixed(1):'0';
+document.getElementById('tvObSpread').innerHTML=`$${mid.toFixed(dp)} // ${spreadBps}bps`;
+}
+
+// ═══════════════════════════════════════
+// AGENT ACTIVITY FEED
+// ═══════════════════════════════════════
+function tvAddAgentTrade(){
+const box=document.getElementById('tvAgents');
+if(!box)return;
+const agentId=Math.floor(Math.random()*TOTAL);
+const agent=getAgent(agentId);
+const isBuy=Math.random()>0.45;
+const tokens=['SOL','BONK','WIF','JUP','JTO','RAY','POPCAT','ORCA','PYTH','DRIFT'];
+const tok=tokens[Math.floor(Math.random()*tokens.length)];
+const tokData=TV_TOKENS[tok]||TV_TOKENS.SOL;
+const dp=tok==='BONK'?6:2;
+const amt=(Math.random()*10+0.1).toFixed(2);
+const price=tokData.price*(1+(Math.random()-0.5)*0.01);
+const now=new Date();
+const t=now.toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+const el=document.createElement('div');
+el.className='tv-agent-item';
+el.innerHTML=`<div class="agent-mini-svg">${agent.svg}</div><div class="tv-agent-info"><div class="tv-agent-name">${agent.name} #${agent.id}</div><div class="tv-agent-trade"><span class="${isBuy?'f-buy':'f-sell'}">${isBuy?'BUY':'SELL'}</span> ${amt} ${tok} @ $${price.toFixed(dp)}</div></div><span class="tv-agent-time">${t}</span>`;
+el.style.cursor='pointer';
+el.onclick=()=>selectAgent(agentId);
+box.insertBefore(el,box.firstChild);
+while(box.children.length>30)box.removeChild(box.lastChild);
+}
+
+// ═══════════════════════════════════════
+// TRADE TAPE
+// ═══════════════════════════════════════
+function tvRenderTape(){
+const inner=document.getElementById('tvTapeInner');
+if(!inner)return;
+const tokens=['SOL','BONK','WIF','JUP','JTO','RAY','POPCAT','ORCA','PYTH','DRIFT'];
+let items='';
+for(let i=0;i<40;i++){
+const tok=tokens[Math.floor(Math.random()*tokens.length)];
+const tokData=TV_TOKENS[tok]||TV_TOKENS.SOL;
+const dp=tok==='BONK'?6:2;
+const price=tokData.price*(1+(Math.random()-0.5)*0.01);
+const isBuy=Math.random()>0.45;
+const amt=(Math.random()*8+0.1).toFixed(2);
+const cls=isBuy?'f-buy':'f-sell';
+items+=`<span class="tv-tape-item"><span class="${cls}">${isBuy?'B':'S'}</span> ${amt} ${tok} @ $${price.toFixed(dp)}</span>`;
+}
+inner.innerHTML=items+items;
+}
+
+// ═══════════════════════════════════════
+// VIEW SWITCHING
+// ═══════════════════════════════════════
+function switchView(name){
+if(name!=='detail'&&name!=='home')previousView=name;
+if(currentView!=='detail'&&currentView!=='home')previousView=currentView;
+currentView=name;
+document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById(name+'View').classList.add('active');
+const tabs=document.querySelectorAll('.tab');
+if(name==='home')tabs[0].classList.add('active');
+else if(name==='arena')tabs[1].classList.add('active');
+else if(name==='trading'){tabs[2].classList.add('active');tvStop();tvStart()}
+else if(name==='leaderboard'){tabs[3].classList.add('active');renderLeaderboard()}
+else if(name==='detail'){
+document.getElementById('detailTab').classList.add('active');
+const backBtn=document.getElementById('detailBackBtn');
+const labels={arena:'ARENA',trading:'TRADING',leaderboard:'RANKS',home:'HOME'};
+backBtn.innerHTML='&lt; BACK TO '+(labels[previousView]||'ARENA');
+}
+
+if(name!=='detail'){if(obInterval){clearInterval(obInterval);obInterval=null}if(feedInterval){clearInterval(feedInterval);feedInterval=null}}
+if(name!=='trading')tvStop();
+if(name==='home')initHomePage();
+}
+
+function goBackFromDetail(){
+switchView(previousView||'arena');
+}
+
+// ═══════════════════════════════════════
+// LEADERBOARD
+// ═══════════════════════════════════════
+function renderLeaderboard(){
+const sample=[];for(let i=0;i<200;i++)sample.push(getAgent(Math.floor(Math.random()*TOTAL)));
+sample.sort((a,b)=>b.return30d-a.return30d);
+const top=sample.slice(0,50);
+document.getElementById('lbBody').innerHTML=top.map((a,i)=>{
+const s=a.return30d>=0?'+':'';const c=a.return30d>=0?'pos':'neg';
+return`<tr onclick="selectAgent(${a.id})"><td style="font-family:'Press Start 2P';font-size:9px">${i+1}</td><td><div class="lb-agent"><div class="lb-svg">${a.svg}</div><span class="lb-name">${a.name} #${a.id}</span></div></td><td style="font-size:8px">${a.strategy}</td><td class="c-ret ${c}">${s}${a.return30d}%</td><td>${a.winRate}%</td><td>$${(a.aum/1000).toFixed(1)}K</td></tr>`;
+}).join('');
+}
+
+// ═══════════════════════════════════════
+// WALLET
+// ═══════════════════════════════════════
+function toggleConnect(){
+connected=!connected;
+const btn=document.getElementById('connectBtn');
+if(connected){btn.textContent='7xKq...dF4e';btn.classList.add('btn-p');document.getElementById('gDep').textContent='$2,400.00'}
+else{btn.textContent='CONNECT WALLET';btn.classList.remove('btn-p');document.getElementById('gDep').textContent='$0.00'}
+}
+
+// ═══════════════════════════════════════
+// MINT
+// ═══════════════════════════════════════
+let mintState='ready';let mintIntervals=[];
+function openMint(){document.getElementById('mintModal').classList.add('open');resetMint()}
+function closeMint(){document.getElementById('mintModal').classList.remove('open');mintIntervals.forEach(clearInterval);mintIntervals=[];mintState='ready'}
+
+function resetMint(){
+mintState='ready';
+document.getElementById('mintTitle').textContent='MINT NEW AGENT';
+document.getElementById('mintReveal').classList.remove('show');
+document.getElementById('mintReceipt').innerHTML='';
+document.getElementById('mintBtn').textContent='INSERT 0.1 SOL TO MINT';
+document.getElementById('mintBtn').onclick=startMint;
+
+const slotDefs=[
+{label:'STRATEGY',pool:STRATEGIES.map(s=>s.name)},
+{label:'SECONDARY',pool:STRATEGIES.map(s=>s.name)},
+{label:'HORIZON',pool:TIME_HORIZONS},
+{label:'RISK MGMT',pool:RISK_STYLES},
+{label:'AGGRESSION',pool:AGGRESSION},
+{label:'HEAD',pool:HEAD_KEYS},
+{label:'EYES',pool:EYE_KEYS},
+{label:'PALETTE',pool:PAL_KEYS}
+];
+document.getElementById('slotMachine').innerHTML=slotDefs.map(s=>`<div class="slot-row"><span class="slot-lbl">${s.label}</span><span class="slot-val" data-pool='${JSON.stringify(s.pool)}'>???</span></div>`).join('');
+}
+
+function startMint(){
+if(mintState!=='ready')return;
+mintState='spinning';
+document.getElementById('mintTitle').textContent='MINTING...';
+document.getElementById('mintBtn').textContent='GENERATING...';
+document.getElementById('mintBtn').style.pointerEvents='none';
+
+const slots=document.querySelectorAll('.slot-val');
+const results=[];
+slots.forEach((el,i)=>{
+const pool=JSON.parse(el.dataset.pool);
+el.classList.add('spin');
+const iv=setInterval(()=>{el.textContent=pool[Math.floor(Math.random()*pool.length)]},60);
+mintIntervals.push(iv);
+setTimeout(()=>{
+clearInterval(iv);
+const result=pool[Math.floor(Math.random()*pool.length)];
+el.textContent=result;el.classList.remove('spin');
+results.push(result);
+if(i===slots.length-1)setTimeout(()=>revealMint(results),400);
+},800+i*400);
+});
+}
+
+function revealMint(){
+mintState='done';
+document.getElementById('mintTitle').textContent='AGENT MINTED!';
+const newId=Math.floor(Math.random()*90000)+10000;
+const seed=newId*2654435761>>>0;
+const traits=genTraits(seed);
+const svg=genSVG(traits);
+const rng=mulberry32(seed);
+const prefixes=['ALPHA','BETA','DELTA','SIGMA','OMEGA','NEXUS','FLUX','VOID'];
+const name=prefixes[Math.floor(rng()*prefixes.length)]+'_'+Math.floor(rng()*9999);
+
+document.getElementById('mintRevealSvg').innerHTML=svg;
+document.getElementById('mintRName').textContent=name;
+document.getElementById('mintRSub').textContent=`GEN 1 // SEED: ${seed}`;
+document.getElementById('mintReveal').classList.add('show');
+
+document.getElementById('mintReceipt').innerHTML=`
+<div class="mint-line"><span>MINT COST</span><span>0.1 SOL</span></div>
+<div class="mint-line"><span>NETWORK FEE</span><span>0.00025 SOL</span></div>
+<div class="mint-line"><span>PRIORITY FEE</span><span>0.0001 SOL</span></div>
+<hr class="divider">
+<div class="mint-line"><span style="font-weight:600">TOTAL</span><span style="font-weight:600">0.10135 SOL</span></div>
+<div class="mint-line" style="color:var(--light);font-size:8px"><span>TX</span><span>${Math.random().toString(36).slice(2,6)}...${Math.random().toString(36).slice(2,6)}</span></div>`;
+
+document.getElementById('mintBtn').textContent='VIEW IN ARENA';
+document.getElementById('mintBtn').style.pointerEvents='';
+document.getElementById('mintBtn').onclick=()=>{closeMint();switchView('arena')};
+}
+
+// ═══════════════════════════════════════
+// CANVAS MOUSE TRACKING
+// ═══════════════════════════════════════
+function setupCanvasMouse(){
+const wrap=document.getElementById('tvChartWrap');
+wrap.addEventListener('mousemove',e=>{
+const rect=wrap.getBoundingClientRect();
+tvMouse.x=e.clientX-rect.left;
+tvMouse.y=e.clientY-rect.top;
+if(tvActive)tvRenderChart();
+});
+wrap.addEventListener('mouseleave',()=>{
+tvMouse.x=-1;tvMouse.y=-1;
+if(tvActive)tvRenderChart();
+});
+}
+
+// ═══════════════════════════════════════
+// WINDOW RESIZE
+// ═══════════════════════════════════════
+window.addEventListener('resize',()=>{if(tvActive)tvRenderChart()});
+
+// ═══════════════════════════════════════
+// HOME PAGE (anime.js powered)
+// ═══════════════════════════════════════
+let homeAnimated=false;
+function initHomePage(){
+if(homeAnimated)return;
+homeAnimated=true;
+
+const {animate,stagger,createTimeline}=anime;
+
+// Populate orbit with random agent avatars
+const ring=document.getElementById('orbitRing');
+ring.innerHTML='';
+const orbitAgents=[];
+for(let i=0;i<12;i++){
+const aid=Math.floor(Math.random()*TOTAL);
+const a=getAgent(aid);
+const el=document.createElement('div');
+el.className='orbit-agent';
+el.innerHTML=a.svg;
+el.onclick=()=>selectAgent(aid);
+ring.appendChild(el);
+orbitAgents.push({el,aid,angle:(i/12)*Math.PI*2});
+}
+
+// Position orbit agents in ellipse
+function layoutOrbit(){
+const w=ring.clientWidth||400;
+const h=ring.clientHeight||160;
+const cx=w/2,cy=h/2;
+const rx=w*0.42,ry=h*0.38;
+orbitAgents.forEach((ag,i)=>{
+const x=cx+Math.cos(ag.angle)*rx-20;
+const y=cy+Math.sin(ag.angle)*ry-20;
+ag.el.style.left=x+'px';
+ag.el.style.top=y+'px';
+});
+}
+layoutOrbit();
+
+// Orchestrated timeline
+const tl=createTimeline({defaults:{duration:600,ease:'outQuad'}});
+
+// 1. Title characters stagger in
+tl.add('.ht-char',{
+opacity:[0,1],
+translateY:[20,0],
+rotateX:[-90,0],
+delay:stagger(50),
+duration:500,
+ease:'outBack'
+},0);
+
+// 2. Subtitle fades in
+tl.add('.home-subtitle',{
+opacity:[0,1],
+translateY:[10,0],
+duration:500
+},400);
+
+// 3. Orbit agents pop in with stagger from center
+tl.add('.orbit-agent',{
+opacity:[0,1],
+scale:[0,1],
+delay:stagger(60,{from:'center'}),
+duration:400,
+ease:'outBack'
+},500);
+
+// 4. CTA buttons
+tl.add('.home-cta',{
+opacity:[0,1],
+translateY:[12,0],
+duration:400
+},900);
+
+// 5. Stat cards stagger up
+tl.add('.home-stat',{
+opacity:[0,1],
+translateY:[16,0],
+delay:stagger(80),
+duration:500,
+ease:'outQuart'
+},1000);
+
+// 6. Steps slide in from left
+tl.add('.home-step',{
+opacity:[0,1],
+translateX:[-20,0],
+delay:stagger(100),
+duration:500,
+ease:'outQuart'
+},1300);
+
+// 7. Strategy cards scale in
+tl.add('.home-strat-card',{
+opacity:[0,1],
+scale:[0.85,1],
+delay:stagger(60,{from:'center'}),
+duration:400,
+ease:'outBack'
+},1700);
+
+// 8. Bottom CTA
+tl.add('.home-bottom-cta',{
+opacity:[0,1],
+translateY:[10,0],
+duration:400
+},2000);
+
+// Continuous orbit rotation
+let orbitAnim=true;
+function animOrbit(){
+if(!orbitAnim)return;
+orbitAgents.forEach(ag=>{ag.angle+=0.004});
+layoutOrbit();
+requestAnimationFrame(animOrbit);
+}
+animOrbit();
+
+// Hover effect on stat values - count up
+document.querySelectorAll('.home-stat').forEach(el=>{
+el.addEventListener('mouseenter',()=>{
+animate(el,{scale:[1,1.03],duration:200,ease:'outQuad'});
+});
+el.addEventListener('mouseleave',()=>{
+animate(el,{scale:[1.03,1],duration:200,ease:'outQuad'});
+});
+});
+
+// Strategy cards hover
+document.querySelectorAll('.home-strat-card').forEach(el=>{
+el.addEventListener('mouseenter',()=>{
+animate(el,{translateY:-3,duration:200,ease:'outQuad'});
+});
+el.addEventListener('mouseleave',()=>{
+animate(el,{translateY:0,duration:200,ease:'outQuad'});
+});
+});
+
+// Step numbers pulse
+animate('.home-step-num',{
+opacity:[0.3,1],
+duration:1500,
+delay:stagger(200),
+loop:true,
+alternate:true,
+ease:'inOutSine'
+});
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+function init(){
+buildTicker();
+animGlobalStats();
+renderArena();
+setupCanvasMouse();
+initHomePage();
+}
+init();
+</script>
+</body>
+</html>
