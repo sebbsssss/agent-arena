@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
-// AGENT ARENA BACKTESTER
-// Simulates 10,000 agents trading against real historical data
-// Each agent starts with $1,000 paper money
+// THE HIVE BACKTESTER
+// Simulates 10,000 bees trading against real historical data
+// Each bee starts with $1,000 paper money
 // ═══════════════════════════════════════════════════════════════
 
 const fs = require('fs');
@@ -28,52 +28,62 @@ function mulberry32(s) {
 
 // ─── Strategies (same as frontend) ────────────────────────────
 const STRATEGIES = [
-  { name: 'MEV Extraction', cat: 'Crypto', risk: 'HIGH' },
-  { name: 'Funding Rate Farming', cat: 'DeFi', risk: 'LOW' },
-  { name: 'Basis Trading', cat: 'DeFi', risk: 'LOW' },
-  { name: 'Delta Neutral', cat: 'DeFi', risk: 'LOW' },
-  { name: 'Yield Rotation', cat: 'DeFi', risk: 'MED' },
-  { name: 'Flash Loan Arb', cat: 'Crypto', risk: 'MED' },
-  { name: 'Cross-Chain Arb', cat: 'Crypto', risk: 'HIGH' },
-  { name: 'Memecoin Momentum', cat: 'Crypto', risk: 'DEGEN' },
-  { name: 'KOL Copy Trading', cat: 'Crypto', risk: 'MED' },
-  { name: 'Whale Tracking', cat: 'Crypto', risk: 'MED' },
-  { name: 'Token Sniping', cat: 'Crypto', risk: 'DEGEN' },
-  { name: 'Airdrop Farming', cat: 'DeFi', risk: 'LOW' },
-  { name: 'Concentrated LP', cat: 'DeFi', risk: 'MED' },
-  { name: 'IL Hedging', cat: 'DeFi', risk: 'MED' },
-  { name: 'Lending Rate Arb', cat: 'DeFi', risk: 'LOW' },
-  { name: 'Liquidation Hunting', cat: 'DeFi', risk: 'HIGH' },
-  { name: 'Recursive Lending', cat: 'DeFi', risk: 'HIGH' },
-  { name: 'Mean Reversion', cat: 'Quant', risk: 'MED' },
-  { name: 'Momentum', cat: 'Quant', risk: 'MED' },
-  { name: 'Pairs Trading', cat: 'Quant', risk: 'LOW' },
-  { name: 'Stat Arb', cat: 'Quant', risk: 'MED' },
-  { name: 'Market Making', cat: 'Quant', risk: 'MED' },
-  { name: 'Breakout Trading', cat: 'TA', risk: 'HIGH' },
-  { name: 'Grid Trading', cat: 'Quant', risk: 'MED' },
-  { name: 'Volatility Trading', cat: 'Quant', risk: 'HIGH' },
-  { name: 'RSI Divergence', cat: 'TA', risk: 'MED' },
-  { name: 'Bollinger Squeeze', cat: 'TA', risk: 'MED' },
-  { name: 'Ichimoku Cloud', cat: 'TA', risk: 'MED' },
-  { name: 'Fibonacci', cat: 'TA', risk: 'MED' },
-  { name: 'Volume Profile', cat: 'TA', risk: 'MED' },
-  { name: 'Order Flow', cat: 'TA', risk: 'HIGH' },
-  { name: 'VWAP Strategy', cat: 'TA', risk: 'LOW' },
-  { name: 'EMA Ribbon', cat: 'TA', risk: 'MED' },
-  { name: 'Sentiment Trading', cat: 'Alt Data', risk: 'HIGH' },
-  { name: 'Fear/Greed', cat: 'Alt Data', risk: 'MED' },
-  { name: 'News Trading', cat: 'Alt Data', risk: 'HIGH' },
-  { name: 'On-Chain Analytics', cat: 'Alt Data', risk: 'MED' },
-  { name: 'Scalping', cat: 'Time', risk: 'MED' },
-  { name: 'Swing Trading', cat: 'Time', risk: 'MED' },
-  { name: 'Position Trading', cat: 'Time', risk: 'LOW' },
-  { name: 'HODL + DCA', cat: 'Time', risk: 'LOW' },
-  { name: 'Martingale', cat: 'Risk', risk: 'DEGEN' },
-  { name: 'Liquidation Cascade', cat: 'Crypto', risk: 'DEGEN' },
-  { name: 'Governance Arb', cat: 'DeFi', risk: 'MED' },
+  // ── Momentum (6) ──
+  { name: 'Trend Following', cat: 'Momentum', risk: 'MED' },
+  { name: 'Momentum Factor', cat: 'Momentum', risk: 'MED' },
+  { name: 'Breakout Trading', cat: 'Momentum', risk: 'HIGH' },
+  { name: 'Donchian Channel', cat: 'Momentum', risk: 'MED' },
+  { name: 'Dual Momentum', cat: 'Momentum', risk: 'MED' },
+  { name: 'Momentum Ignition', cat: 'Momentum', risk: 'HIGH' },
+  // ── Mean Reversion (6) ──
+  { name: 'Mean Reversion', cat: 'Mean Rev', risk: 'MED' },
+  { name: 'Pairs Trading', cat: 'Mean Rev', risk: 'LOW' },
+  { name: 'Stat Arb', cat: 'Mean Rev', risk: 'MED' },
+  { name: 'Bollinger Reversion', cat: 'Mean Rev', risk: 'MED' },
+  { name: 'RSI Mean Reversion', cat: 'Mean Rev', risk: 'MED' },
+  { name: 'Ornstein-Uhlenbeck', cat: 'Mean Rev', risk: 'MED' },
+  // ── Volatility (6) ──
+  { name: 'Volatility Trading', cat: 'Volatility', risk: 'HIGH' },
+  { name: 'Gamma Scalping', cat: 'Volatility', risk: 'HIGH' },
+  { name: 'Volatility Regime', cat: 'Volatility', risk: 'MED' },
+  { name: 'Dispersion Trading', cat: 'Volatility', risk: 'HIGH' },
+  { name: 'Straddle Selling', cat: 'Volatility', risk: 'HIGH' },
+  { name: 'VIX Term Structure', cat: 'Volatility', risk: 'MED' },
+  // ── Execution (6) ──
+  { name: 'Market Making', cat: 'Execution', risk: 'MED' },
+  { name: 'Grid Trading', cat: 'Execution', risk: 'MED' },
+  { name: 'TWAP Execution', cat: 'Execution', risk: 'LOW' },
+  { name: 'VWAP Strategy', cat: 'Execution', risk: 'LOW' },
+  { name: 'Orderbook Imbalance', cat: 'Execution', risk: 'HIGH' },
+  { name: 'Latency Arb', cat: 'Execution', risk: 'HIGH' },
+  // ── Technical (8) ──
+  { name: 'Ichimoku System', cat: 'Technical', risk: 'MED' },
+  { name: 'Fibonacci', cat: 'Technical', risk: 'MED' },
+  { name: 'EMA Ribbon', cat: 'Technical', risk: 'MED' },
+  { name: 'Volume Profile', cat: 'Technical', risk: 'MED' },
+  { name: 'Order Flow', cat: 'Technical', risk: 'HIGH' },
+  { name: 'MACD Divergence', cat: 'Technical', risk: 'MED' },
+  { name: 'Keltner Breakout', cat: 'Technical', risk: 'HIGH' },
+  { name: 'Wyckoff Method', cat: 'Technical', risk: 'MED' },
+  // ── Macro (6) ──
+  { name: 'Risk Parity', cat: 'Macro', risk: 'LOW' },
+  { name: 'Carry Trade', cat: 'Macro', risk: 'MED' },
+  { name: 'Cross-Asset Momentum', cat: 'Macro', risk: 'MED' },
+  { name: 'Factor Rotation', cat: 'Macro', risk: 'MED' },
+  { name: 'Tail Risk Hedging', cat: 'Macro', risk: 'LOW' },
+  { name: 'Global Macro', cat: 'Macro', risk: 'HIGH' },
+  // ── Quant (11) ──
+  { name: 'Kalman Filter', cat: 'Quant', risk: 'MED' },
+  { name: 'Machine Learning Alpha', cat: 'Quant', risk: 'HIGH' },
   { name: 'Correlation Breakdown', cat: 'Quant', risk: 'HIGH' },
-  { name: 'Volatility Regime', cat: 'Quant', risk: 'MED' },
+  { name: 'Kelly Criterion', cat: 'Quant', risk: 'DEGEN' },
+  { name: 'Martingale', cat: 'Quant', risk: 'DEGEN' },
+  { name: 'Relative Value', cat: 'Quant', risk: 'MED' },
+  { name: 'Basis Trading', cat: 'Quant', risk: 'LOW' },
+  { name: 'Delta Neutral', cat: 'Quant', risk: 'LOW' },
+  { name: 'Scalping', cat: 'Quant', risk: 'HIGH' },
+  { name: 'Swing Trading', cat: 'Quant', risk: 'MED' },
+  { name: 'Position Trading', cat: 'Quant', risk: 'LOW' },
 ];
 
 const TIME_HORIZONS = ['Scalper', 'Day Trader', 'Swing Trader', 'Position Trader', 'Long-Term Holder'];
@@ -173,6 +183,47 @@ function volatility(closes, period = 14) {
   return result;
 }
 
+function macd(closes) {
+  const ema12 = ema(closes, 12);
+  const ema26 = ema(closes, 26);
+  const macdLine = [];
+  for (let i = 0; i < closes.length; i++) {
+    if (ema12[i] === null || ema26[i] === null) { macdLine.push(null); continue; }
+    macdLine.push(ema12[i] - ema26[i]);
+  }
+  // Signal line = 9-period EMA of MACD
+  const validMacd = macdLine.filter(x => x !== null);
+  const signalRaw = ema(validMacd, 9);
+  const signal = [];
+  let vi = 0;
+  for (let i = 0; i < closes.length; i++) {
+    if (macdLine[i] === null) { signal.push(null); continue; }
+    signal.push(signalRaw[vi] || null);
+    vi++;
+  }
+  // Histogram
+  const histogram = [];
+  for (let i = 0; i < closes.length; i++) {
+    if (macdLine[i] === null || signal[i] === null) { histogram.push(null); continue; }
+    histogram.push(macdLine[i] - signal[i]);
+  }
+  return { line: macdLine, signal, histogram };
+}
+
+// Keltner Channel (EMA + ATR bands)
+function keltnerChannel(candles, emaPeriod = 20, atrPeriod = 14, mult = 2) {
+  const closes = candles.map(x => x.c);
+  const emaLine = ema(closes, emaPeriod);
+  const atrLine = atr(candles, atrPeriod);
+  const upper = [], lower = [];
+  for (let i = 0; i < candles.length; i++) {
+    if (emaLine[i] === null || atrLine[i] === null) { upper.push(null); lower.push(null); continue; }
+    upper.push(emaLine[i] + mult * atrLine[i]);
+    lower.push(emaLine[i] - mult * atrLine[i]);
+  }
+  return { mid: emaLine, upper, lower };
+}
+
 // ─── Agent Generator (same seed logic as frontend) ────────────
 function generateAgent(id) {
   const seed = id * 2654435761 >>> 0;
@@ -214,19 +265,16 @@ function getPositionSize(agent, portfolio) {
   return Math.min(size, portfolio * MAX_POSITION_PCT);
 }
 
-// ─── Market Neutral & Trend Detection ─────────────────────────
-
-const MARKET_NEUTRAL = new Set([
-  'Funding Rate Farming', 'Basis Trading', 'Delta Neutral',
-  'Lending Rate Arb', 'Airdrop Farming',
-  'Flash Loan Arb', 'Cross-Chain Arb', 'MEV Extraction'
-]);
+// ─── Trend Detection ──────────────────────────────────────────
 
 const TREND_FILTERED = new Set([
-  'Mean Reversion', 'Swing Trading', 'Grid Trading', 'HODL + DCA',
-  'Martingale', 'Breakout Trading', 'Momentum', 'EMA Ribbon',
-  'Pairs Trading', 'Stat Arb', 'VWAP Strategy', 'Scalping',
-  'Market Making', 'Position Trading'
+  'Mean Reversion', 'Pairs Trading', 'Stat Arb', 'Bollinger Reversion',
+  'RSI Mean Reversion', 'Ornstein-Uhlenbeck',
+  'Grid Trading', 'Market Making', 'VWAP Strategy',
+  'Swing Trading', 'Position Trading', 'Scalping',
+  'Carry Trade', 'Relative Value',
+  'Basis Trading', 'Delta Neutral', 'TWAP Execution',
+  'Risk Parity', 'Straddle Selling',
 ]);
 
 function isUptrend(indicators, idx) {
@@ -236,145 +284,105 @@ function isUptrend(indicators, idx) {
   return ma50 >= ma50prev;
 }
 
-function computeNeutralYield(strategy, avgVol, rng, aggression) {
-  const aggrMult = { 'Ultra-Conservative': 0.5, 'Conservative': 0.7, 'Moderate': 1.0, 'Aggressive': 1.3, 'Degen': 1.5 };
-  const mult = aggrMult[aggression] || 1.0;
-
-  switch (strategy) {
-    case 'Funding Rate Farming':
-    case 'Basis Trading':
-    case 'Lending Rate Arb': {
-      const baseAPY = 0.06 + rng() * 0.09; // 6-15% APY
-      let dailyYield = (baseAPY / 365) * mult;
-      if (avgVol > 0.05) dailyYield *= 0.3;
-      else if (avgVol > 0.03) dailyYield *= 0.7;
-      if (rng() < 0.001) return -0.05 * mult; // smart contract risk
-      return dailyYield;
-    }
-    case 'Delta Neutral': {
-      const baseAPY = 0.03 + rng() * 0.05; // 3-8% APY
-      let dailyYield = (baseAPY / 365) * mult;
-      if (avgVol > 0.05) dailyYield *= 0.5;
-      if (rng() < 0.0005) return -0.03 * mult; // depegging
-      return dailyYield;
-    }
-    case 'Airdrop Farming': {
-      if (rng() < 0.008) return (0.02 + rng() * 0.08) * mult; // ~3 airdrops/year
-      return -0.0001 * mult; // gas costs
-    }
-    case 'Flash Loan Arb':
-    case 'Cross-Chain Arb':
-    case 'MEV Extraction': {
-      if (avgVol < 0.015) return 0;
-      const opportunity = rng() < (avgVol * 5) ? 1 : 0;
-      if (!opportunity) return 0;
-      const profit = avgVol * rng() * 0.008 * mult;
-      const gasCost = 0.0003 + rng() * 0.0005;
-      return profit - gasCost;
-    }
-    default: return 0;
-  }
-}
-
 // ─── Strategy Implementations ─────────────────────────────────
 // Each returns: { signal: 'BUY'|'SELL'|'HOLD', confidence: 0-1 }
 // They only see data up to current index (no look-ahead)
 
 function strategySignal(stratName, candles, idx, indicators, agent) {
-  // Market-neutral strategies handled via yield, not directional signals
-  if (MARKET_NEUTRAL.has(stratName)) return { signal: 'HOLD', confidence: 0 };
-
   const c = candles[idx];
-  const closes = candles.map(x => x.c);
-  const rng = agent.rng;
 
   switch (stratName) {
-    // ── DeFi Strategies ──
-    case 'Funding Rate Farming':
-    case 'Basis Trading':
-    case 'Delta Neutral':
-    case 'Lending Rate Arb':
-    case 'Airdrop Farming': {
-      // Low-risk yield: small daily returns with occasional drawdowns
-      // Simulated as market-neutral with slight positive drift
-      if (idx % 3 === 0) return { signal: 'BUY', confidence: 0.3 };
-      if (idx % 7 === 0) return { signal: 'SELL', confidence: 0.2 };
+
+    // ═══════════════════════════════════
+    // MOMENTUM STRATEGIES
+    // ═══════════════════════════════════
+
+    case 'Trend Following': {
+      // Rides sustained moves using MA crossover + trend strength
+      const ema12 = indicators.ema12[idx];
+      const ema26 = indicators.ema26[idx];
+      const ma50 = indicators.sma50[idx];
+      if (ema12 === null || ema26 === null || ma50 === null) return { signal: 'HOLD', confidence: 0 };
+      const macd = ema12 - ema26;
+      const prevMacd = (indicators.ema12[idx - 1] || 0) - (indicators.ema26[idx - 1] || 0);
+      // Strong trend: price above 50 SMA and MACD crossing up
+      if (macd > 0 && prevMacd <= 0 && c.c > ma50) return { signal: 'BUY', confidence: 0.8 };
+      if (macd < 0 && prevMacd >= 0 && c.c < ma50) return { signal: 'SELL', confidence: 0.8 };
+      if (macd > 0 && c.c > ma50) return { signal: 'BUY', confidence: 0.3 };
+      if (macd < 0 && c.c < ma50) return { signal: 'SELL', confidence: 0.3 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Yield Rotation':
-    case 'Concentrated LP':
-    case 'IL Hedging':
-    case 'Governance Arb': {
-      // Medium risk DeFi - follows trend loosely
-      const ma20 = indicators.sma20[idx];
-      if (ma20 === null) return { signal: 'HOLD', confidence: 0 };
-      if (c.c > ma20 * 1.01) return { signal: 'BUY', confidence: 0.4 };
-      if (c.c < ma20 * 0.99) return { signal: 'SELL', confidence: 0.4 };
+    case 'Momentum Factor': {
+      // Ranks by recent performance, goes long winners
+      if (idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const ret20d = (c.c - candles[idx - 20].c) / candles[idx - 20].c;
+      const ret5d = (c.c - candles[idx - 5].c) / candles[idx - 5].c;
+      // Strong positive momentum on both timeframes
+      if (ret20d > 0.10 && ret5d > 0.03) return { signal: 'BUY', confidence: 0.7 };
+      if (ret20d > 0.05 && ret5d > 0) return { signal: 'BUY', confidence: 0.4 };
+      if (ret20d < -0.10 && ret5d < -0.03) return { signal: 'SELL', confidence: 0.7 };
+      if (ret20d < -0.05) return { signal: 'SELL', confidence: 0.4 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Flash Loan Arb':
-    case 'Cross-Chain Arb': {
-      // Arb: profits from volatility, small consistent gains
-      const vol = indicators.vol[idx];
-      if (vol === null) return { signal: 'HOLD', confidence: 0 };
-      if (vol > 0.03) return { signal: 'BUY', confidence: 0.5 };
-      if (vol < 0.015) return { signal: 'SELL', confidence: 0.3 };
+    case 'Breakout Trading': {
+      // Enter when price breaks 20-day high/low with volume
+      if (idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const high20 = Math.max(...candles.slice(idx - 20, idx).map(x => x.h));
+      const low20 = Math.min(...candles.slice(idx - 20, idx).map(x => x.l));
+      const avgVol = candles.slice(idx - 10, idx).reduce((s, x) => s + x.v, 0) / 10;
+      const volConfirm = c.v > avgVol * 1.2;
+      if (c.c > high20 && volConfirm) return { signal: 'BUY', confidence: 0.8 };
+      if (c.c < low20) return { signal: 'SELL', confidence: 0.8 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Liquidation Hunting':
-    case 'Recursive Lending': {
-      // Profits from big drops
-      if (idx < 1) return { signal: 'HOLD', confidence: 0 };
-      const dayReturn = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
-      if (dayReturn < -0.05) return { signal: 'BUY', confidence: 0.7 };
-      if (dayReturn > 0.03) return { signal: 'SELL', confidence: 0.4 };
+    case 'Donchian Channel': {
+      // Buy new 20-day high, sell new 20-day low (turtle trading)
+      if (idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const high20 = Math.max(...candles.slice(idx - 20, idx).map(x => x.h));
+      const low20 = Math.min(...candles.slice(idx - 20, idx).map(x => x.l));
+      if (c.c > high20) return { signal: 'BUY', confidence: 0.7 };
+      if (c.c < low20) return { signal: 'SELL', confidence: 0.7 };
+      // Exit on 10-day channel break opposite direction
+      if (idx >= 10) {
+        const high10 = Math.max(...candles.slice(idx - 10, idx).map(x => x.h));
+        const low10 = Math.min(...candles.slice(idx - 10, idx).map(x => x.l));
+        if (c.c < low10) return { signal: 'SELL', confidence: 0.5 };
+      }
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    // ── Crypto Native ──
-    case 'MEV Extraction': {
-      // Profits from volume spikes
+    case 'Dual Momentum': {
+      // Absolute + relative momentum must both align
+      if (idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const ret20d = (c.c - candles[idx - 20].c) / candles[idx - 20].c;
+      const ma50 = indicators.sma50[idx];
+      // Absolute momentum: positive returns. Relative: above long MA
+      if (ret20d > 0.05 && ma50 && c.c > ma50) return { signal: 'BUY', confidence: 0.7 };
+      if (ret20d > 0 && ma50 && c.c > ma50) return { signal: 'BUY', confidence: 0.4 };
+      if (ret20d < -0.05 && ma50 && c.c < ma50) return { signal: 'SELL', confidence: 0.7 };
+      if (ret20d < 0 && ma50 && c.c < ma50) return { signal: 'SELL', confidence: 0.4 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Momentum Ignition': {
+      // Detects early-stage momentum bursts via volume surge
       if (idx < 5) return { signal: 'HOLD', confidence: 0 };
-      const avgVol = candles.slice(idx - 5, idx).reduce((s, x) => s + x.v, 0) / 5;
-      if (c.v > avgVol * 1.5) return { signal: 'BUY', confidence: 0.5 };
-      return { signal: 'HOLD', confidence: 0 };
-    }
-
-    case 'Memecoin Momentum':
-    case 'Token Sniping': {
-      // Aggressive momentum chasing
-      if (idx < 3) return { signal: 'HOLD', confidence: 0 };
       const ret3d = (c.c - candles[idx - 3].c) / candles[idx - 3].c;
-      if (ret3d > 0.08) return { signal: 'BUY', confidence: 0.8 };
-      if (ret3d < -0.05) return { signal: 'SELL', confidence: 0.9 };
-      if (ret3d > 0.03) return { signal: 'BUY', confidence: 0.4 };
+      const avgVol = candles.slice(idx - 5, idx).reduce((s, x) => s + x.v, 0) / 5;
+      const volSurge = c.v > avgVol * 1.8;
+      if (ret3d > 0.05 && volSurge) return { signal: 'BUY', confidence: 0.8 };
+      if (ret3d < -0.05 && volSurge) return { signal: 'SELL', confidence: 0.8 };
+      if (ret3d > 0.03 && volSurge) return { signal: 'BUY', confidence: 0.5 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'KOL Copy Trading':
-    case 'Whale Tracking': {
-      // Follows volume + trend with delay
-      if (idx < 2) return { signal: 'HOLD', confidence: 0 };
-      const prevRet = (candles[idx - 1].c - candles[idx - 2].c) / candles[idx - 2].c;
-      const volSpike = idx >= 5 && c.v > candles.slice(idx - 5, idx).reduce((s, x) => s + x.v, 0) / 5 * 1.3;
-      if (prevRet > 0.02 && volSpike) return { signal: 'BUY', confidence: 0.6 };
-      if (prevRet < -0.03) return { signal: 'SELL', confidence: 0.5 };
-      return { signal: 'HOLD', confidence: 0 };
-    }
+    // ═══════════════════════════════════
+    // MEAN REVERSION STRATEGIES
+    // ═══════════════════════════════════
 
-    case 'Liquidation Cascade': {
-      // DEGEN: bets on cascading liquidations
-      if (idx < 1) return { signal: 'HOLD', confidence: 0 };
-      const dayDrop = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
-      if (dayDrop < -0.08) return { signal: 'BUY', confidence: 0.9 }; // Buys the cascade
-      if (dayDrop > 0.05) return { signal: 'SELL', confidence: 0.5 };
-      return { signal: 'HOLD', confidence: 0 };
-    }
-
-    // ── Quant Strategies ──
     case 'Mean Reversion': {
       const rsiVal = indicators.rsi[idx];
       const bb = indicators.bb;
@@ -386,32 +394,153 @@ function strategySignal(stratName, candles, idx, indicators, agent) {
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Momentum': {
-      const ema12 = indicators.ema12[idx];
-      const ema26 = indicators.ema26[idx];
-      if (ema12 === null || ema26 === null) return { signal: 'HOLD', confidence: 0 };
-      const macd = ema12 - ema26;
-      const prevMacd = indicators.ema12[idx - 1] - indicators.ema26[idx - 1];
-      if (macd > 0 && prevMacd <= 0) return { signal: 'BUY', confidence: 0.7 };
-      if (macd < 0 && prevMacd >= 0) return { signal: 'SELL', confidence: 0.7 };
-      if (macd > 0) return { signal: 'BUY', confidence: 0.3 };
-      if (macd < 0) return { signal: 'SELL', confidence: 0.3 };
-      return { signal: 'HOLD', confidence: 0 };
-    }
-
     case 'Pairs Trading':
     case 'Stat Arb': {
-      // Mean reversion with tighter bands
+      // Mean reversion with tighter bands on deviation from SMA
       const ma = indicators.sma20[idx];
       if (ma === null) return { signal: 'HOLD', confidence: 0 };
       const dev = (c.c - ma) / ma;
       if (dev < -0.03) return { signal: 'BUY', confidence: 0.6 };
       if (dev > 0.03) return { signal: 'SELL', confidence: 0.6 };
+      if (dev < -0.015) return { signal: 'BUY', confidence: 0.3 };
+      if (dev > 0.015) return { signal: 'SELL', confidence: 0.3 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
+    case 'Bollinger Reversion': {
+      // Fades moves to +/-2 std dev Bollinger Band extremes
+      const bb = indicators.bb;
+      if (bb.lower[idx] === null) return { signal: 'HOLD', confidence: 0 };
+      if (c.c <= bb.lower[idx]) return { signal: 'BUY', confidence: 0.7 };
+      if (c.c >= bb.upper[idx]) return { signal: 'SELL', confidence: 0.7 };
+      // Near-band entries
+      const midLow = (bb.ma[idx] + bb.lower[idx]) / 2;
+      const midHigh = (bb.ma[idx] + bb.upper[idx]) / 2;
+      if (c.c < midLow) return { signal: 'BUY', confidence: 0.3 };
+      if (c.c > midHigh) return { signal: 'SELL', confidence: 0.3 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'RSI Mean Reversion': {
+      // Classic RSI oversold/overbought counter-trend
+      const rsiVal = indicators.rsi[idx];
+      if (rsiVal === null) return { signal: 'HOLD', confidence: 0 };
+      if (rsiVal < 25) return { signal: 'BUY', confidence: 0.8 };
+      if (rsiVal > 75) return { signal: 'SELL', confidence: 0.8 };
+      if (rsiVal < 30) return { signal: 'BUY', confidence: 0.5 };
+      if (rsiVal > 70) return { signal: 'SELL', confidence: 0.5 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Ornstein-Uhlenbeck': {
+      // OU process: trade when price deviates significantly from EMA (mean)
+      const e26 = indicators.ema26[idx];
+      const vol = indicators.vol[idx];
+      if (e26 === null || vol === null) return { signal: 'HOLD', confidence: 0 };
+      const dev = (c.c - e26) / e26;
+      const threshold = vol * 1.5; // Dynamic threshold based on realized vol
+      if (dev < -threshold && threshold > 0.01) return { signal: 'BUY', confidence: 0.6 };
+      if (dev > threshold && threshold > 0.01) return { signal: 'SELL', confidence: 0.6 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    // ═══════════════════════════════════
+    // VOLATILITY STRATEGIES
+    // ═══════════════════════════════════
+
+    case 'Volatility Trading': {
+      // Trades implied vs realized vol divergence (directional on vol expansion)
+      const vol = indicators.vol[idx];
+      const bw = indicators.bb.bandwidth[idx];
+      if (vol === null || bw === null) return { signal: 'HOLD', confidence: 0 };
+      const aboveMa = c.c > indicators.bb.ma[idx];
+      if (bw > 0.08 && aboveMa) return { signal: 'BUY', confidence: 0.5 };
+      if (bw > 0.08 && !aboveMa) return { signal: 'SELL', confidence: 0.5 };
+      if (bw < 0.03) return { signal: 'HOLD', confidence: 0 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Gamma Scalping': {
+      // Profits when realized vol exceeds implied; buys dips and sells rips rapidly
+      if (idx < 3) return { signal: 'HOLD', confidence: 0 };
+      const vol = indicators.vol[idx];
+      if (vol === null) return { signal: 'HOLD', confidence: 0 };
+      const ret1d = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
+      // High realized vol = good for gamma scalping
+      if (vol > 0.03) {
+        if (ret1d < -0.02) return { signal: 'BUY', confidence: 0.6 };
+        if (ret1d > 0.02) return { signal: 'SELL', confidence: 0.6 };
+      }
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Volatility Regime': {
+      // Low vol: mean reversion. High vol: trend follow
+      const vol = indicators.vol[idx];
+      const rsiVal = indicators.rsi[idx];
+      if (vol === null || rsiVal === null) return { signal: 'HOLD', confidence: 0 };
+      if (vol < 0.02) {
+        if (rsiVal < 35) return { signal: 'BUY', confidence: 0.5 };
+        if (rsiVal > 65) return { signal: 'SELL', confidence: 0.5 };
+      } else {
+        const ema12 = indicators.ema12[idx];
+        if (ema12 && c.c > ema12) return { signal: 'BUY', confidence: 0.5 };
+        if (ema12 && c.c < ema12) return { signal: 'SELL', confidence: 0.5 };
+      }
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'VIX Term Structure': {
+      // Trades vol curve shape: in low vol buy, in high vol sell
+      const vol = indicators.vol[idx];
+      if (vol === null || idx < 30) return { signal: 'HOLD', confidence: 0 };
+      const vol30ago = indicators.vol[idx - 30];
+      if (vol30ago === null) return { signal: 'HOLD', confidence: 0 };
+      // Contango (short-term vol < long-term vol): long carry
+      if (vol < vol30ago * 0.8) return { signal: 'BUY', confidence: 0.5 };
+      // Backwardation (short-term vol > long-term vol): short
+      if (vol > vol30ago * 1.3) return { signal: 'SELL', confidence: 0.5 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Straddle Selling': {
+      // Profits in low-vol ranges (collecting "theta"), loses on actual big moves (short gamma)
+      const bw = indicators.bb.bandwidth[idx];
+      const bb = indicators.bb;
+      if (bw === null || idx < 2) return { signal: 'HOLD', confidence: 0 };
+      const ret1d = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
+      // Low vol = calm market, take small mean-reversion positions
+      if (bw < 0.04) {
+        if (c.c <= bb.lower[idx]) return { signal: 'BUY', confidence: 0.4 };
+        if (c.c >= bb.upper[idx]) return { signal: 'SELL', confidence: 0.4 };
+        return { signal: 'HOLD', confidence: 0 };
+      }
+      // High vol with actual big move = getting crushed, exit immediately
+      if (bw > 0.06 && Math.abs(ret1d) > 0.02) {
+        return { signal: 'SELL', confidence: 0.9 };
+      }
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Dispersion Trading': {
+      // Profits from vol mean reversion — buy when vol is spiking down from highs, sell when expanding
+      const vol = indicators.vol[idx];
+      if (vol === null || idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const prevVol = indicators.vol[idx - 10];
+      if (prevVol === null) return { signal: 'HOLD', confidence: 0 };
+      // Vol peaked and now calming = buy (vol reversion = price stabilizing)
+      if (vol < prevVol * 0.8 && vol > 0.02) return { signal: 'BUY', confidence: 0.5 };
+      // Vol expanding from low base = sell/reduce
+      if (vol > prevVol * 1.3 && vol > 0.04) return { signal: 'SELL', confidence: 0.5 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    // ═══════════════════════════════════
+    // EXECUTION STRATEGIES
+    // ═══════════════════════════════════
+
     case 'Market Making': {
-      // Profits from spread - buys dips, sells rips, small sizing
+      // Profits from spread — buys dips, sells rips, small sizing
       if (idx < 1) return { signal: 'HOLD', confidence: 0 };
       const change = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
       if (change < -0.01) return { signal: 'BUY', confidence: 0.3 };
@@ -429,76 +558,52 @@ function strategySignal(stratName, candles, idx, indicators, agent) {
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Volatility Trading': {
-      const vol = indicators.vol[idx];
-      const bw = indicators.bb.bandwidth[idx];
-      if (vol === null || bw === null) return { signal: 'HOLD', confidence: 0 };
-      // Trade volatility expansion directionally (above MA = long, below = short)
-      const aboveMa = c.c > indicators.bb.ma[idx];
-      if (bw > 0.08 && aboveMa) return { signal: 'BUY', confidence: 0.5 };
-      if (bw > 0.08 && !aboveMa) return { signal: 'SELL', confidence: 0.5 };
-      if (bw < 0.03) return { signal: 'HOLD', confidence: 0 }; // Low vol = stay out
+    case 'VWAP Strategy': {
+      // VWAP approximation using SMA — buy below, sell above
+      const vwap = indicators.sma20[idx];
+      if (vwap === null) return { signal: 'HOLD', confidence: 0 };
+      if (c.c < vwap * 0.98) return { signal: 'BUY', confidence: 0.5 };
+      if (c.c > vwap * 1.02) return { signal: 'SELL', confidence: 0.5 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Correlation Breakdown': {
-      // Trade big moves as they may be correlation breaks
+    case 'Orderbook Imbalance': {
+      // Reads volume imbalances to predict short-term direction
       if (idx < 5) return { signal: 'HOLD', confidence: 0 };
-      const ret5d = (c.c - candles[idx - 5].c) / candles[idx - 5].c;
-      if (Math.abs(ret5d) > 0.10) return { signal: ret5d > 0 ? 'SELL' : 'BUY', confidence: 0.6 };
+      const avgVol = candles.slice(idx - 5, idx).reduce((s, x) => s + x.v, 0) / 5;
+      const volRatio = c.v / avgVol;
+      const ret1d = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
+      // High volume + direction = imbalance signal
+      if (volRatio > 1.8 && ret1d > 0.01) return { signal: 'BUY', confidence: 0.7 };
+      if (volRatio > 1.8 && ret1d < -0.01) return { signal: 'SELL', confidence: 0.7 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Volatility Regime': {
-      const vol = indicators.vol[idx];
-      const rsiVal = indicators.rsi[idx];
-      if (vol === null || rsiVal === null) return { signal: 'HOLD', confidence: 0 };
-      // Low vol: mean reversion. High vol: trend follow
-      if (vol < 0.02) {
-        if (rsiVal < 35) return { signal: 'BUY', confidence: 0.5 };
-        if (rsiVal > 65) return { signal: 'SELL', confidence: 0.5 };
-      } else {
-        const ema12 = indicators.ema12[idx];
-        if (ema12 && c.c > ema12) return { signal: 'BUY', confidence: 0.5 };
-        if (ema12 && c.c < ema12) return { signal: 'SELL', confidence: 0.5 };
-      }
+    case 'Latency Arb': {
+      // Exploits micro price differences — profits from vol spikes
+      if (idx < 5) return { signal: 'HOLD', confidence: 0 };
+      const avgVol = candles.slice(idx - 5, idx).reduce((s, x) => s + x.v, 0) / 5;
+      if (c.v > avgVol * 1.5) return { signal: 'BUY', confidence: 0.5 };
+      if (c.v > avgVol * 2.0 && c.c < candles[idx - 1].c) return { signal: 'SELL', confidence: 0.6 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    // ── TA Strategies ──
-    case 'Breakout Trading': {
-      if (idx < 20) return { signal: 'HOLD', confidence: 0 };
-      const high20 = Math.max(...candles.slice(idx - 20, idx).map(x => x.h));
-      const low20 = Math.min(...candles.slice(idx - 20, idx).map(x => x.l));
-      const avgVol = candles.slice(idx - 10, idx).reduce((s, x) => s + x.v, 0) / 10;
-      const volConfirm = c.v > avgVol * 1.2; // require volume confirmation for buys
-      if (c.c > high20 && volConfirm) return { signal: 'BUY', confidence: 0.8 };
-      if (c.c < low20) return { signal: 'SELL', confidence: 0.8 };
+    case 'TWAP Execution': {
+      // Dollar-cost average: buy small amounts at regular intervals, only below VWAP proxy
+      const ma = indicators.sma20[idx];
+      if (ma === null) return { signal: 'HOLD', confidence: 0 };
+      // Buy every 5 days when price is at or below 20-day average
+      if (idx % 5 === 0 && c.c <= ma) return { signal: 'BUY', confidence: 0.3 };
+      // Sell when price is significantly above average (take profit)
+      if (c.c > ma * 1.04) return { signal: 'SELL', confidence: 0.3 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'RSI Divergence': {
-      const rsiVal = indicators.rsi[idx];
-      if (rsiVal === null) return { signal: 'HOLD', confidence: 0 };
-      if (rsiVal < 30) return { signal: 'BUY', confidence: 0.6 };
-      if (rsiVal > 70) return { signal: 'SELL', confidence: 0.6 };
-      return { signal: 'HOLD', confidence: 0 };
-    }
+    // ═══════════════════════════════════
+    // TECHNICAL STRATEGIES
+    // ═══════════════════════════════════
 
-    case 'Bollinger Squeeze': {
-      const bw = indicators.bb.bandwidth[idx];
-      if (bw === null) return { signal: 'HOLD', confidence: 0 };
-      if (idx < 2) return { signal: 'HOLD', confidence: 0 };
-      const prevBw = indicators.bb.bandwidth[idx - 1];
-      // Squeeze release: bandwidth expanding after contraction
-      if (bw > prevBw && prevBw < 0.04) {
-        const dir = c.c > indicators.bb.ma[idx] ? 'BUY' : 'SELL';
-        return { signal: dir, confidence: 0.6 };
-      }
-      return { signal: 'HOLD', confidence: 0 };
-    }
-
-    case 'Ichimoku Cloud': {
+    case 'Ichimoku System': {
       // Simplified: use 9/26 EMA as tenkan/kijun
       const tenkan = indicators.ema9[idx];
       const kijun = indicators.sma26[idx];
@@ -509,15 +614,26 @@ function strategySignal(stratName, candles, idx, indicators, agent) {
     }
 
     case 'Fibonacci': {
-      // Uses 20-day high/low for fib levels
+      // 20-day high/low fib retracements
       if (idx < 20) return { signal: 'HOLD', confidence: 0 };
       const high = Math.max(...candles.slice(idx - 20, idx).map(x => x.h));
       const low = Math.min(...candles.slice(idx - 20, idx).map(x => x.l));
       const range = high - low;
+      if (range === 0) return { signal: 'HOLD', confidence: 0 };
       const fib382 = high - range * 0.382;
       const fib618 = high - range * 0.618;
       if (c.c <= fib618 * 1.005 && c.c >= fib618 * 0.995) return { signal: 'BUY', confidence: 0.5 };
       if (c.c <= fib382 * 1.005 && c.c >= fib382 * 0.995) return { signal: 'SELL', confidence: 0.5 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'EMA Ribbon': {
+      const e9 = indicators.ema9[idx];
+      const e12 = indicators.ema12[idx];
+      const e26 = indicators.ema26[idx];
+      if (e9 === null || e12 === null || e26 === null) return { signal: 'HOLD', confidence: 0 };
+      if (e9 > e12 && e12 > e26) return { signal: 'BUY', confidence: 0.5 };
+      if (e9 < e12 && e12 < e26) return { signal: 'SELL', confidence: 0.5 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
@@ -532,57 +648,224 @@ function strategySignal(stratName, candles, idx, indicators, agent) {
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'VWAP Strategy': {
-      // Simple VWAP approximation using SMA
-      const vwap = indicators.sma20[idx];
-      if (vwap === null) return { signal: 'HOLD', confidence: 0 };
-      if (c.c < vwap * 0.98) return { signal: 'BUY', confidence: 0.5 };
-      if (c.c > vwap * 1.02) return { signal: 'SELL', confidence: 0.5 };
+    case 'MACD Divergence': {
+      // Spots divergence between price and MACD histogram
+      if (idx < 30) return { signal: 'HOLD', confidence: 0 };
+      const ema12v = indicators.ema12[idx];
+      const ema26v = indicators.ema26[idx];
+      const prevEma12 = indicators.ema12[idx - 5];
+      const prevEma26 = indicators.ema26[idx - 5];
+      if (!ema12v || !ema26v || !prevEma12 || !prevEma26) return { signal: 'HOLD', confidence: 0 };
+      const macdNow = ema12v - ema26v;
+      const macdPrev = prevEma12 - prevEma26;
+      const priceNow = c.c;
+      const pricePrev = candles[idx - 5].c;
+      // Bullish divergence: price lower but MACD higher
+      if (priceNow < pricePrev && macdNow > macdPrev) return { signal: 'BUY', confidence: 0.6 };
+      // Bearish divergence: price higher but MACD lower
+      if (priceNow > pricePrev && macdNow < macdPrev) return { signal: 'SELL', confidence: 0.6 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'EMA Ribbon': {
-      const e9 = indicators.ema9[idx];
-      const e12 = indicators.ema12[idx];
-      const e26 = indicators.ema26[idx];
-      if (e9 === null || e12 === null || e26 === null) return { signal: 'HOLD', confidence: 0 };
-      // Ribbon expansion up = bullish, down = bearish
-      if (e9 > e12 && e12 > e26) return { signal: 'BUY', confidence: 0.5 };
-      if (e9 < e12 && e12 < e26) return { signal: 'SELL', confidence: 0.5 };
+    case 'Keltner Breakout': {
+      // Enters on closes outside Keltner Channel with ATR stops
+      const atrVal = indicators.atr[idx];
+      const e20 = indicators.ema20[idx];
+      if (atrVal === null || e20 === null) return { signal: 'HOLD', confidence: 0 };
+      const kUpper = e20 + 2 * atrVal;
+      const kLower = e20 - 2 * atrVal;
+      if (c.c > kUpper) return { signal: 'BUY', confidence: 0.7 };
+      if (c.c < kLower) return { signal: 'SELL', confidence: 0.7 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    // ── Alt Data (simulated with price action proxies) ──
-    case 'Sentiment Trading':
-    case 'News Trading': {
-      // Big moves = "news events"
-      if (idx < 1) return { signal: 'HOLD', confidence: 0 };
-      const dayChange = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
-      if (dayChange > 0.05) return { signal: 'BUY', confidence: 0.6 };
-      if (dayChange < -0.05) return { signal: 'SELL', confidence: 0.6 };
+    case 'Wyckoff Method': {
+      // Accumulation/distribution via volume + price action
+      if (idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const avgVol = candles.slice(idx - 20, idx).reduce((s, x) => s + x.v, 0) / 20;
+      const ret20d = (c.c - candles[idx - 20].c) / candles[idx - 20].c;
+      const volRatio = c.v / avgVol;
+      // Accumulation: low price, high volume (smart money buying)
+      if (ret20d < -0.05 && volRatio > 1.5) return { signal: 'BUY', confidence: 0.6 };
+      // Distribution: high price, high volume (smart money selling)
+      if (ret20d > 0.05 && volRatio > 1.5) return { signal: 'SELL', confidence: 0.6 };
+      // Spring: sharp drop below support with quick recovery
+      if (idx >= 2) {
+        const prev = candles[idx - 1];
+        if (prev.c < candles[idx - 2].l && c.c > prev.c) return { signal: 'BUY', confidence: 0.5 };
+      }
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'Fear/Greed': {
-      // Contrarian on RSI extremes
+    // ═══════════════════════════════════
+    // MACRO STRATEGIES
+    // ═══════════════════════════════════
+
+    case 'Carry Trade': {
+      // Long high-yield assets in uptrends
+      const ma50 = indicators.sma50[idx];
+      if (ma50 === null) return { signal: 'HOLD', confidence: 0 };
+      if (c.c > ma50 * 1.01) return { signal: 'BUY', confidence: 0.4 };
+      if (c.c < ma50 * 0.98) return { signal: 'SELL', confidence: 0.4 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Cross-Asset Momentum': {
+      // Momentum across timeframes
+      if (idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const ret5d = (c.c - candles[idx - 5].c) / candles[idx - 5].c;
+      const ret20d = (c.c - candles[idx - 20].c) / candles[idx - 20].c;
+      if (ret5d > 0.03 && ret20d > 0.05) return { signal: 'BUY', confidence: 0.6 };
+      if (ret5d < -0.03 && ret20d < -0.05) return { signal: 'SELL', confidence: 0.6 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Factor Rotation': {
+      // Rotates between momentum and value based on vol regime
+      const vol = indicators.vol[idx];
       const rsiVal = indicators.rsi[idx];
-      if (rsiVal === null) return { signal: 'HOLD', confidence: 0 };
-      if (rsiVal < 25) return { signal: 'BUY', confidence: 0.7 };
-      if (rsiVal > 75) return { signal: 'SELL', confidence: 0.7 };
+      if (vol === null || rsiVal === null || idx < 20) return { signal: 'HOLD', confidence: 0 };
+      const ret20d = (c.c - candles[idx - 20].c) / candles[idx - 20].c;
+      // Low vol: favor value (oversold)
+      if (vol < 0.02 && rsiVal < 35) return { signal: 'BUY', confidence: 0.5 };
+      if (vol < 0.02 && rsiVal > 65) return { signal: 'SELL', confidence: 0.5 };
+      // High vol: favor momentum
+      if (vol > 0.03 && ret20d > 0.08) return { signal: 'BUY', confidence: 0.5 };
+      if (vol > 0.03 && ret20d < -0.08) return { signal: 'SELL', confidence: 0.5 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'On-Chain Analytics': {
-      // Trend following with volume confirmation
-      const ma = indicators.sma20[idx];
-      if (ma === null || idx < 5) return { signal: 'HOLD', confidence: 0 };
-      const avgVol = candles.slice(idx - 5, idx).reduce((s, x) => s + x.v, 0) / 5;
-      if (c.c > ma && c.v > avgVol) return { signal: 'BUY', confidence: 0.5 };
-      if (c.c < ma && c.v > avgVol) return { signal: 'SELL', confidence: 0.5 };
+    case 'Global Macro': {
+      // Directional positions based on macro trends (simulated via long-term MA)
+      const ma50 = indicators.sma50[idx];
+      if (ma50 === null || idx < 30) return { signal: 'HOLD', confidence: 0 };
+      const ret30d = (c.c - candles[idx - 30].c) / candles[idx - 30].c;
+      // Strong conviction trades on macro trends
+      if (c.c > ma50 * 1.05 && ret30d > 0.10) return { signal: 'BUY', confidence: 0.7 };
+      if (c.c < ma50 * 0.95 && ret30d < -0.10) return { signal: 'SELL', confidence: 0.7 };
+      if (c.c > ma50) return { signal: 'BUY', confidence: 0.3 };
+      if (c.c < ma50) return { signal: 'SELL', confidence: 0.3 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    // ── Time-Based ──
+    case 'Risk Parity': {
+      // Vol-adjusted trend following: bigger positions in low vol, smaller in high vol
+      const vol = indicators.vol[idx];
+      const ma50 = indicators.sma50[idx];
+      if (vol === null || ma50 === null) return { signal: 'HOLD', confidence: 0 };
+      // Confidence scales inversely with realized vol (risk parity = equal risk per unit)
+      const volAdj = Math.max(0.15, Math.min(0.6, 0.02 / (vol || 0.02)));
+      if (c.c > ma50 * 1.01) return { signal: 'BUY', confidence: volAdj };
+      if (c.c < ma50 * 0.99) return { signal: 'SELL', confidence: volAdj };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Tail Risk Hedging': {
+      // Sits in cash most of the time. Buys aggressively only on actual large drops.
+      // "Premium bleed" is opportunity cost of being in cash. Payoff = buying real crash dips.
+      if (idx < 5) return { signal: 'HOLD', confidence: 0 };
+      const ret1d = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
+      const ret5d = (c.c - candles[idx - 5].c) / candles[idx - 5].c;
+      // Large actual daily crash — buy the panic aggressively
+      if (ret1d < -0.07) return { signal: 'BUY', confidence: 0.8 };
+      if (ret1d < -0.04) return { signal: 'BUY', confidence: 0.5 };
+      // Take profit when price bounces back
+      if (ret5d > 0.08) return { signal: 'SELL', confidence: 0.7 };
+      if (ret5d > 0.04) return { signal: 'SELL', confidence: 0.4 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    // ═══════════════════════════════════
+    // QUANT STRATEGIES
+    // ═══════════════════════════════════
+
+    case 'Kalman Filter': {
+      // Recursive smoothed estimate: use EMA as proxy for Kalman state
+      const e9 = indicators.ema9[idx];
+      const e26 = indicators.ema26[idx];
+      if (e9 === null || e26 === null) return { signal: 'HOLD', confidence: 0 };
+      const signal = e9 - e26;
+      const prevE9 = indicators.ema9[idx - 1];
+      const prevE26 = indicators.ema26[idx - 1];
+      if (!prevE9 || !prevE26) return { signal: 'HOLD', confidence: 0 };
+      const prevSignal = prevE9 - prevE26;
+      // Kalman crossover: signal changing sign
+      if (signal > 0 && prevSignal <= 0) return { signal: 'BUY', confidence: 0.6 };
+      if (signal < 0 && prevSignal >= 0) return { signal: 'SELL', confidence: 0.6 };
+      // Trend continuation
+      if (signal > 0 && signal > prevSignal) return { signal: 'BUY', confidence: 0.3 };
+      if (signal < 0 && signal < prevSignal) return { signal: 'SELL', confidence: 0.3 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Machine Learning Alpha': {
+      // Multi-feature model proxy: combines RSI + MA + Vol for signal
+      const rsiVal = indicators.rsi[idx];
+      const ma20 = indicators.sma20[idx];
+      const vol = indicators.vol[idx];
+      if (rsiVal === null || ma20 === null || vol === null) return { signal: 'HOLD', confidence: 0 };
+      const priceSignal = (c.c - ma20) / ma20;
+      // Composite score from multiple features
+      let score = 0;
+      if (rsiVal < 30) score += 2;
+      else if (rsiVal < 40) score += 1;
+      else if (rsiVal > 70) score -= 2;
+      else if (rsiVal > 60) score -= 1;
+      if (priceSignal < -0.03) score += 1;
+      if (priceSignal > 0.03) score -= 1;
+      if (vol > 0.04) score += (priceSignal > 0 ? 1 : -1); // momentum in high vol
+      if (score >= 2) return { signal: 'BUY', confidence: 0.7 };
+      if (score <= -2) return { signal: 'SELL', confidence: 0.7 };
+      if (score >= 1) return { signal: 'BUY', confidence: 0.4 };
+      if (score <= -1) return { signal: 'SELL', confidence: 0.4 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Correlation Breakdown': {
+      // Trade big moves as potential correlation breaks
+      if (idx < 5) return { signal: 'HOLD', confidence: 0 };
+      const ret5d = (c.c - candles[idx - 5].c) / candles[idx - 5].c;
+      if (Math.abs(ret5d) > 0.10) return { signal: ret5d > 0 ? 'SELL' : 'BUY', confidence: 0.6 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Kelly Criterion': {
+      // Full Kelly sizing: aggressive entry on high-confidence signals
+      const rsiVal = indicators.rsi[idx];
+      const ema12 = indicators.ema12[idx];
+      const ema26 = indicators.ema26[idx];
+      if (rsiVal === null || ema12 === null || ema26 === null) return { signal: 'HOLD', confidence: 0 };
+      const momentum = ema12 - ema26;
+      // Kelly bets big on strong signals
+      if (rsiVal < 25 && momentum < 0) return { signal: 'BUY', confidence: 0.9 };
+      if (rsiVal > 75 && momentum > 0) return { signal: 'SELL', confidence: 0.9 };
+      if (rsiVal < 35) return { signal: 'BUY', confidence: 0.5 };
+      if (rsiVal > 65) return { signal: 'SELL', confidence: 0.5 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Martingale': {
+      // Double down on losses, recover with one win
+      if (idx < 1) return { signal: 'HOLD', confidence: 0 };
+      const dayLoss = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
+      if (dayLoss < -0.03) return { signal: 'BUY', confidence: 0.9 };
+      if (dayLoss > 0.02) return { signal: 'SELL', confidence: 0.3 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
+    case 'Relative Value': {
+      // Trade mispricings between price and its "fair value" (SMA)
+      const ma20 = indicators.sma20[idx];
+      const ma50 = indicators.sma50[idx];
+      if (ma20 === null || ma50 === null) return { signal: 'HOLD', confidence: 0 };
+      const shortDev = (c.c - ma20) / ma20;
+      const longDev = (c.c - ma50) / ma50;
+      // Price below both MAs = undervalued
+      if (shortDev < -0.02 && longDev < -0.03) return { signal: 'BUY', confidence: 0.6 };
+      if (shortDev > 0.02 && longDev > 0.03) return { signal: 'SELL', confidence: 0.6 };
+      return { signal: 'HOLD', confidence: 0 };
+    }
+
     case 'Scalping': {
       // Quick in-and-out on small moves
       if (idx < 1) return { signal: 'HOLD', confidence: 0 };
@@ -593,7 +876,7 @@ function strategySignal(stratName, candles, idx, indicators, agent) {
     }
 
     case 'Swing Trading': {
-      // 5-day momentum
+      // 5-day momentum with RSI confirmation
       if (idx < 5) return { signal: 'HOLD', confidence: 0 };
       const ret5d = (c.c - candles[idx - 5].c) / candles[idx - 5].c;
       const rsiVal = indicators.rsi[idx];
@@ -611,19 +894,28 @@ function strategySignal(stratName, candles, idx, indicators, agent) {
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    case 'HODL + DCA': {
-      // DCA every 7 days (trend filter applied in backtestAgent)
-      if (idx % 7 === 0) return { signal: 'BUY', confidence: 0.3 };
+    case 'Basis Trading': {
+      // Buys when spot is at discount to "fair value" (below SMA), sells at premium
+      // Conservative, small positions, frequent mean-reversion entries
+      const ma20 = indicators.sma20[idx];
+      const e9 = indicators.ema9[idx];
+      if (ma20 === null || e9 === null) return { signal: 'HOLD', confidence: 0 };
+      const dev = (c.c - ma20) / ma20;
+      // Buy when spot is discounted below moving average
+      if (dev < -0.02) return { signal: 'BUY', confidence: 0.35 };
+      // Sell when spot is at premium above moving average
+      if (dev > 0.02) return { signal: 'SELL', confidence: 0.35 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
-    // ── Risk/DEGEN ──
-    case 'Martingale': {
-      // Double down on losses
-      if (idx < 1) return { signal: 'HOLD', confidence: 0 };
-      const dayLoss = (c.c - candles[idx - 1].c) / candles[idx - 1].c;
-      if (dayLoss < -0.03) return { signal: 'BUY', confidence: 0.9 };
-      if (dayLoss > 0.02) return { signal: 'SELL', confidence: 0.3 };
+    case 'Delta Neutral': {
+      // Very conservative — tiny positions, quick mean-reversion at extremes only
+      const rsiVal = indicators.rsi[idx];
+      const ma20 = indicators.sma20[idx];
+      if (rsiVal === null || ma20 === null) return { signal: 'HOLD', confidence: 0 };
+      // Only enter at RSI extremes with very low confidence (= tiny position)
+      if (rsiVal < 28) return { signal: 'BUY', confidence: 0.2 };
+      if (rsiVal > 72) return { signal: 'SELL', confidence: 0.2 };
       return { signal: 'HOLD', confidence: 0 };
     }
 
@@ -633,15 +925,12 @@ function strategySignal(stratName, candles, idx, indicators, agent) {
 }
 
 // ─── Backtest Engine v2 ───────────────────────────────────────
-// Fixes: day-by-day across all tokens, stop losses, trend filter,
-// market-neutral yields, correct portfolio calc, full exits
 function backtestAgent(agent, allPriceData) {
   let cash = INITIAL_CAPITAL;
   const positions = {};
   let totalTrades = 0, wins = 0, losses = 0;
   let peakValue = INITIAL_CAPITAL;
   let maxDrawdown = 0;
-  const isNeutral = MARKET_NEUTRAL.has(agent.strategy);
 
   // Pre-compute indicators for all tokens
   const tokenData = {};
@@ -657,10 +946,12 @@ function backtestAgent(agent, allPriceData) {
         sma50: sma(closes, 50),
         ema9: ema(closes, 9),
         ema12: ema(closes, 12),
+        ema20: ema(closes, 20),
         ema26: ema(closes, 26),
         rsi: rsi(closes, 14),
         bb: bollingerBands(closes, 20, 2),
         vol: volatility(closes, 14),
+        atr: atr(candles, 14),
       }
     };
     positions[token] = { qty: 0, avgCost: 0, peakPrice: 0 };
@@ -680,20 +971,6 @@ function backtestAgent(agent, allPriceData) {
   const maxDays = Math.max(...validTokens.map(t => tokenData[t].candles.length));
 
   for (let i = 20; i < maxDays; i++) {
-    if (isNeutral) {
-      // Market-neutral: apply yield directly to cash
-      const avgVol = validTokens.reduce((sum, t) => {
-        const idx = Math.min(i, tokenData[t].candles.length - 1);
-        return sum + (tokenData[t].indicators.vol[idx] || 0.02);
-      }, 0) / validTokens.length;
-
-      const yieldReturn = computeNeutralYield(agent.strategy, avgVol, agent.rng, agent.aggression);
-      if (yieldReturn !== 0) {
-        cash = Math.max(0, cash + cash * yieldReturn);
-        totalTrades++;
-        if (yieldReturn > 0) wins++; else losses++;
-      }
-    } else {
       // ── Stop loss check (before signals) ──
       for (const token of validTokens) {
         if (i >= tokenData[token].candles.length) continue;
@@ -746,7 +1023,7 @@ function backtestAgent(agent, allPriceData) {
           if (!isUptrend(indicators, i)) finalSignal = 'HOLD';
         }
 
-        // Portfolio value using CURRENT prices (fixed bug: was using last-day prices)
+        // Portfolio value using CURRENT prices
         const portfolioValue = cash + validTokens.reduce((sum, t) => {
           const cp = tokenData[t].candles[Math.min(i, tokenData[t].candles.length - 1)]?.c || 0;
           return sum + positions[t].qty * cp;
@@ -784,7 +1061,6 @@ function backtestAgent(agent, allPriceData) {
           totalTrades++;
         }
       }
-    }
 
     // Track drawdown
     const currentValue = cash + validTokens.reduce((sum, t) => {
@@ -821,8 +1097,8 @@ function backtestAgent(agent, allPriceData) {
 // ─── Main ─────────────────────────────────────────────────────
 async function main() {
   console.log('═══════════════════════════════════════════════════');
-  console.log('  AGENT ARENA BACKTESTER');
-  console.log('  10,000 agents / $1,000 each / Real price data');
+  console.log('  THE HIVE BACKTESTER');
+  console.log('  10,000 bees / $1,000 each / Real price data');
   console.log('═══════════════════════════════════════════════════\n');
 
   // Load price data
@@ -842,14 +1118,14 @@ async function main() {
   console.log('');
 
   // Run backtest for all agents
-  console.log('Running backtest on 10,000 agents...');
+  console.log('Running backtest on 10,000 bees...');
   const startTime = Date.now();
   const results = [];
 
   for (let i = 0; i < TOTAL_AGENTS; i++) {
     if (i % 1000 === 0 && i > 0) {
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-      console.log(`  Processed ${i.toLocaleString()} agents (${elapsed}s)`);
+      console.log(`  Processed ${i.toLocaleString()} bees (${elapsed}s)`);
     }
     const agent = generateAgent(i);
     const result = backtestAgent(agent, allPriceData);
@@ -857,7 +1133,7 @@ async function main() {
   }
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-  console.log(`  Completed all ${TOTAL_AGENTS.toLocaleString()} agents in ${elapsed}s\n`);
+  console.log(`  Completed all ${TOTAL_AGENTS.toLocaleString()} bees in ${elapsed}s\n`);
 
   // ─── Analysis ─────────────────────────────────────────
   results.sort((a, b) => b.returnPct - a.returnPct);
@@ -933,7 +1209,7 @@ async function main() {
   console.log('═══════════════════════════════════════════════════');
   console.log('  RESULTS SUMMARY');
   console.log('═══════════════════════════════════════════════════\n');
-  console.log(`  Total Agents:     ${TOTAL_AGENTS.toLocaleString()}`);
+  console.log(`  Total Bees:       ${TOTAL_AGENTS.toLocaleString()}`);
   console.log(`  Initial Capital:  $${(TOTAL_AGENTS * INITIAL_CAPITAL).toLocaleString()}`);
   console.log(`  Final Value:      $${Math.round(totalFinalValue).toLocaleString()}`);
   console.log(`  Avg Return:       ${avgReturn.toFixed(2)}%`);
@@ -944,12 +1220,12 @@ async function main() {
   console.log(`  Avg Win Rate:     ${avgWinRate.toFixed(1)}%`);
   console.log(`  Avg Max Drawdown: ${avgDrawdown.toFixed(1)}%\n`);
 
-  console.log('  TOP 10 AGENTS:');
+  console.log('  TOP 10 BEES:');
   results.slice(0, 10).forEach((r, i) => {
     console.log(`    ${i + 1}. ${r.name} #${r.id} | ${r.strategy} | ${r.returnPct > 0 ? '+' : ''}${r.returnPct.toFixed(1)}% | $${r.finalValue.toFixed(0)} | ${r.totalTrades} trades`);
   });
 
-  console.log('\n  BOTTOM 5 AGENTS:');
+  console.log('\n  BOTTOM 5 BEES:');
   results.slice(-5).forEach((r, i) => {
     console.log(`    ${TOTAL_AGENTS - 4 + i}. ${r.name} #${r.id} | ${r.strategy} | ${r.returnPct.toFixed(1)}% | $${r.finalValue.toFixed(0)}`);
   });
@@ -971,10 +1247,10 @@ async function main() {
   const startDate = dataRange[0]?.date || '?';
   const endDate = dataRange[dataRange.length - 1]?.date || '?';
 
-  let md = `# Agent Arena Backtest Report\n`;
+  let md = `# The Hive Backtest Report\n`;
   md += `**Date:** ${dateStr}\n`;
   md += `**Data Period:** ${startDate} to ${endDate} (~${dataRange.length} days)\n`;
-  md += `**Agents:** ${TOTAL_AGENTS.toLocaleString()} | **Starting Capital:** $${INITIAL_CAPITAL.toLocaleString()} each\n\n`;
+  md += `**Bees:** ${TOTAL_AGENTS.toLocaleString()} | **Starting Capital:** $${INITIAL_CAPITAL.toLocaleString()} each\n\n`;
   md += `---\n\n`;
 
   md += `## Market Context\n\n`;
@@ -993,23 +1269,23 @@ async function main() {
   md += `| Net P&L | $${Math.round(totalFinalValue - TOTAL_AGENTS * INITIAL_CAPITAL).toLocaleString()} |\n`;
   md += `| Average Return | ${avgReturn.toFixed(2)}% |\n`;
   md += `| Median Return | ${medianReturn.toFixed(2)}% |\n`;
-  md += `| Profitable Agents | ${profitable.length} (${(profitable.length / TOTAL_AGENTS * 100).toFixed(1)}%) |\n`;
-  md += `| Avg Trades per Agent | ${avgTrades.toFixed(1)} |\n`;
+  md += `| Profitable Bees | ${profitable.length} (${(profitable.length / TOTAL_AGENTS * 100).toFixed(1)}%) |\n`;
+  md += `| Avg Trades per Bee | ${avgTrades.toFixed(1)} |\n`;
   md += `| Avg Win Rate | ${avgWinRate.toFixed(1)}% |\n`;
   md += `| Avg Max Drawdown | ${avgDrawdown.toFixed(1)}% |\n`;
   md += `\n`;
 
-  md += `## Top 20 Agents\n\n`;
-  md += `| Rank | Agent | Strategy | Return | Final $ | Trades | Win Rate | Max DD |\n`;
-  md += `|------|-------|----------|--------|---------|--------|----------|--------|\n`;
+  md += `## Top 20 Bees\n\n`;
+  md += `| Rank | Bee | Strategy | Return | Final $ | Trades | Win Rate | Max DD |\n`;
+  md += `|------|-----|----------|--------|---------|--------|----------|--------|\n`;
   results.slice(0, 20).forEach((r, i) => {
     md += `| ${i + 1} | ${r.name} #${r.id} | ${r.strategy} | ${r.returnPct > 0 ? '+' : ''}${r.returnPct.toFixed(1)}% | $${r.finalValue.toFixed(0)} | ${r.totalTrades} | ${r.winRate.toFixed(0)}% | ${r.maxDrawdown.toFixed(1)}% |\n`;
   });
   md += `\n`;
 
-  md += `## Bottom 10 Agents\n\n`;
-  md += `| Rank | Agent | Strategy | Return | Final $ | Trades | Aggression |\n`;
-  md += `|------|-------|----------|--------|---------|--------|------------|\n`;
+  md += `## Bottom 10 Bees\n\n`;
+  md += `| Rank | Bee | Strategy | Return | Final $ | Trades | Aggression |\n`;
+  md += `|------|-----|----------|--------|---------|--------|------------|\n`;
   results.slice(-10).forEach((r, i) => {
     md += `| ${TOTAL_AGENTS - 9 + i} | ${r.name} #${r.id} | ${r.strategy} | ${r.returnPct.toFixed(1)}% | $${r.finalValue.toFixed(0)} | ${r.totalTrades} | ${r.aggression} |\n`;
   });
@@ -1024,24 +1300,24 @@ async function main() {
   md += `\n`;
 
   md += `## Performance by Category\n\n`;
-  md += `| Category | Agents | Avg Return | Profitable |\n`;
-  md += `|----------|--------|------------|------------|\n`;
+  md += `| Category | Bees | Avg Return | Profitable |\n`;
+  md += `|----------|------|------------|------------|\n`;
   catPerformance.forEach(c => {
     md += `| ${c.cat} | ${c.count} | ${c.avgReturn > 0 ? '+' : ''}${c.avgReturn.toFixed(2)}% | ${c.profitable}/${c.count} (${(c.profitable / c.count * 100).toFixed(0)}%) |\n`;
   });
   md += `\n`;
 
   md += `## Performance by Risk Level\n\n`;
-  md += `| Risk | Agents | Avg Return | Avg DD | Profitable |\n`;
-  md += `|------|--------|------------|--------|------------|\n`;
+  md += `| Risk | Bees | Avg Return | Avg DD | Profitable |\n`;
+  md += `|------|------|------------|--------|------------|\n`;
   riskPerformance.forEach(r => {
     md += `| ${r.risk} | ${r.count} | ${r.avgReturn > 0 ? '+' : ''}${r.avgReturn.toFixed(2)}% | ${r.avgDrawdown.toFixed(1)}% | ${r.profitable}/${r.count} (${(r.profitable / r.count * 100).toFixed(0)}%) |\n`;
   });
   md += `\n`;
 
   md += `## Performance by Aggression\n\n`;
-  md += `| Aggression | Agents | Avg Return | Profitable |\n`;
-  md += `|------------|--------|------------|------------|\n`;
+  md += `| Aggression | Bees | Avg Return | Profitable |\n`;
+  md += `|------------|------|------------|------------|\n`;
   aggrPerformance.forEach(a => {
     md += `| ${a.aggr} | ${a.count} | ${a.avgReturn > 0 ? '+' : ''}${a.avgReturn.toFixed(2)}% | ${a.profitable}/${a.count} (${(a.profitable / a.count * 100).toFixed(0)}%) |\n`;
   });
@@ -1061,44 +1337,53 @@ async function main() {
   md += `- **Best strategy:** ${bestStrat.name} (${bestStrat.cat}) with avg ${bestStrat.avgReturn > 0 ? '+' : ''}${bestStrat.avgReturn.toFixed(2)}% return and ${bestStrat.winRate.toFixed(0)}% win rate\n`;
   md += `- **Best category:** ${bestCat.cat} strategies averaged ${bestCat.avgReturn > 0 ? '+' : ''}${bestCat.avgReturn.toFixed(2)}% returns\n`;
   md += `- **Best risk level:** ${bestRisk.risk}-risk strategies averaged ${bestRisk.avgReturn > 0 ? '+' : ''}${bestRisk.avgReturn.toFixed(2)}% returns\n`;
-  md += `- **Top performing agent:** ${results[0].name} #${results[0].id} returned ${results[0].returnPct > 0 ? '+' : ''}${results[0].returnPct.toFixed(1)}% ($${INITIAL_CAPITAL} -> $${results[0].finalValue.toFixed(0)})\n`;
+  md += `- **Top performing bee:** ${results[0].name} #${results[0].id} returned ${results[0].returnPct > 0 ? '+' : ''}${results[0].returnPct.toFixed(1)}% ($${INITIAL_CAPITAL} -> $${results[0].finalValue.toFixed(0)})\n`;
   md += `\n`;
 
   md += `### What Didn't Work\n`;
   md += `- **Worst strategy:** ${worstStrat.name} (${worstStrat.cat}) with avg ${worstStrat.avgReturn.toFixed(2)}% return\n`;
   md += `- **Worst category:** ${worstCat.cat} strategies averaged ${worstCat.avgReturn.toFixed(2)}% returns\n`;
-  md += `- **Worst performing agent:** ${results[results.length - 1].name} #${results[results.length - 1].id} lost ${Math.abs(results[results.length - 1].returnPct).toFixed(1)}%\n`;
+  md += `- **Worst performing bee:** ${results[results.length - 1].name} #${results[results.length - 1].id} lost ${Math.abs(results[results.length - 1].returnPct).toFixed(1)}%\n`;
   md += `\n`;
 
   md += `### Insights\n`;
-  md += `- ${profitable.length} out of ${TOTAL_AGENTS.toLocaleString()} agents (${(profitable.length / TOTAL_AGENTS * 100).toFixed(1)}%) were profitable\n`;
+  md += `- ${profitable.length} out of ${TOTAL_AGENTS.toLocaleString()} bees (${(profitable.length / TOTAL_AGENTS * 100).toFixed(1)}%) were profitable\n`;
   md += `- Median return of ${medianReturn.toFixed(2)}% suggests the ${medianReturn >= 0 ? 'majority can generate positive returns' : 'majority struggle to beat holding cash'}\n`;
-  md += `- Average max drawdown of ${avgDrawdown.toFixed(1)}% shows ${avgDrawdown < 15 ? 'reasonable risk management across agents' : 'significant drawdown risk exists'}\n`;
-  md += `- Average of ${avgTrades.toFixed(0)} trades per agent over ~${dataRange.length} days = ~${(avgTrades / dataRange.length).toFixed(1)} trades/day\n`;
+  md += `- Average max drawdown of ${avgDrawdown.toFixed(1)}% shows ${avgDrawdown < 15 ? 'reasonable risk management across bees' : 'significant drawdown risk exists'}\n`;
+  md += `- Average of ${avgTrades.toFixed(0)} trades per bee over ~${dataRange.length} days = ~${(avgTrades / dataRange.length).toFixed(1)} trades/day\n`;
 
   const degen = byRisk['DEGEN'] || [];
   const low = byRisk['LOW'] || [];
   if (degen.length && low.length) {
     const degenAvg = degen.reduce((s, r) => s + r.returnPct, 0) / degen.length;
     const lowAvg = low.reduce((s, r) => s + r.returnPct, 0) / low.length;
-    md += `- DEGEN vs LOW risk: DEGEN agents averaged ${degenAvg.toFixed(2)}% vs LOW at ${lowAvg.toFixed(2)}% -- ${Math.abs(degenAvg) > Math.abs(lowAvg) ? 'higher risk led to more extreme outcomes' : 'conservative approaches held up better'}\n`;
+    md += `- DEGEN vs LOW risk: DEGEN bees averaged ${degenAvg.toFixed(2)}% vs LOW at ${lowAvg.toFixed(2)}% -- ${Math.abs(degenAvg) > Math.abs(lowAvg) ? 'higher risk led to more extreme outcomes' : 'conservative approaches held up better'}\n`;
   }
   md += `\n`;
 
   md += `### Methodology Notes\n`;
-  md += `- All agents start with $${INITIAL_CAPITAL.toLocaleString()} paper money\n`;
+  md += `- All bees start with $${INITIAL_CAPITAL.toLocaleString()} paper money\n`;
   md += `- Trade fees: ${TRADE_FEE * 100}% per trade + ${SLIPPAGE * 100}% slippage\n`;
   md += `- Max position size: ${MAX_POSITION_PCT * 100}% of portfolio\n`;
-  md += `- Strategies are simplified implementations of the named approach\n`;
-  md += `- Agents use dual strategies (primary + secondary) blended by confidence\n`;
+  md += `- 45 pure quantitative trading strategies across 7 categories\n`;
+  md += `- Bees use dual strategies (primary + secondary) blended by confidence\n`;
   md += `- Position sizing varies by aggression level and risk management style\n`;
   md += `- Historical data from Binance (daily OHLCV with proper O/H/L/C)\n`;
-  md += `- No look-ahead bias: agents only see data up to current candle\n`;
+  md += `- No look-ahead bias: bees only see data up to current candle\n`;
 
   // Write to Obsidian
-  const obsidianFile = path.join(OBSIDIAN_DIR, `Agent Arena Backtest - ${dateStr}.md`);
-  fs.writeFileSync(obsidianFile, md);
-  console.log(`\nReport saved to Obsidian: ${obsidianFile}`);
+  const obsidianFile = path.join(OBSIDIAN_DIR, `The Hive Backtest - ${dateStr}.md`);
+  try {
+    fs.writeFileSync(obsidianFile, md);
+    console.log(`\nReport saved to Obsidian: ${obsidianFile}`);
+  } catch (e) {
+    console.log(`\nCould not write to Obsidian (${e.message})`);
+  }
+
+  // Also save report locally
+  const reportFile = path.join(DATA_DIR, 'report.md');
+  fs.writeFileSync(reportFile, md);
+  console.log(`Report saved locally: ${reportFile}`);
 
   // Also save raw results
   const rawFile = path.join(DATA_DIR, 'results.json');
