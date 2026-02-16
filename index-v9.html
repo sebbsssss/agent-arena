@@ -318,6 +318,84 @@ color:var(--ink);font-size:12px;line-height:1.6;min-height:100vh;padding:20px 12
 .feed-box::-webkit-scrollbar-track,.tv-agents::-webkit-scrollbar-track{background:var(--surface)}
 .feed-box::-webkit-scrollbar-thumb,.tv-agents::-webkit-scrollbar-thumb{background:var(--border)}
 
+/* ═══════════════════════════════════════ */
+/* YOUR HIVE & BREEDING SYSTEM           */
+/* ═══════════════════════════════════════ */
+.hive-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.hive-count{font-size:9px;color:var(--faded)}
+.hive-empty{text-align:center;padding:40px 20px;color:var(--faded);font-size:10px;line-height:1.8;border:1px dashed var(--border);margin:16px 0}
+.hive-empty-title{font-family:'Press Start 2P',cursive;font-size:9px;color:var(--honey);margin-bottom:12px}
+
+.hive-card{position:relative;border:1px solid var(--honey);background:var(--card);padding:12px 10px;cursor:pointer;transition:all .15s;text-align:center;overflow:hidden}
+.hive-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--honey),transparent)}
+.hive-card:hover{background:var(--card-hover);transform:translateY(-2px);box-shadow:0 4px 12px rgba(244,165,25,.15)}
+.hive-card .c-id{font-size:7px;color:var(--honey)}
+.hive-card .hive-gen{position:absolute;top:6px;right:8px;font-family:'Press Start 2P',cursive;font-size:5px;color:var(--honey);background:rgba(244,165,25,.1);padding:2px 4px;border:1px solid rgba(244,165,25,.3)}
+.hive-card-actions{display:flex;gap:4px;margin-top:8px;justify-content:center}
+.hive-card-actions button{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:3px 8px;border:1px solid var(--border);background:var(--surface);color:var(--faded);cursor:pointer;transition:all .1s}
+.hive-card-actions button:hover{border-color:var(--honey);color:var(--honey)}
+.hive-card-actions .btn-del:hover{border-color:var(--red);color:var(--red)}
+
+/* Breed Modal */
+.breed-phase{display:none}
+.breed-phase.active{display:block}
+
+.parent-select{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;margin:12px 0}
+.parent-slot{border:1px solid var(--border);background:var(--card);padding:12px;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.parent-slot.filled{border-color:var(--honey)}
+.parent-slot svg{width:48px;height:48px;image-rendering:pixelated}
+.parent-search{width:100%;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:6px 8px;border:1px solid var(--border);background:var(--surface);color:var(--ink);margin-bottom:8px;outline:none}
+.parent-search:focus{border-color:var(--honey)}
+.parent-search-results{max-height:100px;overflow-y:auto;font-size:9px}
+.parent-search-results div{padding:3px 6px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.parent-search-results div:hover{background:var(--card-hover)}
+.parent-search-results svg{width:16px;height:16px;image-rendering:pixelated}
+.parent-x{font-family:'Press Start 2P',cursive;font-size:14px;color:var(--honey);align-self:center}
+.parent-name{font-family:'Press Start 2P',cursive;font-size:7px;margin-top:6px}
+.parent-strat{font-size:8px;color:var(--faded);margin-top:2px}
+
+.breed-slot-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:10px;align-items:center}
+.breed-slot-lbl{color:var(--faded);font-size:9px}
+.breed-slot-val{font-weight:600;font-size:10px;min-width:120px;text-align:right}
+.breed-slot-val.spin{animation:glitch .12s linear infinite}
+.breed-slot-src{font-size:7px;margin-left:6px;padding:1px 4px;border:1px solid var(--border)}
+.breed-slot-src.from-a{color:var(--green);border-color:var(--green)}
+.breed-slot-src.from-b{color:var(--blue);border-color:var(--blue)}
+.breed-slot-src.mutated{color:var(--honey);border-color:var(--honey);background:rgba(244,165,25,.1);animation:pulse 1s ease-in-out 3}
+
+.breed-reveal{text-align:center;padding:20px;margin:12px 0;border:1px solid var(--honey);background:var(--card);opacity:0;transform:scale(.9);transition:all .4s ease;box-shadow:0 0 20px rgba(244,165,25,.15)}
+.breed-reveal.show{opacity:1;transform:scale(1)}
+.breed-reveal svg{width:80px;height:80px;animation:bounceSmall 2s ease-in-out infinite}
+.breed-lineage{font-size:8px;color:var(--faded);margin-top:8px;line-height:1.6}
+.breed-lineage .lineage-parents{color:var(--ink)}
+.breed-lineage .lineage-arrow{color:var(--honey);font-size:12px}
+
+/* Control Panel Modal */
+.cp-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.cp-preview{text-align:center;padding:16px;border:1px solid var(--border);background:var(--card)}
+.cp-preview svg{width:80px;height:80px;image-rendering:pixelated}
+.cp-preview-name{font-family:'Press Start 2P',cursive;font-size:8px;margin-top:8px}
+
+.cp-results{padding:16px;border:1px solid var(--border);background:var(--card)}
+.cp-results-title{font-family:'Press Start 2P',cursive;font-size:7px;color:var(--honey);margin-bottom:10px;letter-spacing:.5px}
+.cp-stat{display:flex;justify-content:space-between;padding:3px 0;font-size:10px}
+.cp-stat-val{font-weight:600}
+.cp-curve-wrap{margin-top:8px;height:60px;border:1px solid var(--border);background:var(--surface);position:relative}
+.cp-curve-wrap canvas{width:100%;height:100%}
+.cp-curve-label{position:absolute;top:2px;left:4px;font-size:6px;color:var(--faded);letter-spacing:.5px}
+
+.cp-section{margin:12px 0}
+.cp-section-title{font-family:'Press Start 2P',cursive;font-size:7px;color:var(--faded);letter-spacing:1px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.cp-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.cp-row-label{font-size:9px;color:var(--faded)}
+.cp-select{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 6px;border:1px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer;outline:none;max-width:180px;text-align:right}
+.cp-select:hover{border-color:var(--honey)}
+.cp-select:focus{border-color:var(--honey)}
+.cp-select option{background:var(--card);color:var(--ink)}
+
+.cp-actions{display:flex;gap:8px;margin-top:16px}
+.cp-actions .btn{flex:1;font-size:9px}
+
 @media(max-width:640px){
 body{padding:10px 6px 60px}
 .receipt{padding:20px 14px}
@@ -342,6 +420,9 @@ body{padding:10px 6px 60px}
 .home-strat-grid{grid-template-columns:1fr 1fr}
 .home-step-num{font-size:14px;width:36px}
 .home-agents-orbit{height:140px}
+.parent-select{grid-template-columns:1fr auto 1fr;gap:8px}
+.cp-layout{grid-template-columns:1fr}
+.cp-select{max-width:140px;font-size:8px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
@@ -371,6 +452,7 @@ body{padding:10px 6px 60px}
 <button class="tab" onclick="switchView('arena')">SWARM</button>
 <button class="tab" onclick="switchView('trading')">FLOWERS</button>
 <button class="tab" onclick="switchView('leaderboard')">QUEENS</button>
+<button class="tab" onclick="switchView('hive')">YOUR HIVE</button>
 <button class="tab" id="detailTab" style="display:none" onclick="switchView('detail')">BEE</button>
 </div>
 
@@ -617,6 +699,21 @@ body{padding:10px 6px 60px}
 </div>
 </div>
 
+<!-- YOUR HIVE VIEW -->
+<div class="view" id="hiveView">
+<div class="hive-header">
+<div class="section-title">YOUR HIVE</div>
+<span class="hive-count" id="hiveCount"></span>
+</div>
+<button class="btn btn-p" onclick="openBreed()" style="width:100%;margin-bottom:16px;font-size:9px">BREED NEW BEE</button>
+<div class="grid" id="hiveGrid"></div>
+<div class="hive-empty" id="hiveEmpty">
+<div class="hive-empty-title">EMPTY HIVE</div>
+Select 2 bees from the SWARM and breed them here.<br>
+Each offspring inherits traits from both parents with a chance of mutation.
+</div>
+</div>
+
 <!-- LEADERBOARD VIEW -->
 <div class="view" id="leaderboardView">
 <div class="section-title">QUEEN CANDIDATES</div>
@@ -646,6 +743,105 @@ All foraging missions recorded on Solana // Powered by the Hive Mind<br>
 <hr class="divider">
 <div id="mintReceipt"></div>
 <div class="mint-btn-w"><button class="btn btn-p" id="mintBtn" onclick="startMint()">INSERT 0.1 SOL TO HATCH</button></div>
+</div>
+</div>
+</div>
+
+<!-- BREED MODAL -->
+<div class="modal-bg" id="breedModal">
+<div class="modal" style="max-width:520px">
+<button class="modal-x" onclick="closeBreed()">X</button>
+<div class="modal-head" id="breedTitle">BREED NEW BEE</div>
+<div class="modal-body">
+<hr class="double-line" style="margin-top:0">
+
+<!-- Phase 1: Parent Selection -->
+<div class="breed-phase active" id="breedPhase1">
+<div class="parent-select">
+<div class="parent-slot" id="parentSlotA">
+<input class="parent-search" placeholder="Search bee ID or name..." oninput="searchParent('A',this.value)">
+<div class="parent-search-results" id="parentResultsA"></div>
+</div>
+<div class="parent-x">x</div>
+<div class="parent-slot" id="parentSlotB">
+<input class="parent-search" placeholder="Search bee ID or name..." oninput="searchParent('B',this.value)">
+<div class="parent-search-results" id="parentResultsB"></div>
+</div>
+</div>
+<div class="mint-btn-w"><button class="btn btn-p" id="breedBtn" onclick="startBreed()" disabled style="width:100%">SELECT 2 PARENTS</button></div>
+</div>
+
+<!-- Phase 2: Slot Machine -->
+<div class="breed-phase" id="breedPhase2">
+<div id="breedSlots"></div>
+</div>
+
+<!-- Phase 3: Reveal -->
+<div class="breed-phase" id="breedPhase3">
+<div class="breed-reveal" id="breedReveal">
+<div id="breedRevealSvg"></div>
+<div class="mint-name" id="breedRName"></div>
+<div class="mint-sub" id="breedRSub"></div>
+<div class="breed-lineage" id="breedLineage"></div>
+</div>
+<hr class="divider">
+<div id="breedReceipt"></div>
+<div class="mint-btn-w"><button class="btn btn-p" id="breedAddBtn" onclick="addBreedToHive()" style="width:100%">ADD TO YOUR HIVE</button></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- CONTROL PANEL MODAL -->
+<div class="modal-bg" id="cpModal">
+<div class="modal" style="max-width:540px">
+<button class="modal-x" onclick="closeControlPanel()">X</button>
+<div class="modal-head" id="cpTitle">CONTROL PANEL</div>
+<div class="modal-body">
+<hr class="double-line" style="margin-top:0">
+
+<div class="cp-layout">
+<div class="cp-preview">
+<div id="cpPreviewSvg"></div>
+<div class="cp-preview-name" id="cpPreviewName"></div>
+</div>
+<div class="cp-results">
+<div class="cp-results-title">LIVE BACKTEST</div>
+<div class="cp-stat"><span>Return</span><span class="cp-stat-val" id="cpReturn">--</span></div>
+<div class="cp-stat"><span>Win Rate</span><span class="cp-stat-val" id="cpWinRate">--</span></div>
+<div class="cp-stat"><span>Sharpe</span><span class="cp-stat-val" id="cpSharpe">--</span></div>
+<div class="cp-stat"><span>Max DD</span><span class="cp-stat-val" id="cpDrawdown">--</span></div>
+<div class="cp-curve-wrap">
+<div class="cp-curve-label">EQUITY CURVE</div>
+<canvas id="cpCurve"></canvas>
+</div>
+</div>
+</div>
+
+<div class="cp-section">
+<div class="cp-section-title">TRADING TRAITS</div>
+<div class="cp-row"><span class="cp-row-label">Strategy</span><select class="cp-select" id="cpStrategy" onchange="onCpChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Secondary</span><select class="cp-select" id="cpStrategy2" onchange="onCpChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Horizon</span><select class="cp-select" id="cpHorizon" onchange="onCpChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Risk Mgmt</span><select class="cp-select" id="cpRiskStyle" onchange="onCpChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Aggression</span><select class="cp-select" id="cpAggression" onchange="onCpChange()"></select></div>
+</div>
+
+<div class="cp-section">
+<div class="cp-section-title">VISUAL TRAITS</div>
+<div class="cp-row"><span class="cp-row-label">Head</span><select class="cp-select" id="cpHead" onchange="onCpVisualChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Eyes</span><select class="cp-select" id="cpEyes" onchange="onCpVisualChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Mouth</span><select class="cp-select" id="cpMouth" onchange="onCpVisualChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Body</span><select class="cp-select" id="cpBody" onchange="onCpVisualChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Antenna</span><select class="cp-select" id="cpAntenna" onchange="onCpVisualChange()"></select></div>
+<div class="cp-row"><span class="cp-row-label">Palette</span><select class="cp-select" id="cpPalette" onchange="onCpVisualChange()"></select></div>
+</div>
+
+<div class="cp-actions">
+<button class="btn btn-p" onclick="saveControlPanel()">SAVE CHANGES</button>
+<button class="btn" onclick="resetControlPanel()">RESET</button>
+</div>
 </div>
 </div>
 </div>
@@ -1473,10 +1669,11 @@ if(name==='home')tabs[0].classList.add('active');
 else if(name==='arena')tabs[1].classList.add('active');
 else if(name==='trading'){tabs[2].classList.add('active');tvStop();tvStart()}
 else if(name==='leaderboard'){tabs[3].classList.add('active');renderLeaderboard()}
+else if(name==='hive'){tabs[4].classList.add('active');renderHive()}
 else if(name==='detail'){
 document.getElementById('detailTab').classList.add('active');
 const backBtn=document.getElementById('detailBackBtn');
-const labels={arena:'SWARM',trading:'FLOWERS',leaderboard:'QUEENS',home:'HIVE'};
+const labels={arena:'SWARM',trading:'FLOWERS',leaderboard:'QUEENS',hive:'YOUR HIVE',home:'HIVE'};
 backBtn.innerHTML='&lt; BACK TO '+(labels[previousView]||'ARENA');
 }
 
@@ -1764,6 +1961,561 @@ loop:true,
 alternate:true,
 ease:'inOutSine'
 });
+}
+
+// ═══════════════════════════════════════
+// YOUR HIVE — LOCALSTORAGE
+// ═══════════════════════════════════════
+const HIVE_KEY='thehive_collection';
+function loadHive(){try{return JSON.parse(localStorage.getItem(HIVE_KEY))||[]}catch{return[]}}
+function saveHive(h){localStorage.setItem(HIVE_KEY,JSON.stringify(h))}
+function addToHive(bee){const h=loadHive();h.unshift(bee);saveHive(h)}
+function removeFromHive(bid){saveHive(loadHive().filter(b=>b.id!==bid))}
+
+// ═══════════════════════════════════════
+// CLIENT-SIDE BACKTEST ENGINE
+// ═══════════════════════════════════════
+const SOL_CANDLES=[{"o":194.47,"h":196.24,"l":186.3,"c":188.27,"v":383704848},{"o":188.26,"h":189.72,"l":174.63,"c":177.53,"v":779271191},{"o":177.53,"h":179.09,"l":160.88,"c":169.32,"v":1061518549},{"o":169.32,"h":174.3,"l":163.75,"c":168.93,"v":590112453},{"o":168.94,"h":176.65,"l":167.66,"c":176,"v":508528835},{"o":176,"h":180.52,"l":167.15,"c":168.94,"v":715436162},{"o":168.94,"h":174.68,"l":168.07,"c":172.07,"v":324983318},{"o":172.07,"h":173.07,"l":166.42,"c":167.94,"v":252136319},{"o":167.94,"h":169.69,"l":138,"c":141.81,"v":1226692646},{"o":141.81,"h":147.09,"l":131.91,"c":144.33,"v":1635111011},{"o":144.33,"h":145.19,"l":130.65,"c":135.32,"v":736842199},{"o":135.33,"h":142.9,"l":134.71,"c":137.68,"v":599160526},{"o":137.68,"h":148.72,"l":125.55,"c":148.18,"v":1368611825},{"o":148.18,"h":151.25,"l":138.57,"c":143.66,"v":597723584},{"o":143.66,"h":179.85,"l":140.04,"c":178.71,"v":2212052717},{"o":178.72,"h":179.47,"l":139.21,"c":142.16,"v":1748078985},{"o":142.16,"h":147,"l":130.66,"c":144.79,"v":1438316455},{"o":144.8,"h":149.73,"l":140.18,"c":146.28,"v":706791297},{"o":146.27,"h":152.9,"l":142.44,"c":143.31,"v":656676725},{"o":143.3,"h":150.88,"l":135.04,"c":139.39,"v":1039508735},{"o":139.39,"h":141.09,"l":135.29,"c":137.01,"v":295310261},{"o":137.01,"h":139.88,"l":125.41,"c":126.51,"v":514516598},{"o":126.52,"h":131.57,"l":115.47,"c":118.32,"v":820279150},{"o":118.32,"h":128.43,"l":112,"c":125.35,"v":783022212},{"o":125.35,"h":131.33,"l":121.22,"c":126.62,"v":552333768},{"o":126.61,"h":128.76,"l":120.76,"c":123.37,"v":352338027},{"o":123.36,"h":136.03,"l":122.98,"c":133.54,"v":468530951},{"o":133.53,"h":136.53,"l":132.44,"c":135.86,"v":257628407},{"o":135.86,"h":136.71,"l":125.21,"c":126.13,"v":360794496},{"o":126.13,"h":130.64,"l":125.55,"c":128.01,"v":347309565},{"o":128.01,"h":128.19,"l":121.76,"c":125.33,"v":395405699},{"o":125.33,"h":136.08,"l":124.2,"c":135.33,"v":541158129},{"o":135.33,"h":136.12,"l":126.65,"c":127.6,"v":340143751},{"o":127.6,"h":130.18,"l":124.81,"c":128.48,"v":306105568},{"o":128.47,"h":131.84,"l":127.8,"c":128.51,"v":194061127},{"o":128.5,"h":134.06,"l":128.21,"c":132.84,"v":232208409},{"o":132.85,"h":144.96,"l":132.04,"c":141.01,"v":638280712},{"o":141.01,"h":147.48,"l":138.17,"c":143.64,"v":505738905},{"o":143.64,"h":145.49,"l":135.89,"c":137.34,"v":437189264},{"o":137.35,"h":140.22,"l":135.63,"c":138.43,"v":341254156},{"o":138.44,"h":139.05,"l":127.69,"c":129.49,"v":515501341},{"o":129.5,"h":130.54,"l":122.68,"c":124.58,"v":329643080},{"o":124.58,"h":127.08,"l":123,"c":124.82,"v":218155181},{"o":124.83,"h":127.81,"l":122.75,"c":124.54,"v":468042538},{"o":124.53,"h":130.55,"l":123.74,"c":126.67,"v":452578878},{"o":126.68,"h":136.21,"l":117,"c":117.42,"v":796943492},{"o":117.42,"h":120.94,"l":112.24,"c":117.17,"v":683637733},{"o":117.17,"h":124,"l":113.25,"c":122.79,"v":677703416},{"o":122.8,"h":122.85,"l":117.15,"c":120.32,"v":213707960},{"o":120.33,"h":121.13,"l":103.81,"c":105.91,"v":547868774},{"o":105.9,"h":113,"l":95.26,"c":106.99,"v":1310680815},{"o":106.98,"h":112.58,"l":102.96,"c":105.4,"v":630835932},{"o":105.4,"h":121,"l":101.26,"c":119.05,"v":1033143449},{"o":119.05,"h":119.3,"l":108.21,"c":112.81,"v":632204181},{"o":112.8,"h":122.65,"l":112.16,"c":121.41,"v":514950895},{"o":121.41,"h":134.11,"l":119.41,"c":132.24,"v":588559519},{"o":132.24,"h":133.96,"l":125.32,"c":128.38,"v":525575878},{"o":128.38,"h":136.13,"l":127.98,"c":129.42,"v":546940838},{"o":129.41,"h":134.45,"l":125.82,"c":126.11,"v":446714548},{"o":126.1,"h":133.91,"l":123.49,"c":131.33,"v":680727730},{"o":131.33,"h":136.2,"l":129.5,"c":134.83,"v":508520833},{"o":134.84,"h":136.02,"l":132.47,"c":134.04,"v":343312223},{"o":134.05,"h":140.5,"l":133.58,"c":139.87,"v":389745180},{"o":139.86,"h":141.96,"l":135.64,"c":137.86,"v":482908343},{"o":137.86,"h":143.25,"l":133.82,"c":136.56,"v":645692434},{"o":136.57,"h":150.23,"l":134.68,"c":148.79,"v":727917405},{"o":148.78,"h":154.21,"l":147.13,"c":151.1,"v":724657996},{"o":151.1,"h":152.9,"l":144.87,"c":152.55,"v":527261359},{"o":152.55,"h":157,"l":149.87,"c":150.82,"v":647250679},{"o":150.82,"h":153.17,"l":147.75,"c":149.21,"v":264884274},{"o":149.22,"h":150.41,"l":145.51,"c":147.98,"v":237125168},{"o":147.97,"h":153.4,"l":144.63,"c":147.84,"v":522023426},{"o":147.84,"h":150.39,"l":145,"c":146.31,"v":369541045},{"o":146.3,"h":148.67,"l":140.32,"c":147.54,"v":403132464},{"o":147.54,"h":153.99,"l":147.54,"c":150.85,"v":458689825},{"o":150.85,"h":151.91,"l":147.3,"c":148.05,"v":332262057},{"o":148.04,"h":149.05,"l":145.82,"c":146.71,"v":207747278},{"o":146.71,"h":147.81,"l":143.5,"c":143.95,"v":235442072},{"o":143.94,"h":147.73,"l":142.5,"c":146.72,"v":295411016},{"o":146.72,"h":147.23,"l":141.41,"c":146.88,"v":339458035},{"o":146.89,"h":149.54,"l":144.68,"c":147.32,"v":358909989},{"o":147.32,"h":164.6,"l":147.08,"c":164.46,"v":947386330},{"o":164.46,"h":176.15,"l":161.07,"c":172.78,"v":1066435830},{"o":172.77,"h":178.98,"l":168.72,"c":177.89,"v":576546707},{"o":177.89,"h":180.26,"l":169.35,"c":173.19,"v":560754526},{"o":173.2,"h":181.46,"l":168.31,"c":174.22,"v":1096750784},{"o":174.22,"h":184.83,"l":166.18,"c":183.75,"v":805977157},{"o":183.75,"h":184.88,"l":173.23,"c":176.64,"v":650301806},{"o":176.63,"h":178.33,"l":166.7,"c":169.16,"v":607575970},{"o":169.16,"h":174.21,"l":166.36,"c":167.4,"v":473923634},{"o":167.4,"h":169.99,"l":164.01,"c":165.94,"v":377239176},{"o":165.94,"h":176.77,"l":164.54,"c":173.3,"v":544510555},{"o":173.3,"h":173.94,"l":159.44,"c":166.86,"v":670683466},{"o":166.87,"h":173.11,"l":164.51,"c":168.59,"v":526700157},{"o":168.59,"h":175.99,"l":165.51,"c":173.53,"v":749188809},{"o":173.54,"h":180.87,"l":172.59,"c":179.68,"v":640424778},{"o":179.68,"h":187.71,"l":173.23,"c":174.01,"v":1104030044},{"o":174,"h":178.33,"l":172.5,"c":175.87,"v":407150995},{"o":175.87,"h":176.88,"l":169.14,"c":175.74,"v":435707799},{"o":175.75,"h":179.02,"l":173.48,"c":174.91,"v":391142612},{"o":174.92,"h":179.41,"l":171.24,"c":176.71,"v":452738960},{"o":176.72,"h":177.45,"l":168.92,"c":172.21,"v":437379320},{"o":172.22,"h":175.34,"l":165.96,"c":166.71,"v":450903344},{"o":166.71,"h":167.51,"l":155.22,"c":156.2,"v":609076480},{"o":156.2,"h":158.01,"l":152.14,"c":156.45,"v":364885612},{"o":156.45,"h":157.92,"l":150.59,"c":157.68,"v":315215977},{"o":157.68,"h":158.93,"l":151.67,"c":156.83,"v":386842477},{"o":156.83,"h":163.64,"l":154.14,"c":155.19,"v":455003938},{"o":155.19,"h":157.97,"l":152.94,"c":153.26,"v":310274443},{"o":153.27,"h":154.61,"l":141.53,"c":144.29,"v":634979838},{"o":144.28,"h":152.39,"l":144.11,"c":147.83,"v":322608804},{"o":147.82,"h":152.84,"l":146.84,"c":150.06,"v":212333840},{"o":150.07,"h":155.3,"l":147.88,"c":152.45,"v":236874132},{"o":152.45,"h":161.73,"l":149.58,"c":161.16,"v":478105972},{"o":161.16,"h":165.67,"l":156.32,"c":165.12,"v":578045039},{"o":165.12,"h":168.36,"l":159.21,"c":160.97,"v":663220132},{"o":160.98,"h":161.28,"l":152.02,"c":152.32,"v":454850637},{"o":152.32,"h":152.59,"l":140.21,"c":148.6,"v":775171113},{"o":148.6,"h":148.7,"l":141.97,"c":144.64,"v":244007517},{"o":144.65,"h":153.54,"l":144.22,"c":152.97,"v":422563513},{"o":152.97,"h":158.8,"l":150.3,"c":150.72,"v":556278400},{"o":150.73,"h":154.33,"l":145.61,"c":147.57,"v":508658147},{"o":147.58,"h":149.28,"l":143.65,"c":146.34,"v":409856194},{"o":146.35,"h":147.9,"l":142.92,"c":147.04,"v":332397675},{"o":147.04,"h":148.81,"l":135.69,"c":140.11,"v":483166807},{"o":140.11,"h":142.6,"l":130.9,"c":135.43,"v":390271800},{"o":135.43,"h":137.62,"l":126,"c":131.71,"v":557857428},{"o":131.71,"h":146.92,"l":130.68,"c":144.51,"v":627079581},{"o":144.51,"h":146.77,"l":142.31,"c":145.92,"v":395980461},{"o":145.93,"h":147.95,"l":142.25,"c":143.57,"v":324533547},{"o":143.57,"h":148,"l":138.62,"c":139.06,"v":360989063},{"o":139.05,"h":144.85,"l":137.14,"c":142.09,"v":349943506},{"o":142.09,"h":152.7,"l":141.13,"c":150.72,"v":391373738},{"o":150.73,"h":154.77,"l":149.36,"c":153.32,"v":325934665},{"o":153.32,"h":159.99,"l":149.45,"c":154.81,"v":598342659},{"o":154.82,"h":155.64,"l":144.85,"c":146.88,"v":413588503},{"o":146.87,"h":154.47,"l":145.85,"c":152.27,"v":399566858},{"o":152.28,"h":156.35,"l":149.86,"c":152.36,"v":411857243},{"o":152.35,"h":153.88,"l":145.22,"c":147.7,"v":344301514},{"o":147.69,"h":148.7,"l":145.9,"c":147.55,"v":173152978},{"o":147.55,"h":153.89,"l":146.78,"c":151.86,"v":374754049},{"o":151.86,"h":153.6,"l":147.7,"c":148.88,"v":327954661},{"o":148.89,"h":152.88,"l":147.85,"c":151.67,"v":408864092},{"o":151.68,"h":157.93,"l":150.53,"c":157.05,"v":448417630},{"o":157.06,"h":165.43,"l":155.64,"c":164.34,"v":547305236},{"o":164.33,"h":168.2,"l":159.54,"c":162.93,"v":715116916},{"o":162.92,"h":163.9,"l":157.74,"c":160.69,"v":328647416},{"o":160.7,"h":164.19,"l":159.63,"c":161.15,"v":312565044},{"o":161.15,"h":168.65,"l":160.61,"c":162.21,"v":658265227},{"o":162.21,"h":164.26,"l":157.23,"c":163.98,"v":589073860},{"o":163.98,"h":176,"l":161.51,"c":173.63,"v":849924900},{"o":173.62,"h":178.19,"l":168.71,"c":175.87,"v":781437222},{"o":175.88,"h":184.67,"l":173.24,"c":177.28,"v":931893082},{"o":177.28,"h":178.61,"l":174,"c":176.96,"v":363940083},{"o":176.97,"h":183.66,"l":176.33,"c":181.43,"v":666377254},{"o":181.44,"h":199.28,"l":178.25,"c":195.72,"v":1245489002},{"o":195.72,"h":206.3,"l":193.75,"c":205.7,"v":1728386077},{"o":205.7,"h":205.75,"l":183.97,"c":189.4,"v":1070982208},{"o":189.4,"h":191.87,"l":179.21,"c":182.87,"v":971502034},{"o":182.88,"h":186.85,"l":175.63,"c":186.76,"v":806409380},{"o":186.75,"h":189.78,"l":184.29,"c":184.88,"v":331235850},{"o":184.89,"h":190.7,"l":184.53,"c":188.64,"v":418620553},{"o":188.64,"h":195.26,"l":182.16,"c":183.11,"v":768873080},{"o":183.1,"h":186.68,"l":178.3,"c":181.48,"v":463596651},{"o":181.47,"h":182.56,"l":170.29,"c":177.77,"v":585983083},{"o":177.77,"h":182.7,"l":171.44,"c":172.22,"v":466405401},{"o":172.22,"h":172.26,"l":159.2,"c":162.71,"v":722230247},{"o":162.71,"h":165.3,"l":155.83,"c":158.48,"v":355113009},{"o":158.49,"h":163.14,"l":156.28,"c":161.97,"v":370496366},{"o":161.98,"h":169.8,"l":161.26,"c":169.55,"v":444266444},{"o":169.55,"h":171.73,"l":161.3,"c":164.09,"v":425083042},{"o":164.09,"h":169.93,"l":161.13,"c":168.09,"v":297879603},{"o":168.1,"h":175.51,"l":166.7,"c":175.36,"v":515712928},{"o":175.37,"h":179.66,"l":173.43,"c":176.78,"v":648764864},{"o":176.79,"h":183.45,"l":176.64,"c":179.95,"v":600713702},{"o":179.96,"h":186.18,"l":177.51,"c":182.66,"v":764487779},{"o":182.67,"h":186.8,"l":173.43,"c":174.84,"v":716297041},{"o":174.83,"h":193.76,"l":173.6,"c":191.78,"v":928619385},{"o":191.77,"h":204.96,"l":191.48,"c":201.51,"v":1420646837},{"o":201.51,"h":209.86,"l":186.68,"c":192.47,"v":1785079919},{"o":192.46,"h":198.07,"l":183.3,"c":185.72,"v":829105705},{"o":185.71,"h":190.06,"l":185.2,"c":189.6,"v":394159922},{"o":189.61,"h":195.89,"l":187.35,"c":190.99,"v":434881254},{"o":191,"h":191.33,"l":180,"c":182.94,"v":618792821},{"o":182.94,"h":185.87,"l":175.69,"c":176.22,"v":585480412},{"o":176.22,"h":187.97,"l":176.04,"c":187.94,"v":631568652},{"o":187.95,"h":190.1,"l":179.43,"c":180.29,"v":539342225},{"o":180.3,"h":202.4,"l":177.27,"c":200.69,"v":1256886661},{"o":200.69,"h":208.62,"l":195.26,"c":204.14,"v":973536840},{"o":204.15,"h":211.99,"l":201.09,"c":205.98,"v":1481731933},{"o":205.99,"h":213.6,"l":185.33,"c":187.2,"v":1582418695},{"o":187.19,"h":198.1,"l":185.58,"c":195.86,"v":902012356},{"o":195.85,"h":212.08,"l":193.78,"c":202.95,"v":1604543620},{"o":202.95,"h":216.89,"l":201.72,"c":214.43,"v":1535414274},{"o":214.43,"h":218,"l":199.85,"c":205.08,"v":1804668250},{"o":205.09,"h":207.06,"l":197.52,"c":202.7,"v":788507478},{"o":202.7,"h":206.66,"l":200.28,"c":200.62,"v":673804992},{"o":200.62,"h":204.58,"l":194.19,"c":197.32,"v":888774734},{"o":197.32,"h":209.68,"l":196.77,"c":209.65,"v":995253298},{"o":209.64,"h":213.02,"l":207.42,"c":210.77,"v":853869393},{"o":210.77,"h":211.94,"l":201.84,"c":202.32,"v":562140700},{"o":202.32,"h":210,"l":200.95,"c":203.36,"v":845694210},{"o":203.37,"h":204.68,"l":199.32,"c":200.16,"v":299268104},{"o":200.17,"h":207.95,"l":200.12,"c":206.35,"v":452766240},{"o":206.35,"h":217.11,"l":205.59,"c":214.11,"v":1218755449},{"o":214.11,"h":219.79,"l":210.79,"c":217.21,"v":1074352910},{"o":217.22,"h":226,"l":215.09,"c":224.07,"v":1068145608},{"o":224.06,"h":228.95,"l":221.72,"c":228.73,"v":982824603},{"o":228.73,"h":244.04,"l":228.11,"c":242.18,"v":1401494582},{"o":242.18,"h":244.14,"l":235.73,"c":242.38,"v":797410753},{"o":242.38,"h":249.6,"l":239.23,"c":239.76,"v":1020860755},{"o":239.75,"h":244,"l":230.15,"c":234.31,"v":1116796444},{"o":234.32,"h":240.95,"l":231.26,"c":236.96,"v":751087110},{"o":236.96,"h":246.62,"l":232.23,"c":244.84,"v":1131152511},{"o":244.84,"h":253.51,"l":242.58,"c":247.5,"v":969547754},{"o":247.5,"h":248.57,"l":235.12,"c":238.53,"v":816472209},{"o":238.53,"h":241.22,"l":236.91,"c":239.48,"v":370629859},{"o":239.48,"h":241.82,"l":235.32,"c":236.16,"v":332349584},{"o":236.16,"h":236.96,"l":214.5,"c":220.38,"v":1306702325},{"o":220.39,"h":221.71,"l":212.34,"c":213.3,"v":749395008},{"o":213.29,"h":216.45,"l":204.81,"c":211.6,"v":934723853},{"o":211.61,"h":212.44,"l":191.32,"c":192.74,"v":1356874817},{"o":192.73,"h":205.52,"l":190.8,"c":205.17,"v":1107437560},{"o":205.16,"h":205.43,"l":199.88,"c":203.46,"v":426788361},{"o":203.47,"h":211,"l":198,"c":210.83,"v":447175241},{"o":210.83,"h":214.74,"l":204.58,"c":212.75,"v":674793151},{"o":212.74,"h":213.67,"l":204.29,"c":208.68,"v":679647220},{"o":208.68,"h":222.77,"l":206.31,"c":222.04,"v":873666055},{"o":222.04,"h":234.99,"l":219.52,"c":234.74,"v":1041743948},{"o":234.74,"h":237,"l":227.13,"c":232.84,"v":977118748},{"o":232.84,"h":234.05,"l":224.07,"c":227.86,"v":420089668},{"o":227.86,"h":237.22,"l":226.45,"c":228.56,"v":718004023},{"o":228.56,"h":237.79,"l":227.55,"c":232.35,"v":696237930},{"o":232.35,"h":235.21,"l":219.7,"c":219.97,"v":999073406},{"o":219.98,"h":229.72,"l":217.3,"c":229.02,"v":692169445},{"o":229.03,"h":229.69,"l":216.53,"c":220.93,"v":728443052},{"o":220.93,"h":224.46,"l":168.79,"c":188.43,"v":1933764148},{"o":188.43,"h":191.05,"l":172.58,"c":177.62,"v":1336674582},{"o":177.63,"h":199,"l":173,"c":197,"v":1212033480},{"o":196.99,"h":209.28,"l":190.02,"c":208.69,"v":1243650930},{"o":208.69,"h":211.25,"l":191.03,"c":202.44,"v":1468181584},{"o":202.45,"h":208.91,"l":192.04,"c":193.84,"v":1077459951},{"o":193.84,"h":198.42,"l":182.03,"c":184.85,"v":1031907452},{"o":184.84,"h":187.55,"l":174.06,"c":181.96,"v":1105131380},{"o":181.97,"h":188.26,"l":181.75,"c":187.56,"v":390464631},{"o":187.55,"h":192.29,"l":183.19,"c":187.86,"v":467903352},{"o":187.86,"h":194.5,"l":183.82,"c":189.71,"v":603125239},{"o":189.71,"h":197.71,"l":182.72,"c":185.63,"v":882667767},{"o":185.62,"h":187.45,"l":177.04,"c":180.12,"v":728436137},{"o":180.13,"h":193.45,"l":179.68,"c":191.35,"v":660476128},{"o":191.36,"h":197,"l":188.83,"c":193.59,"v":645504080},{"o":193.58,"h":195.25,"l":191.19,"c":193.84,"v":314665641},{"o":193.84,"h":202.43,"l":191.9,"c":200.03,"v":509121280},{"o":200.03,"h":205.33,"l":197.34,"c":198.7,"v":708336575},{"o":198.71,"h":203.99,"l":190.22,"c":194.15,"v":859454239},{"o":194.16,"h":201.7,"l":189.37,"c":193.88,"v":904296220},{"o":193.89,"h":198.19,"l":178.65,"c":184.69,"v":951567373},{"o":184.69,"h":190.26,"l":183.7,"c":187.21,"v":595975739},{"o":187.21,"h":187.55,"l":183.79,"c":186.35,"v":276116739},{"o":186.35,"h":188.34,"l":182,"c":187.71,"v":326634314},{"o":187.71,"h":189.13,"l":163.15,"c":166.06,"v":1264049328},{"o":166.06,"h":168.42,"l":145.85,"c":155.03,"v":1304788600},{"o":155.04,"h":163.97,"l":147.29,"c":162.37,"v":731570307},{"o":162.37,"h":162.91,"l":153.45,"c":155.28,"v":566130763},{"o":155.27,"h":164.48,"l":149.82,"c":161.79,"v":661451644},{"o":161.8,"h":164.89,"l":155.8,"c":158.02,"v":399996303},{"o":158.01,"h":166.57,"l":155.11,"c":164.53,"v":520708062},{"o":164.53,"h":170.48,"l":163.42,"c":167.31,"v":607111109},{"o":167.31,"h":171.94,"l":153.93,"c":154.63,"v":766449926},{"o":154.63,"h":161.14,"l":151.2,"c":153.42,"v":645568637},{"o":153.43,"h":157.2,"l":141.04,"c":144.73,"v":812546001},{"o":144.74,"h":145.68,"l":135.76,"c":138.92,"v":871175641},{"o":138.93,"h":144.69,"l":138.61,"c":139.61,"v":332993048},{"o":139.6,"h":143.38,"l":134.42,"c":137.17,"v":468359687},{"o":137.17,"h":143.28,"l":128.82,"c":130.99,"v":766512711},{"o":131,"h":142.17,"l":129,"c":140.69,"v":757005301},{"o":140.68,"h":142.84,"l":130.53,"c":137.06,"v":583711755},{"o":137.06,"h":144.8,"l":131.11,"c":133.67,"v":972668411},{"o":133.67,"h":135.06,"l":121.66,"c":128.68,"v":1059214776},{"o":128.69,"h":129.94,"l":125.08,"c":127.59,"v":332301149},{"o":127.6,"h":133.54,"l":127.56,"c":130.58,"v":368727256},{"o":130.58,"h":139.87,"l":128.44,"c":138.44,"v":632869857},{"o":138.43,"h":140.5,"l":133.13,"c":138.96,"v":409226323},{"o":138.96,"h":144.75,"l":135.5,"c":143.02,"v":562094537},{"o":143.01,"h":144.29,"l":140.47,"c":140.85,"v":331918082},{"o":140.85,"h":143.6,"l":136.01,"c":137.33,"v":490598697},{"o":137.33,"h":138.1,"l":134.76,"c":135.91,"v":254173126},{"o":135.92,"h":140.19,"l":133.26,"c":133.48,"v":357882225},{"o":133.48,"h":133.74,"l":123.11,"c":126.66,"v":635198829},{"o":126.66,"h":140.88,"l":126.01,"c":138.68,"v":675106832},{"o":138.67,"h":146.08,"l":137.76,"c":144.67,"v":560511341},{"o":144.67,"h":146.91,"l":137.8,"c":139.01,"v":383629222},{"o":139.01,"h":140.75,"l":130.73,"c":133.29,"v":457172027},{"o":133.29,"h":134.13,"l":131.28,"c":132.19,"v":178276610},{"o":132.2,"h":136.35,"l":127.7,"c":132.24,"v":413797116},{"o":132.25,"h":139.36,"l":131.52,"c":133.25,"v":440265639},{"o":133.24,"h":144.93,"l":131.62,"c":137.88,"v":623533691},{"o":137.87,"h":142.57,"l":135.39,"c":136.26,"v":624546006},{"o":136.26,"h":137.79,"l":129,"c":136.41,"v":581262368},{"o":136.41,"h":140.12,"l":130.35,"c":132.27,"v":542914566},{"o":132.28,"h":134.28,"l":131.6,"c":133.14,"v":195790565},{"o":133.13,"h":133.66,"l":127.98,"c":129.4,"v":227172805},{"o":129.39,"h":135.43,"l":123.63,"c":127.81,"v":505572419},{"o":127.81,"h":130.14,"l":124.87,"c":129.15,"v":368318615},{"o":129.15,"h":133.99,"l":121.36,"c":123.27,"v":574312574},{"o":123.28,"h":129.05,"l":116.88,"c":119.6,"v":589276514},{"o":119.6,"h":127.87,"l":117.61,"c":126.27,"v":508624593},{"o":126.27,"h":126.89,"l":125.3,"c":125.81,"v":155070613},{"o":125.8,"h":126.62,"l":123.4,"c":126.03,"v":227009326},{"o":126.03,"h":128.78,"l":124.2,"c":125.93,"v":337356986},{"o":125.93,"h":126.93,"l":122.16,"c":124.01,"v":303158690},{"o":124.02,"h":124.3,"l":120.63,"c":122.53,"v":196266335},{"o":122.52,"h":124.46,"l":119.71,"c":120.06,"v":222666013},{"o":120.05,"h":125.14,"l":119.24,"c":122.26,"v":407793790},{"o":122.27,"h":125.08,"l":121.86,"c":124.73,"v":167427636},{"o":124.74,"h":125.64,"l":123.08,"c":125.27,"v":227049721},{"o":125.27,"h":130.16,"l":122.36,"c":123.28,"v":543723305},{"o":123.28,"h":126.52,"l":122.58,"c":125.01,"v":308730777},{"o":125.02,"h":132.75,"l":122.99,"c":124.65,"v":368493595},{"o":124.64,"h":127.25,"l":124.15,"c":126.9,"v":217068948},{"o":126.91,"h":133.25,"l":125.84,"c":132.29,"v":378213188},{"o":132.28,"h":133.99,"l":129.6,"c":133.37,"v":200295922},{"o":133.37,"h":135.54,"l":133.12,"c":134.12,"v":242985170},{"o":134.12,"h":139.87,"l":133.18,"c":137.9,"v":452911084},{"o":137.91,"h":143.48,"l":136.19,"c":141.08,"v":526491232},{"o":141.08,"h":141.4,"l":134.41,"c":136.39,"v":319140450},{"o":136.39,"h":140.07,"l":132.67,"c":138.37,"v":425211873},{"o":138.37,"h":141.17,"l":134.98,"c":135.97,"v":522670163},{"o":135.96,"h":137.05,"l":135.37,"c":135.84,"v":136346331},{"o":135.85,"h":141.6,"l":135.75,"c":139.7,"v":306185407},{"o":139.69,"h":144.4,"l":138.34,"c":139.22,"v":587559710},{"o":139.21,"h":148.74,"l":137.82,"c":145.51,"v":598713149},{"o":145.52,"h":148.44,"l":143.37,"c":146.69,"v":539088198},{"o":146.7,"h":146.73,"l":140.9,"c":142.4,"v":354149726},{"o":142.41,"h":145.55,"l":140.26,"c":144.89,"v":271758950},{"o":144.9,"h":144.99,"l":143.32,"c":143.72,"v":120390445},{"o":143.73,"h":144,"l":137.74,"c":137.87,"v":266417011},{"o":137.87,"h":137.87,"l":130,"c":133.44,"v":397766014},{"o":133.44,"h":134.63,"l":124.68,"c":125.8,"v":456200360},{"o":125.81,"h":132.17,"l":125.26,"c":129.54,"v":406727656},{"o":129.53,"h":130.94,"l":126.73,"c":128.47,"v":233570688},{"o":128.47,"h":130.2,"l":125.28,"c":127.43,"v":261243944},{"o":127.43,"h":128.12,"l":126.64,"c":127.21,"v":102804908},{"o":127.22,"h":127.46,"l":117.15,"c":118.85,"v":549164530},{"o":118.85,"h":125.6,"l":118.53,"c":124.24,"v":289767656},{"o":124.24,"h":127.84,"l":123.12,"c":127.19,"v":255047826},{"o":127.18,"h":128.34,"l":124.78,"c":125.35,"v":252933660},{"o":125.34,"h":125.51,"l":115.39,"c":117.82,"v":444597605},{"o":117.82,"h":119.12,"l":112.14,"c":117.59,"v":552023487},{"o":117.6,"h":118.85,"l":96.4,"c":105.58,"v":920582075},{"o":105.58,"h":106.69,"l":98.02,"c":100.79,"v":432839562},{"o":100.78,"h":106.12,"l":95.95,"c":104.55,"v":566609042},{"o":104.54,"h":105.1,"l":96.64,"c":97.89,"v":455865168},{"o":97.89,"h":99.67,"l":89.3,"c":92.12,"v":589863840},{"o":92.11,"h":93.43,"l":77.6,"c":78.35,"v":874788984},{"o":78.34,"h":89.84,"l":67.5,"c":87.46,"v":944308125},{"o":87.45,"h":89.2,"l":84.16,"c":87.59,"v":389575196},{"o":87.59,"h":89.08,"l":85.77,"c":86.99,"v":222107656},{"o":86.99,"h":88.69,"l":82.86,"c":86.77,"v":315211864},{"o":86.77,"h":87.49,"l":81.91,"c":82.99,"v":251317964},{"o":82.99,"h":84.39,"l":78.04,"c":79.3,"v":308205411},{"o":79.31,"h":82.25,"l":76.6,"c":78.4,"v":254145720},{"o":78.39,"h":85.63,"l":77.53,"c":84.33,"v":275784441},{"o":84.34,"h":88.9,"l":84.21,"c":88.06,"v":234370543},{"o":88.06,"h":91.26,"l":87.31,"c":91,"v":123695092}];
+
+// Technical indicators (ported from backtest.js)
+function btSma(data,p){const r=[];for(let i=0;i<data.length;i++){if(i<p-1){r.push(null);continue}let s=0;for(let j=i-p+1;j<=i;j++)s+=data[j];r.push(s/p)}return r}
+function btEma(data,p){const r=[];const k=2/(p+1);let prev=null;for(let i=0;i<data.length;i++){if(i<p-1){r.push(null);continue}if(prev===null){let s=0;for(let j=i-p+1;j<=i;j++)s+=data[j];prev=s/p}else{prev=data[i]*k+prev*(1-k)}r.push(prev)}return r}
+function btRsi(closes,p=14){const r=[];for(let i=0;i<closes.length;i++){if(i<p){r.push(null);continue}let g=0,l=0;for(let j=i-p+1;j<=i;j++){const d=closes[j]-closes[j-1];if(d>0)g+=d;else l-=d}const ag=g/p,al=l/p;const rs=al===0?100:ag/al;r.push(100-(100/(1+rs)))}return r}
+function btBB(closes,p=20,m=2){const ma=btSma(closes,p);const u=[],lo=[],bw=[];for(let i=0;i<closes.length;i++){if(ma[i]===null){u.push(null);lo.push(null);bw.push(null);continue}let sq=0;for(let j=i-p+1;j<=i;j++)sq+=(closes[j]-ma[i])**2;const std=Math.sqrt(sq/p);u.push(ma[i]+m*std);lo.push(ma[i]-m*std);bw.push(std*2*m/ma[i])}return{ma,upper:u,lower:lo,bandwidth:bw}}
+function btAtr(candles,p=14){const r=[];for(let i=0;i<candles.length;i++){if(i<p){r.push(null);continue}let s=0;for(let j=i-p+1;j<=i;j++){s+=Math.max(candles[j].h-candles[j].l,Math.abs(candles[j].h-candles[j-1].c),Math.abs(candles[j].l-candles[j-1].c))}r.push(s/p)}return r}
+function btVol(closes,p=14){const r=[];for(let i=0;i<closes.length;i++){if(i<p){r.push(null);continue}const sl=closes.slice(i-p+1,i+1);const mn=sl.reduce((a,b)=>a+b,0)/p;const v=sl.reduce((a,b)=>a+(b-mn)**2,0)/p;r.push(Math.sqrt(v)/mn)}return r}
+
+// Pre-compute SOL indicators (done once)
+const SOL_CLOSES=SOL_CANDLES.map(x=>x.c);
+const SOL_IND={
+sma20:btSma(SOL_CLOSES,20),sma26:btSma(SOL_CLOSES,26),sma50:btSma(SOL_CLOSES,50),
+ema9:btEma(SOL_CLOSES,9),ema12:btEma(SOL_CLOSES,12),ema20:btEma(SOL_CLOSES,20),ema26:btEma(SOL_CLOSES,26),
+rsi:btRsi(SOL_CLOSES,14),bb:btBB(SOL_CLOSES,20,2),vol:btVol(SOL_CLOSES,14),atr:btAtr(SOL_CANDLES,14)
+};
+
+const BT_TREND_FILTERED=new Set(['Mean Reversion','Pairs Trading','Stat Arb','Bollinger Reversion','RSI Mean Reversion','Ornstein-Uhlenbeck','Grid Trading','Market Making','VWAP Strategy','Swing Trading','Position Trading','Scalping','Carry Trade','Relative Value','Basis Trading','Delta Neutral','TWAP Execution','Risk Parity','Straddle Selling']);
+
+function btSignal(sn,candles,idx,ind){
+const c=candles[idx];
+switch(sn){
+case'Trend Following':{const e12=ind.ema12[idx],e26=ind.ema26[idx],ma50=ind.sma50[idx];if(e12===null||e26===null||ma50===null)return{signal:'HOLD',confidence:0};const m=e12-e26,pm=(ind.ema12[idx-1]||0)-(ind.ema26[idx-1]||0);if(m>0&&pm<=0&&c.c>ma50)return{signal:'BUY',confidence:.8};if(m<0&&pm>=0&&c.c<ma50)return{signal:'SELL',confidence:.8};if(m>0&&c.c>ma50)return{signal:'BUY',confidence:.3};if(m<0&&c.c<ma50)return{signal:'SELL',confidence:.3};return{signal:'HOLD',confidence:0}}
+case'Momentum Factor':{if(idx<20)return{signal:'HOLD',confidence:0};const r20=(c.c-candles[idx-20].c)/candles[idx-20].c,r5=(c.c-candles[idx-5].c)/candles[idx-5].c;if(r20>.1&&r5>.03)return{signal:'BUY',confidence:.7};if(r20>.05&&r5>0)return{signal:'BUY',confidence:.4};if(r20<-.1&&r5<-.03)return{signal:'SELL',confidence:.7};if(r20<-.05)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Breakout Trading':{if(idx<20)return{signal:'HOLD',confidence:0};const h20=Math.max(...candles.slice(idx-20,idx).map(x=>x.h)),l20=Math.min(...candles.slice(idx-20,idx).map(x=>x.l)),av=candles.slice(idx-10,idx).reduce((s,x)=>s+x.v,0)/10;if(c.c>h20&&c.v>av*1.2)return{signal:'BUY',confidence:.8};if(c.c<l20)return{signal:'SELL',confidence:.8};return{signal:'HOLD',confidence:0}}
+case'Donchian Channel':{if(idx<20)return{signal:'HOLD',confidence:0};const h20=Math.max(...candles.slice(idx-20,idx).map(x=>x.h)),l20=Math.min(...candles.slice(idx-20,idx).map(x=>x.l));if(c.c>h20)return{signal:'BUY',confidence:.7};if(c.c<l20)return{signal:'SELL',confidence:.7};return{signal:'HOLD',confidence:0}}
+case'Dual Momentum':{if(idx<20)return{signal:'HOLD',confidence:0};const r20=(c.c-candles[idx-20].c)/candles[idx-20].c,ma50=ind.sma50[idx];if(r20>.05&&ma50&&c.c>ma50)return{signal:'BUY',confidence:.7};if(r20>0&&ma50&&c.c>ma50)return{signal:'BUY',confidence:.4};if(r20<-.05&&ma50&&c.c<ma50)return{signal:'SELL',confidence:.7};if(r20<0&&ma50&&c.c<ma50)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Momentum Ignition':{if(idx<5)return{signal:'HOLD',confidence:0};const r3=(c.c-candles[idx-3].c)/candles[idx-3].c,av=candles.slice(idx-5,idx).reduce((s,x)=>s+x.v,0)/5;if(r3>.05&&c.v>av*1.8)return{signal:'BUY',confidence:.8};if(r3<-.05&&c.v>av*1.8)return{signal:'SELL',confidence:.8};return{signal:'HOLD',confidence:0}}
+case'Mean Reversion':{const rv=ind.rsi[idx],bb=ind.bb;if(rv===null||bb.lower[idx]===null)return{signal:'HOLD',confidence:0};if(rv<30&&c.c<=bb.lower[idx])return{signal:'BUY',confidence:.7};if(rv>70&&c.c>=bb.upper[idx])return{signal:'SELL',confidence:.7};if(rv<35)return{signal:'BUY',confidence:.4};if(rv>65)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Pairs Trading':case'Stat Arb':{const ma=ind.sma20[idx];if(ma===null)return{signal:'HOLD',confidence:0};const d=(c.c-ma)/ma;if(d<-.03)return{signal:'BUY',confidence:.6};if(d>.03)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Bollinger Reversion':{const bb=ind.bb;if(bb.lower[idx]===null)return{signal:'HOLD',confidence:0};if(c.c<=bb.lower[idx])return{signal:'BUY',confidence:.7};if(c.c>=bb.upper[idx])return{signal:'SELL',confidence:.7};return{signal:'HOLD',confidence:0}}
+case'RSI Mean Reversion':{const rv=ind.rsi[idx];if(rv===null)return{signal:'HOLD',confidence:0};if(rv<25)return{signal:'BUY',confidence:.8};if(rv>75)return{signal:'SELL',confidence:.8};if(rv<30)return{signal:'BUY',confidence:.5};if(rv>70)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Ornstein-Uhlenbeck':{const e26=ind.ema26[idx],vol=ind.vol[idx];if(e26===null||vol===null)return{signal:'HOLD',confidence:0};const d=(c.c-e26)/e26,th=vol*1.5;if(d<-th&&th>.01)return{signal:'BUY',confidence:.6};if(d>th&&th>.01)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Volatility Trading':{const vol=ind.vol[idx],bw=ind.bb.bandwidth[idx];if(vol===null||bw===null)return{signal:'HOLD',confidence:0};if(bw>.08&&c.c>ind.bb.ma[idx])return{signal:'BUY',confidence:.5};if(bw>.08)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Gamma Scalping':{if(idx<3)return{signal:'HOLD',confidence:0};const vol=ind.vol[idx];if(vol===null)return{signal:'HOLD',confidence:0};const r1=(c.c-candles[idx-1].c)/candles[idx-1].c;if(vol>.03){if(r1<-.02)return{signal:'BUY',confidence:.6};if(r1>.02)return{signal:'SELL',confidence:.6}}return{signal:'HOLD',confidence:0}}
+case'Volatility Regime':{const vol=ind.vol[idx],rv=ind.rsi[idx];if(vol===null||rv===null)return{signal:'HOLD',confidence:0};if(vol<.02){if(rv<35)return{signal:'BUY',confidence:.5};if(rv>65)return{signal:'SELL',confidence:.5}}else{const e12=ind.ema12[idx];if(e12&&c.c>e12)return{signal:'BUY',confidence:.5};if(e12&&c.c<e12)return{signal:'SELL',confidence:.5}}return{signal:'HOLD',confidence:0}}
+case'VIX Term Structure':{const vol=ind.vol[idx];if(vol===null||idx<30)return{signal:'HOLD',confidence:0};const v30=ind.vol[idx-30];if(v30===null)return{signal:'HOLD',confidence:0};if(vol<v30*.8)return{signal:'BUY',confidence:.5};if(vol>v30*1.3)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Straddle Selling':{const bw=ind.bb.bandwidth[idx],bb=ind.bb;if(bw===null||idx<2)return{signal:'HOLD',confidence:0};const r1=(c.c-candles[idx-1].c)/candles[idx-1].c;if(bw<.04){if(c.c<=bb.lower[idx])return{signal:'BUY',confidence:.4};if(c.c>=bb.upper[idx])return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}if(bw>.06&&Math.abs(r1)>.02)return{signal:'SELL',confidence:.9};return{signal:'HOLD',confidence:0}}
+case'Dispersion Trading':{const vol=ind.vol[idx];if(vol===null||idx<20)return{signal:'HOLD',confidence:0};const pv=ind.vol[idx-10];if(pv===null)return{signal:'HOLD',confidence:0};if(vol<pv*.8&&vol>.02)return{signal:'BUY',confidence:.5};if(vol>pv*1.3&&vol>.04)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Market Making':{if(idx<1)return{signal:'HOLD',confidence:0};const ch=(c.c-candles[idx-1].c)/candles[idx-1].c;if(ch<-.01)return{signal:'BUY',confidence:.3};if(ch>.01)return{signal:'SELL',confidence:.3};return{signal:'HOLD',confidence:0}}
+case'Grid Trading':{const ma=ind.sma20[idx];if(ma===null)return{signal:'HOLD',confidence:0};const p=(c.c-ma)/ma;if(p<-.02)return{signal:'BUY',confidence:.4};if(p>.02)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'VWAP Strategy':{const vw=ind.sma20[idx];if(vw===null)return{signal:'HOLD',confidence:0};if(c.c<vw*.98)return{signal:'BUY',confidence:.5};if(c.c>vw*1.02)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Orderbook Imbalance':{if(idx<5)return{signal:'HOLD',confidence:0};const av=candles.slice(idx-5,idx).reduce((s,x)=>s+x.v,0)/5,vr=c.v/av,r1=(c.c-candles[idx-1].c)/candles[idx-1].c;if(vr>1.8&&r1>.01)return{signal:'BUY',confidence:.7};if(vr>1.8&&r1<-.01)return{signal:'SELL',confidence:.7};return{signal:'HOLD',confidence:0}}
+case'Latency Arb':{if(idx<5)return{signal:'HOLD',confidence:0};const av=candles.slice(idx-5,idx).reduce((s,x)=>s+x.v,0)/5;if(c.v>av*1.5)return{signal:'BUY',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'TWAP Execution':{const ma=ind.sma20[idx];if(ma===null)return{signal:'HOLD',confidence:0};if(idx%5===0&&c.c<=ma)return{signal:'BUY',confidence:.3};if(c.c>ma*1.04)return{signal:'SELL',confidence:.3};return{signal:'HOLD',confidence:0}}
+case'Ichimoku System':{const tk=ind.ema9[idx],kj=ind.sma26[idx];if(tk===null||kj===null)return{signal:'HOLD',confidence:0};if(tk>kj&&c.c>tk)return{signal:'BUY',confidence:.5};if(tk<kj&&c.c<tk)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Fibonacci':{if(idx<20)return{signal:'HOLD',confidence:0};const hi=Math.max(...candles.slice(idx-20,idx).map(x=>x.h)),lo=Math.min(...candles.slice(idx-20,idx).map(x=>x.l)),rng=hi-lo;if(rng===0)return{signal:'HOLD',confidence:0};const f618=hi-rng*.618;if(c.c<=f618*1.005&&c.c>=f618*.995)return{signal:'BUY',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'EMA Ribbon':{const e9=ind.ema9[idx],e12=ind.ema12[idx],e26=ind.ema26[idx];if(e9===null||e12===null||e26===null)return{signal:'HOLD',confidence:0};if(e9>e12&&e12>e26)return{signal:'BUY',confidence:.5};if(e9<e12&&e12<e26)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Volume Profile':case'Order Flow':{if(idx<10)return{signal:'HOLD',confidence:0};const av=candles.slice(idx-10,idx).reduce((s,x)=>s+x.v,0)/10;if(c.v/av>2&&c.c>candles[idx-1].c)return{signal:'BUY',confidence:.6};if(c.v/av>2)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'MACD Divergence':{if(idx<30)return{signal:'HOLD',confidence:0};const e12=ind.ema12[idx],e26=ind.ema26[idx],pe12=ind.ema12[idx-5],pe26=ind.ema26[idx-5];if(!e12||!e26||!pe12||!pe26)return{signal:'HOLD',confidence:0};const mn=e12-e26,mp=pe12-pe26;if(c.c<candles[idx-5].c&&mn>mp)return{signal:'BUY',confidence:.6};if(c.c>candles[idx-5].c&&mn<mp)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Keltner Breakout':{const at=ind.atr[idx],e20=ind.ema20[idx];if(at===null||e20===null)return{signal:'HOLD',confidence:0};if(c.c>e20+2*at)return{signal:'BUY',confidence:.7};if(c.c<e20-2*at)return{signal:'SELL',confidence:.7};return{signal:'HOLD',confidence:0}}
+case'Wyckoff Method':{if(idx<20)return{signal:'HOLD',confidence:0};const av=candles.slice(idx-20,idx).reduce((s,x)=>s+x.v,0)/20,r20=(c.c-candles[idx-20].c)/candles[idx-20].c;if(r20<-.05&&c.v/av>1.5)return{signal:'BUY',confidence:.6};if(r20>.05&&c.v/av>1.5)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Carry Trade':{const ma50=ind.sma50[idx];if(ma50===null)return{signal:'HOLD',confidence:0};if(c.c>ma50*1.01)return{signal:'BUY',confidence:.4};if(c.c<ma50*.98)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Cross-Asset Momentum':{if(idx<20)return{signal:'HOLD',confidence:0};const r5=(c.c-candles[idx-5].c)/candles[idx-5].c,r20=(c.c-candles[idx-20].c)/candles[idx-20].c;if(r5>.03&&r20>.05)return{signal:'BUY',confidence:.6};if(r5<-.03&&r20<-.05)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Factor Rotation':{const vol=ind.vol[idx],rv=ind.rsi[idx];if(vol===null||rv===null||idx<20)return{signal:'HOLD',confidence:0};const r20=(c.c-candles[idx-20].c)/candles[idx-20].c;if(vol<.02&&rv<35)return{signal:'BUY',confidence:.5};if(vol<.02&&rv>65)return{signal:'SELL',confidence:.5};if(vol>.03&&r20>.08)return{signal:'BUY',confidence:.5};if(vol>.03&&r20<-.08)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Global Macro':{const ma50=ind.sma50[idx];if(ma50===null||idx<30)return{signal:'HOLD',confidence:0};const r30=(c.c-candles[idx-30].c)/candles[idx-30].c;if(c.c>ma50*1.05&&r30>.1)return{signal:'BUY',confidence:.7};if(c.c<ma50*.95&&r30<-.1)return{signal:'SELL',confidence:.7};if(c.c>ma50)return{signal:'BUY',confidence:.3};if(c.c<ma50)return{signal:'SELL',confidence:.3};return{signal:'HOLD',confidence:0}}
+case'Risk Parity':{const vol=ind.vol[idx],ma50=ind.sma50[idx];if(vol===null||ma50===null)return{signal:'HOLD',confidence:0};const va=Math.max(.15,Math.min(.6,.02/(vol||.02)));if(c.c>ma50*1.01)return{signal:'BUY',confidence:va};if(c.c<ma50*.99)return{signal:'SELL',confidence:va};return{signal:'HOLD',confidence:0}}
+case'Tail Risk Hedging':{if(idx<5)return{signal:'HOLD',confidence:0};const r1=(c.c-candles[idx-1].c)/candles[idx-1].c,r5=(c.c-candles[idx-5].c)/candles[idx-5].c;if(r1<-.07)return{signal:'BUY',confidence:.8};if(r1<-.04)return{signal:'BUY',confidence:.5};if(r5>.08)return{signal:'SELL',confidence:.7};if(r5>.04)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Kalman Filter':{const e9=ind.ema9[idx],e26=ind.ema26[idx];if(e9===null||e26===null)return{signal:'HOLD',confidence:0};const sg=e9-e26,pe9=ind.ema9[idx-1],pe26=ind.ema26[idx-1];if(!pe9||!pe26)return{signal:'HOLD',confidence:0};const ps=pe9-pe26;if(sg>0&&ps<=0)return{signal:'BUY',confidence:.6};if(sg<0&&ps>=0)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Machine Learning Alpha':{const rv=ind.rsi[idx],ma20=ind.sma20[idx],vol=ind.vol[idx];if(rv===null||ma20===null||vol===null)return{signal:'HOLD',confidence:0};const ps=(c.c-ma20)/ma20;let sc=0;if(rv<30)sc+=2;else if(rv<40)sc+=1;else if(rv>70)sc-=2;else if(rv>60)sc-=1;if(ps<-.03)sc+=1;if(ps>.03)sc-=1;if(vol>.04)sc+=(ps>0?1:-1);if(sc>=2)return{signal:'BUY',confidence:.7};if(sc<=-2)return{signal:'SELL',confidence:.7};if(sc>=1)return{signal:'BUY',confidence:.4};if(sc<=-1)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Correlation Breakdown':{if(idx<5)return{signal:'HOLD',confidence:0};const r5=(c.c-candles[idx-5].c)/candles[idx-5].c;if(Math.abs(r5)>.1)return{signal:r5>0?'SELL':'BUY',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Kelly Criterion':{const rv=ind.rsi[idx],e12=ind.ema12[idx],e26=ind.ema26[idx];if(rv===null||e12===null||e26===null)return{signal:'HOLD',confidence:0};const m=e12-e26;if(rv<25&&m<0)return{signal:'BUY',confidence:.9};if(rv>75&&m>0)return{signal:'SELL',confidence:.9};if(rv<35)return{signal:'BUY',confidence:.5};if(rv>65)return{signal:'SELL',confidence:.5};return{signal:'HOLD',confidence:0}}
+case'Martingale':{if(idx<1)return{signal:'HOLD',confidence:0};const dl=(c.c-candles[idx-1].c)/candles[idx-1].c;if(dl<-.03)return{signal:'BUY',confidence:.9};if(dl>.02)return{signal:'SELL',confidence:.3};return{signal:'HOLD',confidence:0}}
+case'Relative Value':{const ma20=ind.sma20[idx],ma50=ind.sma50[idx];if(ma20===null||ma50===null)return{signal:'HOLD',confidence:0};const sd=(c.c-ma20)/ma20,ld=(c.c-ma50)/ma50;if(sd<-.02&&ld<-.03)return{signal:'BUY',confidence:.6};if(sd>.02&&ld>.03)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Scalping':{if(idx<1)return{signal:'HOLD',confidence:0};const ch=(c.c-candles[idx-1].c)/candles[idx-1].c;if(ch<-.008)return{signal:'BUY',confidence:.4};if(ch>.008)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Swing Trading':{if(idx<5)return{signal:'HOLD',confidence:0};const r5=(c.c-candles[idx-5].c)/candles[idx-5].c,rv=ind.rsi[idx];if(r5<-.05&&rv&&rv<40)return{signal:'BUY',confidence:.6};if(r5>.05&&rv&&rv>60)return{signal:'SELL',confidence:.6};return{signal:'HOLD',confidence:0}}
+case'Position Trading':{const ma50=ind.sma50[idx];if(ma50===null)return{signal:'HOLD',confidence:0};if(c.c>ma50*1.02)return{signal:'BUY',confidence:.4};if(c.c<ma50*.98)return{signal:'SELL',confidence:.4};return{signal:'HOLD',confidence:0}}
+case'Basis Trading':{const ma20=ind.sma20[idx],e9=ind.ema9[idx];if(ma20===null||e9===null)return{signal:'HOLD',confidence:0};const d=(c.c-ma20)/ma20;if(d<-.02)return{signal:'BUY',confidence:.35};if(d>.02)return{signal:'SELL',confidence:.35};return{signal:'HOLD',confidence:0}}
+case'Delta Neutral':{const rv=ind.rsi[idx];if(rv===null)return{signal:'HOLD',confidence:0};if(rv<28)return{signal:'BUY',confidence:.2};if(rv>72)return{signal:'SELL',confidence:.2};return{signal:'HOLD',confidence:0}}
+default:return{signal:'HOLD',confidence:0}
+}}
+
+// Client-side backtestAgent (simplified, single token SOL)
+function clientBacktest(agent){
+const candles=SOL_CANDLES,ind=SOL_IND;
+const FEE=0.001,SLIP=0.0005;
+let cash=1000,qty=0,avgCost=0,peakPrice=0;
+let trades=0,wins=0,losses=0,peak=1000,maxDD=0;
+const equity=[1000];
+const aggrMult={'Ultra-Conservative':.03,'Conservative':.06,'Moderate':.1,'Aggressive':.18,'Degen':.25};
+const riskMult={'Kelly Criterion':1,'Fixed Fractional':.8,'Risk Parity':.7,'Trailing Stops':.9,'Pyramiding':1.2,'Anti-Martingale':.9,'Conservative':.5};
+
+for(let i=20;i<candles.length;i++){
+const price=candles[i].c;
+// Stop loss check
+if(qty>0){
+const unr=(price-avgCost)/avgCost;
+peakPrice=Math.max(peakPrice,price);
+const fp=(price-peakPrice)/peakPrice;
+let stop=false;
+if(agent.riskStyle==='Trailing Stops')stop=fp<-.08;
+else if(agent.riskStyle==='Conservative')stop=unr<-.1;
+else if(agent.riskStyle==='Fixed Fractional')stop=unr<-.15;
+else stop=unr<-.25;
+if(stop){const ep=price*(1-SLIP-FEE);const pr=qty*ep;if(pr>qty*avgCost)wins++;else losses++;cash+=pr;trades++;qty=0;avgCost=0;peakPrice=0}}
+
+const s1=btSignal(agent.strategy,candles,i,ind);
+const s2=btSignal(agent.strategy2,candles,i,ind);
+let fs=s1.signal,conf=s1.confidence;
+if(s2.signal===s1.signal&&s2.confidence>0)conf=Math.min(conf+s2.confidence*.3,1);
+else if(s2.signal!=='HOLD'&&s2.signal!==s1.signal)conf*=.6;
+if(conf<.2)fs='HOLD';
+
+// Trend filter
+if(BT_TREND_FILTERED.has(agent.strategy)&&fs==='BUY'){
+const ma50=ind.sma50[i];const ma50p=ind.sma50[Math.max(0,i-10)];
+if(ma50&&ma50p&&ma50<ma50p)fs='HOLD'}
+
+const pv=cash+qty*price;
+const ddR=pv/peak;
+const ddM=ddR<.7?.25:ddR<.85?.5:1;
+
+if(fs==='BUY'&&cash>10){
+const base=(aggrMult[agent.aggression]||.1)*(riskMult[agent.riskStyle]||.8);
+const posSize=Math.min(pv*base*conf*ddM,cash*.9,.25*pv);
+if(posSize>=5){const ep=price*(1+SLIP+FEE);const q=posSize/ep;const tq=qty+q;avgCost=(avgCost*qty+ep*q)/tq;qty=tq;peakPrice=Math.max(peakPrice||price,price);cash-=posSize;trades++}}
+else if(fs==='SELL'&&qty>0){
+const sp=conf>=.9?1:Math.min(conf,.8);const sq=qty*sp;if(sq*price>=5){const ep=price*(1-SLIP-FEE);const pr=sq*ep;if(pr>sq*avgCost)wins++;else losses++;qty-=sq;if(qty<.0001){qty=0;avgCost=0;peakPrice=0}cash+=pr;trades++}}
+
+const cv=cash+qty*price;
+peak=Math.max(peak,cv);
+maxDD=Math.max(maxDD,(peak-cv)/peak);
+equity.push(cv)}
+
+const fv=cash+qty*SOL_CANDLES[SOL_CANDLES.length-1].c;
+const ret=((fv-1000)/1000)*100;
+const wr=trades>0?(wins/Math.max(wins+losses,1))*100:0;
+// Sharpe approximation
+const returns=[];for(let i=1;i<equity.length;i++)returns.push((equity[i]-equity[i-1])/equity[i-1]);
+const avgR=returns.length?returns.reduce((a,b)=>a+b,0)/returns.length:0;
+const stdR=returns.length?Math.sqrt(returns.reduce((a,b)=>a+(b-avgR)**2,0)/returns.length):1;
+const sharpe=stdR>0?(avgR/stdR)*Math.sqrt(365):0;
+
+return{returnPct:+ret.toFixed(2),winRate:+wr.toFixed(1),sharpe:+sharpe.toFixed(2),maxDrawdown:+(maxDD*100).toFixed(1),equity}}
+
+// ═══════════════════════════════════════
+// BREEDING MECHANICS
+// ═══════════════════════════════════════
+let breedParentA=null,breedParentB=null,breedOffspring=null,breedIntervals=[];
+
+function breedBee(pA,pB){
+const r=Math.random;
+function pick(a,b,pool,weights){const v=r();if(v<.45)return{val:a,src:'A'};if(v<.9)return{val:b,src:'B'};const rv=wRand(pool||[a,b],weights||[1,1],Math.random);return{val:rv,src:'M'}}
+
+const head=pick(pA.traits.head,pB.traits.head,HEAD_KEYS,HEAD_W);
+const eyes=pick(pA.traits.eyes,pB.traits.eyes,EYE_KEYS,EYE_W);
+const mouth=pick(pA.traits.mouth,pB.traits.mouth,MOUTH_KEYS,MOUTH_W);
+const body=pick(pA.traits.body,pB.traits.body,BODY_KEYS,BODY_W);
+const antenna=pick(pA.traits.antenna,pB.traits.antenna,ANT_KEYS,ANT_W);
+const palette=pick(pA.traits.palette,pB.traits.palette,PAL_KEYS,PAL_W);
+const bg=pick(pA.traits.background,pB.traits.background,BG_TYPES,BG_W);
+
+const strats=STRATEGIES.map(s=>s.name);
+const stratW=strats.map(()=>1);
+const strategy=pick(pA.strategy,pB.strategy,strats,stratW);
+const strategy2=pick(pA.strategy2,pB.strategy2,strats,stratW);
+const horizon=pick(pA.horizon,pB.horizon,TIME_HORIZONS,TIME_HORIZONS.map(()=>1));
+const riskStyle=pick(pA.riskStyle,pB.riskStyle,RISK_STYLES,RISK_STYLES.map(()=>1));
+const aggression=pick(pA.aggression,pB.aggression,AGGRESSION,AGGRESSION.map(()=>1));
+
+const traits={head:head.val,eyes:eyes.val,mouth:mouth.val,body:body.val,antenna:antenna.val,palette:palette.val,background:bg.val};
+const svg=genSVG(traits);
+
+// Name: combine parent names
+const nameA=pA.name||'';const nameB=pB.name||'';
+const halfA=nameA.slice(0,Math.ceil(nameA.length/2));
+const halfB=nameB.slice(Math.floor(nameB.length/2));
+const name=(halfA+halfB).replace(/_+/g,'_').replace(/^_|_$/g,'')||'BRED_'+Date.now();
+
+const gen=Math.max(pA.gen||1,pB.gen||1)+1;
+
+const bee={
+id:'BRED_'+Date.now(),name,
+parentA:pA.id,parentAName:pA.name,parentB:pB.id,parentBName:pB.name,
+traits,svg,
+strategy:strategy.val,strategy2:strategy2.val,
+horizon:horizon.val,riskStyle:riskStyle.val,aggression:aggression.val,
+gen,createdAt:Date.now(),
+_sources:{head:head.src,eyes:eyes.src,mouth:mouth.src,body:body.src,antenna:antenna.src,palette:palette.src,background:bg.src,strategy:strategy.src,strategy2:strategy2.src,horizon:horizon.src,riskStyle:riskStyle.src,aggression:aggression.src}
+};
+
+// Run backtest
+const bt=clientBacktest(bee);
+bee.backtestReturn=bt.returnPct;
+bee.backtestWinRate=bt.winRate;
+bee.backtestSharpe=bt.sharpe;
+bee.backtestDrawdown=bt.maxDrawdown;
+
+return bee;
+}
+
+// ═══════════════════════════════════════
+// BREED MODAL
+// ═══════════════════════════════════════
+function openBreed(){
+breedParentA=null;breedParentB=null;breedOffspring=null;
+breedIntervals.forEach(clearInterval);breedIntervals=[];
+document.getElementById('breedModal').classList.add('open');
+document.getElementById('breedTitle').textContent='BREED NEW BEE';
+document.querySelectorAll('.breed-phase').forEach(p=>p.classList.remove('active'));
+document.getElementById('breedPhase1').classList.add('active');
+document.getElementById('breedBtn').disabled=true;
+document.getElementById('breedBtn').textContent='SELECT 2 PARENTS';
+// Reset parent slots
+['A','B'].forEach(s=>{
+const slot=document.getElementById('parentSlot'+s);
+slot.classList.remove('filled');
+slot.innerHTML=`<input class="parent-search" placeholder="Search bee ID or name..." oninput="searchParent('${s}',this.value)"><div class="parent-search-results" id="parentResults${s}"></div>`;
+});
+}
+
+function closeBreed(){
+document.getElementById('breedModal').classList.remove('open');
+breedIntervals.forEach(clearInterval);breedIntervals=[];
+}
+
+function searchParent(side,q){
+q=q.trim().toLowerCase();
+const el=document.getElementById('parentResults'+side);
+if(!q){el.innerHTML='';return}
+const results=[];
+if(q.startsWith('#')&&!isNaN(q.slice(1))){const id=parseInt(q.slice(1));if(id>=0&&id<TOTAL)results.push(id)}
+else{for(let i=0;i<TOTAL&&results.length<8;i++){const a=getAgent(i);if(a.name.toLowerCase().includes(q)||String(i).includes(q))results.push(i)}}
+el.innerHTML=results.map(id=>{const a=getAgent(id);return`<div onclick="selectParent('${side}',${id})">${a.svg}<span>${a.name} #${id}</span></div>`}).join('');
+}
+
+function selectParent(side,id){
+const a=getAgent(id);
+if(side==='A')breedParentA=a;else breedParentB=a;
+const slot=document.getElementById('parentSlot'+side);
+slot.classList.add('filled');
+slot.innerHTML=`<div style="cursor:pointer" onclick="clearParent('${side}')">${a.svg}</div><div class="parent-name">${a.name} #${a.id}</div><div class="parent-strat">${a.strategy}</div>`;
+checkBreedReady();
+}
+
+function clearParent(side){
+if(side==='A')breedParentA=null;else breedParentB=null;
+const slot=document.getElementById('parentSlot'+side);
+slot.classList.remove('filled');
+slot.innerHTML=`<input class="parent-search" placeholder="Search bee ID or name..." oninput="searchParent('${side}',this.value)"><div class="parent-search-results" id="parentResults${side}"></div>`;
+checkBreedReady();
+}
+
+function checkBreedReady(){
+const btn=document.getElementById('breedBtn');
+if(breedParentA&&breedParentB){btn.disabled=false;btn.textContent='BREED THESE BEES'}
+else{btn.disabled=true;btn.textContent='SELECT 2 PARENTS'}
+}
+
+function startBreed(){
+if(!breedParentA||!breedParentB)return;
+breedOffspring=breedBee(breedParentA,breedParentB);
+document.getElementById('breedTitle').textContent='INCUBATING...';
+
+// Switch to phase 2
+document.querySelectorAll('.breed-phase').forEach(p=>p.classList.remove('active'));
+document.getElementById('breedPhase2').classList.add('active');
+
+// Build slot rows
+const slotDefs=[
+{label:'STRATEGY',val:breedOffspring.strategy,src:breedOffspring._sources.strategy},
+{label:'SECONDARY',val:breedOffspring.strategy2,src:breedOffspring._sources.strategy2},
+{label:'HORIZON',val:breedOffspring.horizon,src:breedOffspring._sources.horizon},
+{label:'RISK MGMT',val:breedOffspring.riskStyle,src:breedOffspring._sources.riskStyle},
+{label:'AGGRESSION',val:breedOffspring.aggression,src:breedOffspring._sources.aggression},
+{label:'HEAD',val:breedOffspring.traits.head,src:breedOffspring._sources.head},
+{label:'EYES',val:breedOffspring.traits.eyes,src:breedOffspring._sources.eyes},
+{label:'PALETTE',val:breedOffspring.traits.palette,src:breedOffspring._sources.palette},
+];
+
+const pools={STRATEGY:STRATEGIES.map(s=>s.name),SECONDARY:STRATEGIES.map(s=>s.name),HORIZON:TIME_HORIZONS,'RISK MGMT':RISK_STYLES,AGGRESSION:AGGRESSION,HEAD:HEAD_KEYS,EYES:EYE_KEYS,PALETTE:PAL_KEYS};
+
+document.getElementById('breedSlots').innerHTML=slotDefs.map(s=>`<div class="breed-slot-row"><span class="breed-slot-lbl">${s.label}</span><span class="breed-slot-val spin" data-final="${s.val}" data-src="${s.src}" data-pool="${s.label}">???</span></div>`).join('');
+
+const slots=document.querySelectorAll('.breed-slot-val');
+slots.forEach((el,i)=>{
+const pool=pools[el.dataset.pool]||[el.dataset.final];
+const iv=setInterval(()=>{el.textContent=pool[Math.floor(Math.random()*pool.length)]},60);
+breedIntervals.push(iv);
+setTimeout(()=>{
+clearInterval(iv);
+el.textContent=el.dataset.final;
+el.classList.remove('spin');
+const src=el.dataset.src;
+const srcLabel=src==='A'?breedParentA.name:src==='B'?breedParentB.name:'MUTATION!';
+const srcClass=src==='A'?'from-a':src==='B'?'from-b':'mutated';
+el.insertAdjacentHTML('afterend',`<span class="breed-slot-src ${srcClass}">${srcLabel}</span>`);
+if(i===slots.length-1)setTimeout(revealBreed,500);
+},800+i*350);
+});
+}
+
+function revealBreed(){
+document.getElementById('breedTitle').textContent='BEE BRED!';
+document.querySelectorAll('.breed-phase').forEach(p=>p.classList.remove('active'));
+document.getElementById('breedPhase3').classList.add('active');
+
+const b=breedOffspring;
+document.getElementById('breedRevealSvg').innerHTML=b.svg;
+document.getElementById('breedRName').textContent=b.name;
+document.getElementById('breedRSub').textContent=`GEN ${b.gen}`;
+document.getElementById('breedLineage').innerHTML=`<span class="lineage-parents">${b.parentAName} #${b.parentA}</span> <span class="lineage-arrow">x</span> <span class="lineage-parents">${b.parentBName} #${b.parentB}</span>`;
+document.getElementById('breedReveal').classList.add('show');
+
+const rc=b.backtestReturn>=0?'color:var(--green)':'color:var(--red)';
+const rs=b.backtestReturn>=0?'+':'';
+document.getElementById('breedReceipt').innerHTML=`
+<div class="mint-line"><span>BACKTEST RETURN (SOL)</span><span style="${rc}">${rs}${b.backtestReturn}%</span></div>
+<div class="mint-line"><span>WIN RATE</span><span>${b.backtestWinRate}%</span></div>
+<div class="mint-line"><span>SHARPE RATIO</span><span>${b.backtestSharpe}</span></div>
+<div class="mint-line"><span>MAX DRAWDOWN</span><span style="color:var(--red)">-${b.backtestDrawdown}%</span></div>`;
+}
+
+function addBreedToHive(){
+if(!breedOffspring)return;
+addToHive(breedOffspring);
+closeBreed();
+switchView('hive');
+}
+
+// ═══════════════════════════════════════
+// CONTROL PANEL
+// ═══════════════════════════════════════
+let cpBee=null,cpOriginal=null;
+
+function openControlPanel(beeId){
+const hive=loadHive();
+const bee=hive.find(b=>b.id===beeId);
+if(!bee)return;
+cpBee=JSON.parse(JSON.stringify(bee));
+cpOriginal=JSON.parse(JSON.stringify(bee));
+
+document.getElementById('cpModal').classList.add('open');
+document.getElementById('cpTitle').textContent='CONTROL PANEL — '+bee.name;
+
+// Populate dropdowns
+populateSelect('cpStrategy',STRATEGIES.map(s=>s.name),cpBee.strategy);
+populateSelect('cpStrategy2',STRATEGIES.map(s=>s.name),cpBee.strategy2);
+populateSelect('cpHorizon',TIME_HORIZONS,cpBee.horizon);
+populateSelect('cpRiskStyle',RISK_STYLES,cpBee.riskStyle);
+populateSelect('cpAggression',AGGRESSION,cpBee.aggression);
+populateSelect('cpHead',HEAD_KEYS,cpBee.traits.head);
+populateSelect('cpEyes',EYE_KEYS,cpBee.traits.eyes);
+populateSelect('cpMouth',MOUTH_KEYS,cpBee.traits.mouth);
+populateSelect('cpBody',BODY_KEYS,cpBee.traits.body);
+populateSelect('cpAntenna',ANT_KEYS,cpBee.traits.antenna);
+populateSelect('cpPalette',PAL_KEYS,cpBee.traits.palette);
+
+updateCpPreview();
+runCpBacktest();
+}
+
+function populateSelect(id,options,selected){
+const el=document.getElementById(id);
+el.innerHTML=options.map(o=>`<option value="${o}"${o===selected?' selected':''}>${o}</option>`).join('');
+}
+
+function closeControlPanel(){document.getElementById('cpModal').classList.remove('open');cpBee=null;cpOriginal=null}
+
+function onCpChange(){
+if(!cpBee)return;
+cpBee.strategy=document.getElementById('cpStrategy').value;
+cpBee.strategy2=document.getElementById('cpStrategy2').value;
+cpBee.horizon=document.getElementById('cpHorizon').value;
+cpBee.riskStyle=document.getElementById('cpRiskStyle').value;
+cpBee.aggression=document.getElementById('cpAggression').value;
+runCpBacktest();
+}
+
+function onCpVisualChange(){
+if(!cpBee)return;
+cpBee.traits.head=document.getElementById('cpHead').value;
+cpBee.traits.eyes=document.getElementById('cpEyes').value;
+cpBee.traits.mouth=document.getElementById('cpMouth').value;
+cpBee.traits.body=document.getElementById('cpBody').value;
+cpBee.traits.antenna=document.getElementById('cpAntenna').value;
+cpBee.traits.palette=document.getElementById('cpPalette').value;
+cpBee.svg=genSVG(cpBee.traits);
+updateCpPreview();
+}
+
+function updateCpPreview(){
+document.getElementById('cpPreviewSvg').innerHTML=cpBee.svg;
+document.getElementById('cpPreviewName').textContent=cpBee.name;
+}
+
+function runCpBacktest(){
+const bt=clientBacktest(cpBee);
+cpBee.backtestReturn=bt.returnPct;
+cpBee.backtestWinRate=bt.winRate;
+cpBee.backtestSharpe=bt.sharpe;
+cpBee.backtestDrawdown=bt.maxDrawdown;
+
+const rc=bt.returnPct>=0?'color:var(--green)':'color:var(--red)';
+const rs=bt.returnPct>=0?'+':'';
+document.getElementById('cpReturn').innerHTML=`<span style="${rc}">${rs}${bt.returnPct}%</span>`;
+document.getElementById('cpWinRate').textContent=bt.winRate+'%';
+document.getElementById('cpSharpe').textContent=bt.sharpe;
+document.getElementById('cpDrawdown').innerHTML=`<span style="color:var(--red)">-${bt.maxDrawdown}%</span>`;
+
+// Draw equity curve
+drawCpCurve(bt.equity);
+}
+
+function drawCpCurve(equity){
+const canvas=document.getElementById('cpCurve');
+const wrap=canvas.parentElement;
+canvas.width=wrap.clientWidth*2;canvas.height=wrap.clientHeight*2;
+canvas.style.width=wrap.clientWidth+'px';canvas.style.height=wrap.clientHeight+'px';
+const ctx=canvas.getContext('2d');
+ctx.clearRect(0,0,canvas.width,canvas.height);
+if(!equity||equity.length<2)return;
+const min=Math.min(...equity),max=Math.max(...equity);
+const range=max-min||1;
+const w=canvas.width,h=canvas.height;
+const color=equity[equity.length-1]>=1000?'#7cb342':'#ef5350';
+ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+for(let i=0;i<equity.length;i++){
+const x=(i/(equity.length-1))*w;
+const y=h-((equity[i]-min)/range)*h*.85-h*.05;
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
+ctx.stroke();
+// Fill under
+ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+ctx.fillStyle=color.replace(')',',0.08)').replace('rgb','rgba');
+ctx.fill();
+}
+
+function saveControlPanel(){
+if(!cpBee)return;
+cpBee.svg=genSVG(cpBee.traits);
+const hive=loadHive();
+const idx=hive.findIndex(b=>b.id===cpBee.id);
+if(idx>=0){hive[idx]=JSON.parse(JSON.stringify(cpBee));saveHive(hive)}
+closeControlPanel();
+if(currentView==='hive')renderHive();
+}
+
+function resetControlPanel(){
+if(!cpOriginal)return;
+cpBee=JSON.parse(JSON.stringify(cpOriginal));
+document.getElementById('cpStrategy').value=cpBee.strategy;
+document.getElementById('cpStrategy2').value=cpBee.strategy2;
+document.getElementById('cpHorizon').value=cpBee.horizon;
+document.getElementById('cpRiskStyle').value=cpBee.riskStyle;
+document.getElementById('cpAggression').value=cpBee.aggression;
+document.getElementById('cpHead').value=cpBee.traits.head;
+document.getElementById('cpEyes').value=cpBee.traits.eyes;
+document.getElementById('cpMouth').value=cpBee.traits.mouth;
+document.getElementById('cpBody').value=cpBee.traits.body;
+document.getElementById('cpAntenna').value=cpBee.traits.antenna;
+document.getElementById('cpPalette').value=cpBee.traits.palette;
+updateCpPreview();
+runCpBacktest();
+}
+
+// ═══════════════════════════════════════
+// RENDER HIVE
+// ═══════════════════════════════════════
+function renderHive(){
+const hive=loadHive();
+const grid=document.getElementById('hiveGrid');
+const empty=document.getElementById('hiveEmpty');
+const count=document.getElementById('hiveCount');
+
+if(hive.length===0){grid.innerHTML='';empty.style.display='';count.textContent='';return}
+empty.style.display='none';
+count.textContent=hive.length+' BEE'+(hive.length>1?'S':'');
+
+grid.innerHTML=hive.map(b=>{
+const rc=b.backtestReturn>=0?'pos':'neg';
+const rs=b.backtestReturn>=0?'+':'';
+return`<div class="hive-card" onclick="selectBredBee('${b.id}')">
+<span class="c-id">${b.id.slice(0,12)}</span>
+<span class="hive-gen">GEN ${b.gen}</span>
+<div class="card-svg">${b.svg}</div>
+<div class="c-name">${b.name}</div>
+<div class="c-ret ${rc}">${rs}${b.backtestReturn}%</div>
+<div class="hive-card-actions">
+<button onclick="event.stopPropagation();openControlPanel('${b.id}')">EDIT</button>
+<button class="btn-del" onclick="event.stopPropagation();deleteBredBee('${b.id}')">DEL</button>
+</div>
+</div>`}).join('');
+}
+
+function deleteBredBee(id){
+if(!confirm('Delete this bee?'))return;
+removeFromHive(id);
+renderHive();
+}
+
+function selectBredBee(id){
+const hive=loadHive();
+const b=hive.find(x=>x.id===id);
+if(!b)return;
+
+selectedId=id;
+document.getElementById('detailTab').style.display='';
+document.getElementById('dSvg').innerHTML=b.svg;
+document.getElementById('dName').textContent=b.name;
+document.getElementById('dSub').textContent=`GEN ${b.gen} // ${b.horizon.toUpperCase()} // ${b.riskStyle.toUpperCase()}`;
+document.getElementById('dStrat').textContent=`"${b.strategy}" + "${b.strategy2}"`;
+const strat=STRATEGIES.find(s=>s.name===b.strategy);
+document.getElementById('dQuote').textContent=strat?strat.quote:'';
+
+const rc=b.backtestReturn>=0?'color:var(--green)':'color:var(--red)';
+const rs=b.backtestReturn>=0?'+':'';
+document.getElementById('dStats').innerHTML=`
+<div class="stat-cell"><div class="s-val">GEN ${b.gen}</div><div class="s-lbl">Generation</div></div>
+<div class="stat-cell"><div class="s-val" style="${rc}">${rs}${b.backtestReturn}%</div><div class="s-lbl">Backtest Return</div></div>
+<div class="stat-cell"><div class="s-val">${b.backtestWinRate}%</div><div class="s-lbl">Win Rate</div></div>
+<div class="stat-cell"><div class="s-val">${b.backtestSharpe}</div><div class="s-lbl">Sharpe</div></div>
+<div class="stat-cell"><div class="s-val" style="color:var(--red)">-${b.backtestDrawdown}%</div><div class="s-lbl">Max DD</div></div>
+<div class="stat-cell"><div class="s-val">${b.aggression}</div><div class="s-lbl">Aggression</div></div>`;
+
+document.getElementById('dTraits').innerHTML=`
+<div class="trait-row"><span class="trait-label">Primary Pattern</span><span class="trait-val">${b.strategy}</span></div>
+<div class="trait-row"><span class="trait-label">Secondary Pattern</span><span class="trait-val">${b.strategy2}</span></div>
+<div class="trait-row"><span class="trait-label">Flight Range</span><span class="trait-val">${b.horizon}</span></div>
+<div class="trait-row"><span class="trait-label">Swarm Behavior</span><span class="trait-val">${b.riskStyle}</span></div>
+<div class="trait-row"><span class="trait-label">Sting Level</span><span class="trait-val">${b.aggression}</span></div>
+<div class="trait-row"><span class="trait-label">Lineage</span><span class="trait-val">${b.parentAName||'?'} x ${b.parentBName||'?'}</span></div>
+<div class="trait-row"><span class="trait-label">Head</span><span class="trait-val">${b.traits.head}</span></div>
+<div class="trait-row"><span class="trait-label">Eyes</span><span class="trait-val">${b.traits.eyes}</span></div>
+<div class="trait-row"><span class="trait-label">Mouth</span><span class="trait-val">${b.traits.mouth}</span></div>
+<div class="trait-row"><span class="trait-label">Body</span><span class="trait-val">${b.traits.body}</span></div>
+<div class="trait-row"><span class="trait-label">Antenna</span><span class="trait-val">${b.traits.antenna}</span></div>
+<div class="trait-row"><span class="trait-label">Palette</span><span class="trait-val">${b.traits.palette}</span></div>`;
+
+// Simple sparkline from backtest
+const bt=clientBacktest(b);
+const sparkEl=document.getElementById('dSpark');sparkEl.innerHTML='';
+const eq=bt.equity;const eqMin=Math.min(...eq),eqMax=Math.max(...eq),eqRange=eqMax-eqMin||1;
+const step=Math.max(1,Math.floor(eq.length/30));
+for(let i=0;i<eq.length;i+=step){
+const h=((eq[i]-eqMin)/eqRange)*100;
+const cls=eq[i]>=1000?'up':'dn';
+const bar=document.createElement('div');bar.className='spark-bar '+cls;bar.style.height=Math.max(2,h)+'%';sparkEl.appendChild(bar)}
+
+switchView('detail');
 }
 
 // ═══════════════════════════════════════
