@@ -42,13 +42,16 @@ const STRATEGIES = [
   { name: 'Bollinger Reversion', cat: 'Mean Rev', risk: 'MED' },
   { name: 'RSI Mean Reversion', cat: 'Mean Rev', risk: 'MED' },
   { name: 'Ornstein-Uhlenbeck', cat: 'Mean Rev', risk: 'MED' },
-  // ── Volatility (6) ──
+  // ── Volatility (9) ──
   { name: 'Volatility Trading', cat: 'Volatility', risk: 'HIGH' },
   { name: 'Gamma Scalping', cat: 'Volatility', risk: 'HIGH' },
   { name: 'Volatility Regime', cat: 'Volatility', risk: 'MED' },
   { name: 'Dispersion Trading', cat: 'Volatility', risk: 'HIGH' },
   { name: 'Straddle Selling', cat: 'Volatility', risk: 'HIGH' },
   { name: 'VIX Term Structure', cat: 'Volatility', risk: 'MED' },
+  { name: 'Volatility Skew', cat: 'Volatility', risk: 'HIGH' },
+  { name: 'Realized Vol Arb', cat: 'Volatility', risk: 'MED' },
+  { name: 'Vega Neutral', cat: 'Volatility', risk: 'MED' },
   // ── Execution (6) ──
   { name: 'Market Making', cat: 'Execution', risk: 'MED' },
   { name: 'Grid Trading', cat: 'Execution', risk: 'MED' },
