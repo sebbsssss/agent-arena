@@ -72,7 +72,7 @@ const STRATEGIES = [
   { name: 'Factor Rotation', cat: 'Macro', risk: 'MED' },
   { name: 'Tail Risk Hedging', cat: 'Macro', risk: 'LOW' },
   { name: 'Global Macro', cat: 'Macro', risk: 'HIGH' },
-  // ── Quant (11) ──
+  // ── Quant (20) ──
   { name: 'Kalman Filter', cat: 'Quant', risk: 'MED' },
   { name: 'Machine Learning Alpha', cat: 'Quant', risk: 'HIGH' },
   { name: 'Correlation Breakdown', cat: 'Quant', risk: 'HIGH' },
@@ -84,6 +84,15 @@ const STRATEGIES = [
   { name: 'Scalping', cat: 'Quant', risk: 'HIGH' },
   { name: 'Swing Trading', cat: 'Quant', risk: 'MED' },
   { name: 'Position Trading', cat: 'Quant', risk: 'LOW' },
+  { name: 'Hidden Markov Model', cat: 'Quant', risk: 'HIGH' },
+  { name: 'GARCH Volatility', cat: 'Quant', risk: 'MED' },
+  { name: 'Cointegration Arb', cat: 'Quant', risk: 'MED' },
+  { name: 'PCA Factor Model', cat: 'Quant', risk: 'HIGH' },
+  { name: 'LSTM Prediction', cat: 'Quant', risk: 'HIGH' },
+  { name: 'Entropy Trading', cat: 'Quant', risk: 'HIGH' },
+  { name: 'Fractal Breakout', cat: 'Quant', risk: 'MED' },
+  { name: 'Hurst Exponent', cat: 'Quant', risk: 'MED' },
+  { name: 'Reinforcement Learning', cat: 'Quant', risk: 'DEGEN' },
 ];
 
 const TIME_HORIZONS = ['Scalper', 'Day Trader', 'Swing Trader', 'Position Trader', 'Long-Term Holder'];
