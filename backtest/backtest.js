@@ -251,13 +251,22 @@ function keltnerChannel(candles, emaPeriod = 20, atrPeriod = 14, mult = 2) {
   return { mid: emaLine, upper, lower };
 }
 
-// ─── Agent Generator (same seed logic as frontend) ────────────
+// ─── Agent Generator (deterministic + even strategy distribution) ────────────
 function generateAgent(id) {
   const seed = id * 2654435761 >>> 0;
   const rng = mulberry32(seed);
 
-  const strat = STRATEGIES[Math.floor(rng() * STRATEGIES.length)];
-  const strat2 = STRATEGIES[Math.floor(rng() * STRATEGIES.length)];
+  // PRIMARY STRATEGY: Cycle through ALL strategies evenly (10000 agents / 71 strategies = ~141 per strategy)
+  const stratIdx = id % STRATEGIES.length;
+  const strat = STRATEGIES[stratIdx];
+  
+  // SECONDARY STRATEGY: Use RNG for variety, but avoid same as primary
+  let strat2Idx = Math.floor(rng() * STRATEGIES.length);
+  while (strat2Idx === stratIdx && STRATEGIES.length > 1) {
+    strat2Idx = Math.floor(rng() * STRATEGIES.length);
+  }
+  const strat2 = STRATEGIES[strat2Idx];
+  
   const horizon = TIME_HORIZONS[Math.floor(rng() * TIME_HORIZONS.length)];
   const riskStyle = RISK_STYLES[Math.floor(rng() * RISK_STYLES.length)];
   const aggression = AGGRESSION_LEVELS[Math.floor(rng() * AGGRESSION_LEVELS.length)];
