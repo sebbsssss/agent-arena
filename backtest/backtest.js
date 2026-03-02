@@ -100,6 +100,17 @@ const STRATEGIES = [
   { name: 'Fractal Breakout', cat: 'Quant', risk: 'MED' },
   { name: 'Hurst Exponent', cat: 'Quant', risk: 'MED' },
   { name: 'Reinforcement Learning', cat: 'Quant', risk: 'DEGEN' },
+  // ── DeFi/Crypto Native (10) ──
+  { name: 'Liquidity Farming', cat: 'DeFi', risk: 'HIGH' },
+  { name: 'Airdrop Farming', cat: 'DeFi', risk: 'MED' },
+  { name: 'MEV Frontrun', cat: 'DeFi', risk: 'DEGEN' },
+  { name: 'Yield Rotation', cat: 'DeFi', risk: 'MED' },
+  { name: 'Flash Loan Arb', cat: 'DeFi', risk: 'DEGEN' },
+  { name: 'Impermanent Loss Hedge', cat: 'DeFi', risk: 'LOW' },
+  { name: 'Liquidation Hunting', cat: 'DeFi', risk: 'HIGH' },
+  { name: 'Fear/Greed Index', cat: 'DeFi', risk: 'MED' },
+  { name: 'On-Chain Flow', cat: 'DeFi', risk: 'HIGH' },
+  { name: 'Social Sentiment', cat: 'DeFi', risk: 'HIGH' },
 ];
 
 const TIME_HORIZONS = ['Scalper', 'Day Trader', 'Swing Trader', 'Position Trader', 'Long-Term Holder'];
