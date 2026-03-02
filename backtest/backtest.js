@@ -65,13 +65,17 @@ const STRATEGIES = [
   { name: 'MACD Divergence', cat: 'Technical', risk: 'MED' },
   { name: 'Keltner Breakout', cat: 'Technical', risk: 'HIGH' },
   { name: 'Wyckoff Method', cat: 'Technical', risk: 'MED' },
-  // ── Macro (6) ──
+  // ── Macro (10) ──
   { name: 'Risk Parity', cat: 'Macro', risk: 'LOW' },
   { name: 'Carry Trade', cat: 'Macro', risk: 'MED' },
   { name: 'Cross-Asset Momentum', cat: 'Macro', risk: 'MED' },
   { name: 'Factor Rotation', cat: 'Macro', risk: 'MED' },
   { name: 'Tail Risk Hedging', cat: 'Macro', risk: 'LOW' },
   { name: 'Global Macro', cat: 'Macro', risk: 'HIGH' },
+  { name: 'Commodity Spreads', cat: 'Macro', risk: 'MED' },
+  { name: 'Yield Curve Arb', cat: 'Macro', risk: 'LOW' },
+  { name: 'Currency Momentum', cat: 'Macro', risk: 'MED' },
+  { name: 'Inflation Hedge', cat: 'Macro', risk: 'LOW' },
   // ── Quant (20) ──
   { name: 'Kalman Filter', cat: 'Quant', risk: 'MED' },
   { name: 'Machine Learning Alpha', cat: 'Quant', risk: 'HIGH' },
